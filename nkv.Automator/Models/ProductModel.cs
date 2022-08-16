@@ -25,4 +25,11 @@ namespace nkv.Automator.Models
         public int DatabaseTypeId { get; set; }
         public string DatabaseTypeName { get; set; }
     }
+    public enum DataTypeEnum
+    {
+        MySQL = 1,
+        MSSQL = 2,
+        PostgreSQL = 3,
+        MongoDB = 4,
+    }
 }

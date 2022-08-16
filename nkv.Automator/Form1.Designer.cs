@@ -52,11 +52,14 @@
             this.postgresqlTab = new System.Windows.Forms.TabPage();
             this.communityTab = new System.Windows.Forms.TabPage();
             this.docsTab = new System.Windows.Forms.TabPage();
+            this.label7 = new System.Windows.Forms.Label();
+            this.mysqlToolComboBox = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.licenceTab.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.licenceDataGridView)).BeginInit();
+            this.mysqlTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -256,6 +259,8 @@
             // 
             // mysqlTab
             // 
+            this.mysqlTab.Controls.Add(this.label7);
+            this.mysqlTab.Controls.Add(this.mysqlToolComboBox);
             this.mysqlTab.Location = new System.Drawing.Point(4, 27);
             this.mysqlTab.Name = "mysqlTab";
             this.mysqlTab.Padding = new System.Windows.Forms.Padding(3);
@@ -310,10 +315,32 @@
             this.docsTab.Text = "Documentation";
             this.docsTab.UseVisualStyleBackColor = true;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(41, 25);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(146, 15);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "Select Registered Products";
+            // 
+            // mysqlToolComboBox
+            // 
+            this.mysqlToolComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.mysqlToolComboBox.FormattingEnabled = true;
+            this.mysqlToolComboBox.Items.AddRange(new object[] {
+            "CodeCanyon",
+            "GetAutomator.com"});
+            this.mysqlToolComboBox.Location = new System.Drawing.Point(218, 22);
+            this.mysqlToolComboBox.Name = "mysqlToolComboBox";
+            this.mysqlToolComboBox.Size = new System.Drawing.Size(972, 23);
+            this.mysqlToolComboBox.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1265, 722);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -327,6 +354,8 @@
             this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.licenceDataGridView)).EndInit();
+            this.mysqlTab.ResumeLayout(false);
+            this.mysqlTab.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -356,5 +385,7 @@
         private System.Windows.Forms.Button registerBtn;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox productComboBox;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox mysqlToolComboBox;
     }
 }

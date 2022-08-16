@@ -30,7 +30,7 @@ namespace nkv.Automator.Models
         public string MacID { get; set; }
         public string ProductNumber { get; set; }
         public string ValidTill { get; set; }
-        public string ProductID { get; set; }
+        public int ProductID { get; set; }
         public string ProductTitle { get; set; }
         public int DatabaseTypeId { get; set; }
         public string DatabaseTypeName { get; set; }

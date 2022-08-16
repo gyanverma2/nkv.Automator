@@ -9,19 +9,20 @@ namespace nkv.Automator
     internal class Validator
     {
         private const string baseURL = "http://localhost:82/getautomator";
+        
         public List<ProductModel> GetAllProduct()
         {
             var client = new JsonServiceClient(baseURL);
             var response = client.Get<string>("/api/products/read.php?APIKEY=3f7569f151994c19894a139257b049e6");
             if (response != null)
             {
-                var apiResponse = JsonConvert.DeserializeObject<APIResponse<List<ProductModel>>>(response);
+                var apiResponse = JsonConvert.DeserializeObject<APIResponse<APIResponseRecord<List<ProductModel>>>>(response);
                 if (apiResponse != null && apiResponse.code==1)
                 {
-                    return apiResponse.document;
+                    return apiResponse.document.records;
                 }
             }
-            return new List<ProductModel>();
+            return new List<ProductModel>() { new ProductModel() { ProductID=0,ProductNumber="0",ProductTitle="No Product Found"} };
         }
         public List<LicenceProductModel> GetAllLicence(LoginModel login)
         {
