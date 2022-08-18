@@ -47,13 +47,17 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.licenceDataGridView = new System.Windows.Forms.DataGridView();
             this.mysqlTab = new System.Windows.Forms.TabPage();
+            this.label7 = new System.Windows.Forms.Label();
+            this.mysqlToolComboBox = new System.Windows.Forms.ComboBox();
             this.msSqlTab = new System.Windows.Forms.TabPage();
             this.mongodbTab = new System.Windows.Forms.TabPage();
             this.postgresqlTab = new System.Windows.Forms.TabPage();
             this.communityTab = new System.Windows.Forms.TabPage();
             this.docsTab = new System.Windows.Forms.TabPage();
-            this.label7 = new System.Windows.Forms.Label();
-            this.mysqlToolComboBox = new System.Windows.Forms.ComboBox();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.mysqlGenerateButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.licenceTab.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -259,6 +263,10 @@
             // 
             // mysqlTab
             // 
+            this.mysqlTab.Controls.Add(this.mysqlGenerateButton);
+            this.mysqlTab.Controls.Add(this.panel5);
+            this.mysqlTab.Controls.Add(this.panel4);
+            this.mysqlTab.Controls.Add(this.panel3);
             this.mysqlTab.Controls.Add(this.label7);
             this.mysqlTab.Controls.Add(this.mysqlToolComboBox);
             this.mysqlTab.Location = new System.Drawing.Point(4, 27);
@@ -268,6 +276,27 @@
             this.mysqlTab.TabIndex = 1;
             this.mysqlTab.Text = "MySQL";
             this.mysqlTab.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(41, 25);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(146, 15);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "Select Registered Products";
+            // 
+            // mysqlToolComboBox
+            // 
+            this.mysqlToolComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.mysqlToolComboBox.FormattingEnabled = true;
+            this.mysqlToolComboBox.Items.AddRange(new object[] {
+            "CodeCanyon",
+            "GetAutomator.com"});
+            this.mysqlToolComboBox.Location = new System.Drawing.Point(218, 22);
+            this.mysqlToolComboBox.Name = "mysqlToolComboBox";
+            this.mysqlToolComboBox.Size = new System.Drawing.Size(972, 23);
+            this.mysqlToolComboBox.TabIndex = 13;
             // 
             // msSqlTab
             // 
@@ -315,26 +344,42 @@
             this.docsTab.Text = "Documentation";
             this.docsTab.UseVisualStyleBackColor = true;
             // 
-            // label7
+            // panel3
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(41, 25);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(146, 15);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "Select Registered Products";
+            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Location = new System.Drawing.Point(41, 64);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(488, 442);
+            this.panel3.TabIndex = 15;
             // 
-            // mysqlToolComboBox
+            // panel4
             // 
-            this.mysqlToolComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.mysqlToolComboBox.FormattingEnabled = true;
-            this.mysqlToolComboBox.Items.AddRange(new object[] {
-            "CodeCanyon",
-            "GetAutomator.com"});
-            this.mysqlToolComboBox.Location = new System.Drawing.Point(218, 22);
-            this.mysqlToolComboBox.Name = "mysqlToolComboBox";
-            this.mysqlToolComboBox.Size = new System.Drawing.Size(972, 23);
-            this.mysqlToolComboBox.TabIndex = 13;
+            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel4.Location = new System.Drawing.Point(565, 64);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(625, 197);
+            this.panel4.TabIndex = 16;
+            // 
+            // panel5
+            // 
+            this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel5.Location = new System.Drawing.Point(565, 293);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(625, 213);
+            this.panel5.TabIndex = 17;
+            // 
+            // mysqlGenerateButton
+            // 
+            this.mysqlGenerateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(60)))), ((int)(((byte)(81)))));
+            this.mysqlGenerateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.mysqlGenerateButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.mysqlGenerateButton.ForeColor = System.Drawing.Color.Transparent;
+            this.mysqlGenerateButton.Location = new System.Drawing.Point(1022, 548);
+            this.mysqlGenerateButton.Name = "mysqlGenerateButton";
+            this.mysqlGenerateButton.Size = new System.Drawing.Size(168, 42);
+            this.mysqlGenerateButton.TabIndex = 18;
+            this.mysqlGenerateButton.Text = "Generate";
+            this.mysqlGenerateButton.UseVisualStyleBackColor = false;
             // 
             // Form1
             // 
@@ -387,5 +432,9 @@
         private System.Windows.Forms.ComboBox productComboBox;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox mysqlToolComboBox;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Button mysqlGenerateButton;
     }
 }
