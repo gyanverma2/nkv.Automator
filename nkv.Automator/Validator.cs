@@ -26,20 +26,28 @@ namespace nkv.Automator
         }
         public List<LicenceProductModel> GetAllLicence(LoginModel login)
         {
-            var client = new JsonServiceClient(baseURL);
-            client.AddHeader("Content-Type", "application/json");
-            login.APIKEY = "3f7569f151994c19894a139257b049e6";
-            string json = JsonConvert.SerializeObject(login);
-            var response = client.Post<string>("/api/licence_check/getallbyuser.php", json);
-            if (response != null)
+            try
             {
-                var apiResponse = JsonConvert.DeserializeObject<APIResponse<APIResponseRecord<List<LicenceProductModel>>>>(response);
-                if (apiResponse != null && apiResponse.code == 1)
+                var client = new JsonServiceClient(baseURL);
+                client.AddHeader("Content-Type", "application/json");
+                login.APIKEY = "3f7569f151994c19894a139257b049e6";
+                string json = JsonConvert.SerializeObject(login);
+                var response = client.Post<string>("/api/licence_check/getallbyuser.php", json);
+                if (response != null)
                 {
-                    return apiResponse.document.records;
+                    var apiResponse = JsonConvert.DeserializeObject<APIResponse<APIResponseRecord<List<LicenceProductModel>>>>(response);
+                    if (apiResponse != null && apiResponse.code == 1)
+                    {
+                        return apiResponse.document.records;
+                    }
                 }
+                return new List<LicenceProductModel>();
             }
-            return new List<LicenceProductModel>();
+            catch(Exception ex)
+            {
+                return new List<LicenceProductModel>();
+            }
+            
         }
         public bool Register(RegisterModel register)
         {
