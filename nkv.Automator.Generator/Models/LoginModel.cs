@@ -24,6 +24,7 @@ namespace nkv.Automator.Models
     public class LicenceProductModel
     {
         public string ProductName { get; set; }
+        public string PublicID { get; set; }
         public int NumberOfDays { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string licenceID { get; set; }

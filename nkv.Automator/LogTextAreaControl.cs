@@ -16,5 +16,16 @@ namespace nkv.Automator
         {
             InitializeComponent();
         }
+        public void SetLogText(string msg, Color color,bool clearPrior = false)
+        {
+            if (clearPrior)
+            {
+                richTextBox1.Clear();
+            }
+
+            richTextBox1.SelectionColor = color;
+            richTextBox1.SelectedText = " " + msg + "\r\n";
+            richTextBox1.Update();
+        }
     }
 }

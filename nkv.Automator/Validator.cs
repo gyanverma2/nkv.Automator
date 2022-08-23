@@ -12,17 +12,23 @@ namespace nkv.Automator
         
         public List<ProductModel> GetAllProduct()
         {
-            var client = new JsonServiceClient(baseURL);
-            var response = client.Get<string>("/api/products/read.php?APIKEY=3f7569f151994c19894a139257b049e6");
-            if (response != null)
+            try
             {
-                var apiResponse = JsonConvert.DeserializeObject<APIResponse<APIResponseRecord<List<ProductModel>>>>(response);
-                if (apiResponse != null && apiResponse.code==1)
+                var client = new JsonServiceClient(baseURL);
+                var response = client.Get<string>("/api/products/read.php?APIKEY=3f7569f151994c19894a139257b049e6");
+                if (response != null)
                 {
-                    return apiResponse.document.records;
+                    var apiResponse = JsonConvert.DeserializeObject<APIResponse<APIResponseRecord<List<ProductModel>>>>(response);
+                    if (apiResponse != null && apiResponse.code == 1)
+                    {
+                        return apiResponse.document.records;
+                    }
                 }
+                return new List<ProductModel>() { new ProductModel() { ProductID = 0, ProductNumber = "0", ProductTitle = "No Product Found" } };
+            }catch(Exception ex)
+            {
+                return new List<ProductModel>();
             }
-            return new List<ProductModel>() { new ProductModel() { ProductID=0,ProductNumber="0",ProductTitle="No Product Found"} };
         }
         public List<LicenceProductModel> GetAllLicence(LoginModel login)
         {
@@ -53,7 +59,7 @@ namespace nkv.Automator
         {
             try
             {
-                var response = this.RegisterAPI(register);
+                var response = RegisterAPI(register);
                 return true;
             }
             catch (Exception ex)
@@ -74,6 +80,29 @@ namespace nkv.Automator
                 }
             }
             return null;
+        }
+        public bool ClickCounter(string publicID)
+        {
+            try
+            {
+                var client = new JsonServiceClient(baseURL);
+                var param = new { LicencePublicID = publicID };
+
+                var response = client.Post<string>("/api/licence_check/validate_click.php", param);
+                if (response != null)
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<APIResponse<string>>(response);
+                    if (apiResponse != null && apiResponse.code == 1)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

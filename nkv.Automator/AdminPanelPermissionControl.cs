@@ -16,5 +16,13 @@ namespace nkv.Automator
         {
             InitializeComponent();
         }
+        public string SuperAdminUsername { get { return superAdminUsernameTextBox.Text.Trim(); } }
+        public string SuperAdminPassword { get { return superAdminPasswordTextBox.Text.Trim(); } }
+        public string AdminUsername { get { return adminUsernameTextBox.Text.Trim(); } }
+        public string AdminPassword{ get { return adminPasswordTextbox.Text.Trim(); } }
+        public string GuestUsername { get { return guestUsernameTextBox.Text.Trim(); } }
+        public string GuestPassword { get { return guestPasswordTextbox.Text.Trim(); } }
+        public List<string> ImageColumns { get { return imageColumnTextbox.Text.Trim().Split(',').ToList(); } }
+        public List<string> FileColumns { get { return fileColumnTextbox.Text.Trim().Split(',').ToList(); } }
     }
 }

@@ -47,6 +47,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.licenceDataGridView = new System.Windows.Forms.DataGridView();
             this.mysqlTab = new System.Windows.Forms.TabPage();
+            this.logTextAreaControl2 = new nkv.Automator.LogTextAreaControl();
             this.adminPanelPermissionControlPanel2 = new nkv.Automator.AdminPanelPermissionControlPanel();
             this.tableSelectionControl2 = new nkv.Automator.TableSelectionControl();
             this.authSelectionControl2 = new nkv.Automator.AuthSelectionControl();
@@ -64,14 +65,14 @@
             this.hostMysqlTextBox = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.mysqlToolComboBox = new System.Windows.Forms.ComboBox();
             this.msSqlTab = new System.Windows.Forms.TabPage();
             this.mongodbTab = new System.Windows.Forms.TabPage();
             this.postgresqlTab = new System.Windows.Forms.TabPage();
+            this.projectNameControlPgSQL = new nkv.Automator.ProjectNameControl();
+            this.logTextAreaControlpgSQL = new nkv.Automator.LogTextAreaControl();
             this.adminPanelPermissionControlPanelPgSQL = new nkv.Automator.AdminPanelPermissionControlPanel();
-            this.tableSelectionControl1 = new nkv.Automator.TableSelectionControl();
-            this.authSelectionControl1 = new nkv.Automator.AuthSelectionControl();
+            this.tableSelectionControlPgSQL = new nkv.Automator.TableSelectionControl();
+            this.authSelectionControlPgSQL = new nkv.Automator.AuthSelectionControl();
             this.pgSQLGenerateButton = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
             this.testConPgSQLButton = new System.Windows.Forms.Button();
@@ -88,14 +89,11 @@
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.pgsqlToolComboBox = new System.Windows.Forms.ComboBox();
             this.communityTab = new System.Windows.Forms.TabPage();
             this.docsTab = new System.Windows.Forms.TabPage();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.logTextAreaControl1 = new nkv.Automator.LogTextAreaControl();
-            this.logTextAreaControl2 = new nkv.Automator.LogTextAreaControl();
+            this.projectNameControlMySql = new nkv.Automator.ProjectNameControl();
             this.tabControl1.SuspendLayout();
             this.licenceTab.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -304,14 +302,13 @@
             // 
             // mysqlTab
             // 
+            this.mysqlTab.Controls.Add(this.projectNameControlMySql);
             this.mysqlTab.Controls.Add(this.logTextAreaControl2);
             this.mysqlTab.Controls.Add(this.adminPanelPermissionControlPanel2);
             this.mysqlTab.Controls.Add(this.tableSelectionControl2);
             this.mysqlTab.Controls.Add(this.authSelectionControl2);
             this.mysqlTab.Controls.Add(this.mysqlGenerateButton);
             this.mysqlTab.Controls.Add(this.panel3);
-            this.mysqlTab.Controls.Add(this.label7);
-            this.mysqlTab.Controls.Add(this.mysqlToolComboBox);
             this.mysqlTab.Location = new System.Drawing.Point(4, 27);
             this.mysqlTab.Name = "mysqlTab";
             this.mysqlTab.Padding = new System.Windows.Forms.Padding(3);
@@ -319,6 +316,14 @@
             this.mysqlTab.TabIndex = 1;
             this.mysqlTab.Text = "MySQL";
             this.mysqlTab.UseVisualStyleBackColor = true;
+            // 
+            // logTextAreaControl2
+            // 
+            this.logTextAreaControl2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.logTextAreaControl2.Location = new System.Drawing.Point(8, 455);
+            this.logTextAreaControl2.Name = "logTextAreaControl2";
+            this.logTextAreaControl2.Size = new System.Drawing.Size(839, 191);
+            this.logTextAreaControl2.TabIndex = 25;
             // 
             // adminPanelPermissionControlPanel2
             // 
@@ -356,6 +361,7 @@
             this.mysqlGenerateButton.TabIndex = 18;
             this.mysqlGenerateButton.Text = "Generate";
             this.mysqlGenerateButton.UseVisualStyleBackColor = false;
+            this.mysqlGenerateButton.Click += new System.EventHandler(this.automatorGenerateButton_Click);
             // 
             // panel3
             // 
@@ -384,7 +390,7 @@
             this.button1.ForeColor = System.Drawing.Color.White;
             this.button1.Location = new System.Drawing.Point(91, 292);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(256, 61);
+            this.button1.Size = new System.Drawing.Size(256, 47);
             this.button1.TabIndex = 26;
             this.button1.Text = "Test Connection";
             this.button1.UseVisualStyleBackColor = false;
@@ -487,27 +493,6 @@
             this.label21.TabIndex = 15;
             this.label21.Text = "MySQL";
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 16);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(146, 15);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "Select Registered Products";
-            // 
-            // mysqlToolComboBox
-            // 
-            this.mysqlToolComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.mysqlToolComboBox.FormattingEnabled = true;
-            this.mysqlToolComboBox.Items.AddRange(new object[] {
-            "CodeCanyon",
-            "GetAutomator.com"});
-            this.mysqlToolComboBox.Location = new System.Drawing.Point(185, 13);
-            this.mysqlToolComboBox.Name = "mysqlToolComboBox";
-            this.mysqlToolComboBox.Size = new System.Drawing.Size(703, 23);
-            this.mysqlToolComboBox.TabIndex = 13;
-            // 
             // msSqlTab
             // 
             this.msSqlTab.Location = new System.Drawing.Point(4, 27);
@@ -528,20 +513,34 @@
             // 
             // postgresqlTab
             // 
-            this.postgresqlTab.Controls.Add(this.logTextAreaControl1);
+            this.postgresqlTab.Controls.Add(this.projectNameControlPgSQL);
+            this.postgresqlTab.Controls.Add(this.logTextAreaControlpgSQL);
             this.postgresqlTab.Controls.Add(this.adminPanelPermissionControlPanelPgSQL);
-            this.postgresqlTab.Controls.Add(this.tableSelectionControl1);
-            this.postgresqlTab.Controls.Add(this.authSelectionControl1);
+            this.postgresqlTab.Controls.Add(this.tableSelectionControlPgSQL);
+            this.postgresqlTab.Controls.Add(this.authSelectionControlPgSQL);
             this.postgresqlTab.Controls.Add(this.pgSQLGenerateButton);
             this.postgresqlTab.Controls.Add(this.panel8);
-            this.postgresqlTab.Controls.Add(this.label8);
-            this.postgresqlTab.Controls.Add(this.pgsqlToolComboBox);
             this.postgresqlTab.Location = new System.Drawing.Point(4, 27);
             this.postgresqlTab.Name = "postgresqlTab";
             this.postgresqlTab.Size = new System.Drawing.Size(1549, 737);
             this.postgresqlTab.TabIndex = 5;
             this.postgresqlTab.Text = "PostgreSQL";
             this.postgresqlTab.UseVisualStyleBackColor = true;
+            // 
+            // projectNameControlPgSQL
+            // 
+            this.projectNameControlPgSQL.Location = new System.Drawing.Point(8, 8);
+            this.projectNameControlPgSQL.Name = "projectNameControlPgSQL";
+            this.projectNameControlPgSQL.Size = new System.Drawing.Size(630, 40);
+            this.projectNameControlPgSQL.TabIndex = 34;
+            // 
+            // logTextAreaControlpgSQL
+            // 
+            this.logTextAreaControlpgSQL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.logTextAreaControlpgSQL.Location = new System.Drawing.Point(8, 455);
+            this.logTextAreaControlpgSQL.Name = "logTextAreaControlpgSQL";
+            this.logTextAreaControlpgSQL.Size = new System.Drawing.Size(839, 191);
+            this.logTextAreaControlpgSQL.TabIndex = 33;
             // 
             // adminPanelPermissionControlPanelPgSQL
             // 
@@ -551,21 +550,21 @@
             this.adminPanelPermissionControlPanelPgSQL.Size = new System.Drawing.Size(527, 443);
             this.adminPanelPermissionControlPanelPgSQL.TabIndex = 32;
             // 
-            // tableSelectionControl1
+            // tableSelectionControlPgSQL
             // 
-            this.tableSelectionControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tableSelectionControl1.Location = new System.Drawing.Point(422, 238);
-            this.tableSelectionControl1.Name = "tableSelectionControl1";
-            this.tableSelectionControl1.Size = new System.Drawing.Size(574, 199);
-            this.tableSelectionControl1.TabIndex = 31;
+            this.tableSelectionControlPgSQL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tableSelectionControlPgSQL.Location = new System.Drawing.Point(422, 238);
+            this.tableSelectionControlPgSQL.Name = "tableSelectionControlPgSQL";
+            this.tableSelectionControlPgSQL.Size = new System.Drawing.Size(574, 199);
+            this.tableSelectionControlPgSQL.TabIndex = 31;
             // 
-            // authSelectionControl1
+            // authSelectionControlPgSQL
             // 
-            this.authSelectionControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.authSelectionControl1.Location = new System.Drawing.Point(422, 54);
-            this.authSelectionControl1.Name = "authSelectionControl1";
-            this.authSelectionControl1.Size = new System.Drawing.Size(574, 178);
-            this.authSelectionControl1.TabIndex = 30;
+            this.authSelectionControlPgSQL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.authSelectionControlPgSQL.Location = new System.Drawing.Point(422, 54);
+            this.authSelectionControlPgSQL.Name = "authSelectionControlPgSQL";
+            this.authSelectionControlPgSQL.Size = new System.Drawing.Size(574, 178);
+            this.authSelectionControlPgSQL.TabIndex = 30;
             // 
             // pgSQLGenerateButton
             // 
@@ -579,7 +578,7 @@
             this.pgSQLGenerateButton.TabIndex = 28;
             this.pgSQLGenerateButton.Text = "Generate";
             this.pgSQLGenerateButton.UseVisualStyleBackColor = false;
-            this.pgSQLGenerateButton.Click += new System.EventHandler(this.pgSQLGenerateButton_Click);
+            this.pgSQLGenerateButton.Click += new System.EventHandler(this.automatorGenerateButton_Click);
             // 
             // panel8
             // 
@@ -740,27 +739,6 @@
             this.label15.TabIndex = 7;
             this.label15.Text = "postgreSQL";
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(8, 15);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(146, 15);
-            this.label8.TabIndex = 20;
-            this.label8.Text = "Select Registered Products";
-            // 
-            // pgsqlToolComboBox
-            // 
-            this.pgsqlToolComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.pgsqlToolComboBox.FormattingEnabled = true;
-            this.pgsqlToolComboBox.Items.AddRange(new object[] {
-            "CodeCanyon",
-            "GetAutomator.com"});
-            this.pgsqlToolComboBox.Location = new System.Drawing.Point(185, 12);
-            this.pgsqlToolComboBox.Name = "pgsqlToolComboBox";
-            this.pgsqlToolComboBox.Size = new System.Drawing.Size(762, 23);
-            this.pgsqlToolComboBox.TabIndex = 19;
-            // 
             // communityTab
             // 
             this.communityTab.Location = new System.Drawing.Point(4, 27);
@@ -788,21 +766,12 @@
             // 
             this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
             // 
-            // logTextAreaControl1
+            // projectNameControlMySql
             // 
-            this.logTextAreaControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.logTextAreaControl1.Location = new System.Drawing.Point(8, 455);
-            this.logTextAreaControl1.Name = "logTextAreaControl1";
-            this.logTextAreaControl1.Size = new System.Drawing.Size(839, 191);
-            this.logTextAreaControl1.TabIndex = 33;
-            // 
-            // logTextAreaControl2
-            // 
-            this.logTextAreaControl2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.logTextAreaControl2.Location = new System.Drawing.Point(8, 455);
-            this.logTextAreaControl2.Name = "logTextAreaControl2";
-            this.logTextAreaControl2.Size = new System.Drawing.Size(839, 191);
-            this.logTextAreaControl2.TabIndex = 25;
+            this.projectNameControlMySql.Location = new System.Drawing.Point(8, 9);
+            this.projectNameControlMySql.Name = "projectNameControlMySql";
+            this.projectNameControlMySql.Size = new System.Drawing.Size(630, 40);
+            this.projectNameControlMySql.TabIndex = 26;
             // 
             // Form1
             // 
@@ -825,11 +794,9 @@
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.licenceDataGridView)).EndInit();
             this.mysqlTab.ResumeLayout(false);
-            this.mysqlTab.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.postgresqlTab.ResumeLayout(false);
-            this.postgresqlTab.PerformLayout();
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
             this.ResumeLayout(false);
@@ -861,13 +828,9 @@
         private System.Windows.Forms.Button registerBtn;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox productComboBox;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ComboBox mysqlToolComboBox;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button mysqlGenerateButton;
         private System.Windows.Forms.Panel panel8;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ComboBox pgsqlToolComboBox;
         private System.Windows.Forms.Button testConPgSQLButton;
         private System.Windows.Forms.TextBox passwordPGTextBox;
         private System.Windows.Forms.TextBox usernamePGTextBox;
@@ -895,15 +858,17 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Button pgSQLGenerateButton;
-        private AuthSelectionControl authSelectionControl1;
-        private TableSelectionControl tableSelectionControl1;
+        private AuthSelectionControl authSelectionControlPgSQL;
+        private TableSelectionControl tableSelectionControlPgSQL;
         private AdminPanelPermissionControlPanel adminPanelPermissionControlPanelPgSQL;
         private TableSelectionControl tableSelectionControl2;
         private AuthSelectionControl authSelectionControl2;
         private AdminPanelPermissionControlPanel adminPanelPermissionControlPanel2;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
-        private LogTextAreaControl logTextAreaControl1;
+        private LogTextAreaControl logTextAreaControlpgSQL;
         private LogTextAreaControl logTextAreaControl2;
+        private ProjectNameControl projectNameControlPgSQL;
+        private ProjectNameControl projectNameControlMySql;
     }
 }

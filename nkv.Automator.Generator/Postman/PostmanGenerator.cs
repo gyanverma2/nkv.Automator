@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace nkv.Automator.Postman
 {
-    internal static class PostmanGenerator
+    public static class PostmanGenerator
     {
         public static string ItemTemplate = "{\"name\": \"{NameString}\", \"request\":{ \"auth\":{ \"type\": \"bearer\", \"bearer\": [ { \"key\": \"token\", \"value\": \"{{token}}\", \"type\": \"string\"}]},\"" +
             "method\": \"{MethodString}\", \"header\": [ { \"key\": \"Content-Type\", \"name\": \"Content-Type\", \"value\": \"application/json\", \"type\": \"text\" } ], \"body\": { \"mode\": \"raw\", \"raw\": \"{BodyJson}\", \"options\": { \"raw\": { \"language\": \"json\" } } }, \"url\": { \"raw\": \"{{DEVServerURL}}{URLString}\", \"host\": [ \"{{DEVServerURL}}\" ], \"path\": {PathArray} } }, \"response\": [] }";

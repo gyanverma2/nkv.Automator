@@ -2,7 +2,7 @@
 
 namespace nkv.Automator.Utility
 {
-    internal static class CopyDir
+    public static class CopyDir
     {
         public static void Copy(string sourceDirectory, string targetDirectory, string projectName, string existingProjectName)
         {

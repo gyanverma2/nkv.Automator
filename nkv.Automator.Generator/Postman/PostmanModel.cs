@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace nkv.Automator.Postman
 {
-    internal class PostmanModel
+    public class PostmanModel
     {
-        public List<PRequestBody> Body { get; set; }
-        public string Url { get; set; }
-        public string Name { get; set; }
-        public List<string> Host { get; set; }
-        public List<string> Path { get; set; }
-        public string Method { get; set; }
-        public string TableName { get; set; }
+        public List<PRequestBody> Body { get; set; } = null!;
+        public string Url { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public List<string> Host { get; set; } = null!;
+        public List<string> Path { get; set; } = null!;
+        public string Method { get; set; } = null!;
+        public string TableName { get; set; } = null!;
     }
 
-    internal class PRequestBody
+    public class PRequestBody
     {
         public PRequestBody(string propName, string propDataType, bool isRequred, string defaultValue)
         {
@@ -32,7 +32,7 @@ namespace nkv.Automator.Postman
         public string DefaultValue { get; set; }
     }
 
-    internal class PRequestRefBody
+    public class PRequestRefBody
     {
         public PRequestRefBody(string actualColName, string actualTableName, string propName, string propDataType, string refColName, string refTableName, bool isRequred, string defaultValue)
         {

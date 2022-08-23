@@ -34,14 +34,14 @@
             this.label47 = new System.Windows.Forms.Label();
             this.label48 = new System.Windows.Forms.Label();
             this.label49 = new System.Windows.Forms.Label();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.imageColumnTextbox = new System.Windows.Forms.RichTextBox();
             this.panel16 = new System.Windows.Forms.Panel();
             this.adminPasswordTextbox = new System.Windows.Forms.TextBox();
             this.adminUsernameTextBox = new System.Windows.Forms.TextBox();
             this.label50 = new System.Windows.Forms.Label();
             this.label51 = new System.Windows.Forms.Label();
             this.label52 = new System.Windows.Forms.Label();
-            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
+            this.fileColumnTextbox = new System.Windows.Forms.RichTextBox();
             this.panel17 = new System.Windows.Forms.Panel();
             this.superAdminPasswordTextBox = new System.Windows.Forms.TextBox();
             this.superAdminUsernameTextBox = new System.Windows.Forms.TextBox();
@@ -113,14 +113,14 @@
             this.label49.TabIndex = 0;
             this.label49.Text = "Guest : (View Permission)";
             // 
-            // richTextBox2
+            // imageColumnTextbox
             // 
-            this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richTextBox2.Location = new System.Drawing.Point(12, 280);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(474, 53);
-            this.richTextBox2.TabIndex = 12;
-            this.richTextBox2.Text = "";
+            this.imageColumnTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.imageColumnTextbox.Location = new System.Drawing.Point(12, 280);
+            this.imageColumnTextbox.Name = "imageColumnTextbox";
+            this.imageColumnTextbox.Size = new System.Drawing.Size(474, 53);
+            this.imageColumnTextbox.TabIndex = 12;
+            this.imageColumnTextbox.Text = "";
             // 
             // panel16
             // 
@@ -180,15 +180,15 @@
             this.label52.TabIndex = 0;
             this.label52.Text = "Admin : (View/Add/Edit Permission)";
             // 
-            // richTextBox3
+            // fileColumnTextbox
             // 
-            this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richTextBox3.Location = new System.Drawing.Point(12, 376);
-            this.richTextBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.richTextBox3.Name = "richTextBox3";
-            this.richTextBox3.Size = new System.Drawing.Size(474, 53);
-            this.richTextBox3.TabIndex = 16;
-            this.richTextBox3.Text = "";
+            this.fileColumnTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.fileColumnTextbox.Location = new System.Drawing.Point(12, 376);
+            this.fileColumnTextbox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.fileColumnTextbox.Name = "fileColumnTextbox";
+            this.fileColumnTextbox.Size = new System.Drawing.Size(474, 53);
+            this.fileColumnTextbox.TabIndex = 16;
+            this.fileColumnTextbox.Text = "";
             // 
             // panel17
             // 
@@ -271,9 +271,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Controls.Add(this.richTextBox3);
+            this.Controls.Add(this.fileColumnTextbox);
             this.Controls.Add(this.label57);
-            this.Controls.Add(this.richTextBox2);
+            this.Controls.Add(this.imageColumnTextbox);
             this.Controls.Add(this.panel15);
             this.Controls.Add(this.label56);
             this.Controls.Add(this.panel17);
@@ -299,14 +299,14 @@
         private System.Windows.Forms.Label label47;
         private System.Windows.Forms.Label label48;
         private System.Windows.Forms.Label label49;
-        private System.Windows.Forms.RichTextBox richTextBox2;
+        private System.Windows.Forms.RichTextBox imageColumnTextbox;
         private System.Windows.Forms.Panel panel16;
         private System.Windows.Forms.TextBox adminPasswordTextbox;
         private System.Windows.Forms.TextBox adminUsernameTextBox;
         private System.Windows.Forms.Label label50;
         private System.Windows.Forms.Label label51;
         private System.Windows.Forms.Label label52;
-        private System.Windows.Forms.RichTextBox richTextBox3;
+        private System.Windows.Forms.RichTextBox fileColumnTextbox;
         private System.Windows.Forms.Panel panel17;
         private System.Windows.Forms.TextBox superAdminPasswordTextBox;
         private System.Windows.Forms.TextBox superAdminUsernameTextBox;

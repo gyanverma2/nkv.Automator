@@ -46,6 +46,7 @@
             this.selectAllTableCheckBox.TabIndex = 35;
             this.selectAllTableCheckBox.Text = "Select All Tables";
             this.selectAllTableCheckBox.UseVisualStyleBackColor = true;
+            this.selectAllTableCheckBox.CheckedChanged += new System.EventHandler(this.selectAllTableCheckBox_CheckedChanged);
             // 
             // removeFromSelectedTableButton
             // 
@@ -56,6 +57,7 @@
             this.removeFromSelectedTableButton.TabIndex = 34;
             this.removeFromSelectedTableButton.Text = "<< Remove";
             this.removeFromSelectedTableButton.UseVisualStyleBackColor = true;
+            this.removeFromSelectedTableButton.Click += new System.EventHandler(this.removeButton_Click);
             // 
             // addToSelectedTableButton
             // 
@@ -66,6 +68,7 @@
             this.addToSelectedTableButton.TabIndex = 33;
             this.addToSelectedTableButton.Text = "Add >>";
             this.addToSelectedTableButton.UseVisualStyleBackColor = true;
+            this.addToSelectedTableButton.Click += new System.EventHandler(this.addSelectionButton_Click);
             // 
             // SelectedTableListBox
             // 

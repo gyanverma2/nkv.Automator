@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace nkv.Automator.PGSQL
 {
-    internal class PGSQLDBHelper
+    public class PGSQLDBHelper
     {
-        string ConnectionString { get; set; }
-        string Host { get; set; }
-        string SchemaName { get; set; }
-        int Port { get; set; }
-        string Username { get; set; }
-        string Password { get; set; }
-        string DBName { get; set; }
-        internal PGSQLDBHelper(string host, string schema, string port, string username, string password, string dbName)
+        public string ConnectionString { get; set; }
+        public string Host { get; set; }
+        public string SchemaName { get; set; }
+        public int Port { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string DBName { get; set; }
+        public PGSQLDBHelper(string host, string schema, string port, string username, string password, string dbName)
         {
             Host = host;
             SchemaName = schema;
@@ -27,14 +27,14 @@ namespace nkv.Automator.PGSQL
             DBName = dbName;
             ConnectionString = "Host=" + Host + ";Port=" + Port + ";Username=" + Username + ";Password=" + Password + ";Database=" + DBName + "";
         }
-        internal bool Connect()
+        public bool Connect()
         {
             using var con = new NpgsqlConnection(ConnectionString);
             con.Open();
             return true;
         }
 
-        internal List<TableConstraint> GetTableConstraints(string tableName)
+        public List<TableConstraint> GetTableConstraints(string tableName)
         {
             List<TableConstraint> tableConstraints = new List<TableConstraint>();
 
@@ -63,7 +63,7 @@ namespace nkv.Automator.PGSQL
             }
             return tableConstraints;
         }
-        internal List<string> GetSchema()
+        public List<string> GetSchema()
         {
             List<string> schemaList = new List<string>();
             using var con = new NpgsqlConnection(ConnectionString);
@@ -80,12 +80,12 @@ namespace nkv.Automator.PGSQL
             return schemaList;
         }
 
-        internal List<string> GetTables(string schemaName)
+        public List<string> GetTables()
         {
             List<string> schemaList = new List<string>();
             using var con = new NpgsqlConnection(ConnectionString);
             con.Open();
-            string sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='" + schemaName + "'";
+            string sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='" + SchemaName + "'";
             using var cmd = new NpgsqlCommand(sql, con);
 
             using NpgsqlDataReader rdr = cmd.ExecuteReader();
@@ -97,14 +97,14 @@ namespace nkv.Automator.PGSQL
             return schemaList;
         }
 
-        internal List<ColumnModel> GetColumns(string tableName, string schemaName)
+        public List<ColumnModel> GetColumns(string tableName)
         {
             List<TableConstraint> tableConstraints = GetTableConstraints(tableName);
             List<ColumnModel> columnModels = new List<ColumnModel>();
 
             using var con = new NpgsqlConnection(ConnectionString);
             con.Open();
-            string sql = "SELECT column_name,data_type,is_nullable,udt_name,column_default FROM information_schema.columns WHERE table_name = '" + tableName + "'  AND table_schema = '" + schemaName + "' ";
+            string sql = "SELECT column_name,data_type,is_nullable,udt_name,column_default FROM information_schema.columns WHERE table_name = '" + tableName + "'  AND table_schema = '" + SchemaName + "' ";
             using var cmd = new NpgsqlCommand(sql, con);
 
             using NpgsqlDataReader rdr = cmd.ExecuteReader();

@@ -71,6 +71,7 @@
             // 
             // authPasswordColumnCoumboBox
             // 
+            this.authPasswordColumnCoumboBox.Enabled = false;
             this.authPasswordColumnCoumboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.authPasswordColumnCoumboBox.FormattingEnabled = true;
             this.authPasswordColumnCoumboBox.Location = new System.Drawing.Point(401, 132);
@@ -80,6 +81,7 @@
             // 
             // authUserColumnComboBox
             // 
+            this.authUserColumnComboBox.Enabled = false;
             this.authUserColumnComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.authUserColumnComboBox.FormattingEnabled = true;
             this.authUserColumnComboBox.Location = new System.Drawing.Point(214, 134);
@@ -98,12 +100,14 @@
             // 
             // authTableComboBox
             // 
+            this.authTableComboBox.Enabled = false;
             this.authTableComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.authTableComboBox.FormattingEnabled = true;
             this.authTableComboBox.Location = new System.Drawing.Point(25, 132);
             this.authTableComboBox.Name = "authTableComboBox";
             this.authTableComboBox.Size = new System.Drawing.Size(154, 23);
             this.authTableComboBox.TabIndex = 27;
+            this.authTableComboBox.SelectedIndexChanged += new System.EventHandler(this.authTableComboBox_SelectedIndexChanged);
             // 
             // label43
             // 
@@ -152,6 +156,7 @@
             this.authSkipCheckBox.TabIndex = 30;
             this.authSkipCheckBox.Text = "I want to use static username/password for token generation";
             this.authSkipCheckBox.UseVisualStyleBackColor = true;
+            this.authSkipCheckBox.CheckedChanged += new System.EventHandler(this.authSkipCheckBox_CheckedChanged);
             // 
             // AuthSelectionControl
             // 

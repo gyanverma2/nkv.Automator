@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace nkv.Automator.Utility
 {
-    internal static class Helper
+    public static class Helper
     {
         public static void Copy(string sourceDirectory, string targetDirectory)
         {

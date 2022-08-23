@@ -1,0 +1,26 @@
+﻿<?php
+class Database{
+ 
+    // specify your own database credentials
+    private $host = "{hostName}";
+    private $db_name = "{dbName}";
+    private $username = "{userName}";
+    private $password = "{password}";
+    private $port = "{port}";
+    public $conn;
+  
+    // get the database connection
+    public function getConnection(){
+       $conn_string = "host=". $this->host ." port=". $this->port ." dbname=". $this->db_name ." user=". $this->username ." password=". $this->password ."";
+        $this->conn = null;
+ 
+        try{
+            $this->conn = pg_connect($conn_string);
+        }catch(Exception $e){
+            echo "Connection error: " . $e->getMessage();
+        }
+ 
+        return $this->conn;
+    }
+}
+?>
