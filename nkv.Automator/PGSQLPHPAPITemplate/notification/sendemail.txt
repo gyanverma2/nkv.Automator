@@ -20,11 +20,11 @@ require 'PHPMailer/SMTP.php';
 
 include_once '../config/database.php';
 include_once '../token/validatetoken.php';
-$database = new Database();
+
+{initDatabaseModel}
 $db = $database->getConnection();
 
 $data = json_decode(file_get_contents("php://input"));
-
 if(
 !empty($data->body)
 &&!empty($data->to)
@@ -40,7 +40,7 @@ if(
         echo json_encode(array("status" => "error", "code" => 0,"message"=> "Email sent failed!","document"=> ""));	
 	}
 	
-}// tell the user data is incomplete
+}
 else{
  
     // set response code - 400 bad request
@@ -92,7 +92,6 @@ function sendEmail($to,$cc,$subject,$body){
 	//$mail->Send();
 
 	$mailStatus="";
-	//var_dump($mail->ErrorInfo);
 	if(!$mail->Send()) {
 		
 		 $mail->ClearAddresses();

@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MySQL\" />
     <Folder Include="MongoDB\" />
     <Folder Include="MSSQL\" />
   </ItemGroup>

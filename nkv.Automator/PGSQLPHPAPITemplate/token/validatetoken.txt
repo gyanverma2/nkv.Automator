@@ -1,26 +1,13 @@
 <?php
-// required headers
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST");
-header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
- 
-// get database connection
-include_once '../config/database.php';
- include_once '../token/token.php';
-// instantiate product object
+include_once '../config/header.php';
+include_once '../token/token.php';
 include_once '../jwt/BeforeValidException.php';
 include_once '../jwt/ExpiredException.php';
 include_once '../jwt/SignatureInvalidException.php';
 include_once '../jwt/JWT.php';
 use \Firebase\JWT\JWT;
  
-$database = new Database();
-$db = $database->getConnection();
-
-// get posted data
+$decodedJWTData=null; //Use this variable to read data anywhere in any other endpoint
 $data = json_decode(file_get_contents("php://input"));
 
 /** 
@@ -37,7 +24,6 @@ function getAuthorizationHeader(){
             $requestHeaders = apache_request_headers();
             // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
             $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-            //print_r($requestHeaders);
             if (isset($requestHeaders['Authorization'])) {
                 $headers = trim($requestHeaders['Authorization']);
             }
@@ -61,11 +47,11 @@ try{
 	  $jwtToken=  getBearerToken(); //token from header
 	  //if header[Authorization] is coming null then set the .htaccess file with SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1 
 	  if(!$jwtToken){
-	       http_response_code(403);
+	    http_response_code(403);
 		echo json_encode(array("status" => "error", "code" => 0,"message"=> "Error No Token Found","document"=> "Please set .htaccess file with [SetEnvIf Authorization '(.*)' HTTP_AUTHORIZATION=$1]"));
 		exit();
 	   }else{
-       $decoded = JWT::decode($jwtToken,SECRET_KEY, array(ALGORITHM));
+       $decodedJWTData = JWT::decode($jwtToken,SECRET_KEY, array(ALGORITHM));
 	   }
 
     }catch(\Firebase\JWT\ExpiredException $e){
@@ -73,13 +59,9 @@ try{
 		echo json_encode(array("status" => "error", "code" => 0,"message"=> "Error : " .$e->getMessage(),"document"=> ""));
 		exit();
     }catch(Exception $e){
-		//var_dump($e);
 		http_response_code(403);
 		echo json_encode(array("status" => "error", "code" => 0,"message"=> "Invalid Token","document"=> $e-getMessage()));
 		exit();
 	}
-
-
-
 
 ?>

@@ -1,151 +1,49 @@
 ﻿<?php
 class {moduleName}{
  
-    // database connection and table name
     private $conn;
     private $table_name = "{tableName}";
 	public $pageNo = 1;
 	public  $no_of_records_per_page=30;
-    // object properties
 	{objectProperties}
     
- 
-    // constructor with $db as database connection
     public function __construct($db){
         $this->conn = $db;
     }
 
-	function total_record_count(){
-		$query = pg_query($this->conn, "SELECT count(*) as total from ". $this->table_name ."");
-		$total=0;
-		while($row = pg_fetch_array($query)){
-			$total = $row["total"];
-			}
-		return $total;
+	function total_record_count() {
+		$query = "select count(1) as total from ". $this->table_name ."";
+		$stmt = $this->conn->prepare($query);
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		return $row['total'];
 	}
 
-	// read {tableName}
-	function read(){
-		if(isset($_GET["pageNo"])){
-		$this->pageNo=$_GET["pageNo"];
-		}
-		$offset = ($this->pageNo-1) * $this->no_of_records_per_page; 
-		// select all query
-		{selectQuery}
-	 
-		// prepare query statement
-		$stmt =pg_query($this->conn,$query);
-		return $stmt;
-	}
-
-	function readOne(){
-	 
-		// query to read single record
-		{selectOneQuery}
-
-		// bind id of product to be updated
-		{selectOneBindValue}
-	 
-		// prepare query statement
-		$stmt =pg_query_params($this->conn,$query,$paramArray);
-	 
-		// get retrieved row
-		$row = pg_fetch_assoc($stmt);
-	 
-		// set values to object properties
-		{selectOneSetValueToObject}
+	function search_count($searchKey) {
+		{searchCountQuery}
+		$stmt = $this->conn->prepare($query);
+		$searchKey=strtolower($searchKey);
+		$stmt->bindParam(':search_term', $searchKey, PDO::PARAM_STR);
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		return $row['total'];
 	}
 	
-	// create {tableName}
-	function create(){
-	 
-		// query to insert record
-		{insertQuery}
-
-		// sanitize
-		{insertSanitize}
-	 
-		// bind values
-		{insertBindValue}
-
-		// prepare query
-		$stmt =pg_query_params($this->conn,$query,$paramArray);
-		// execute query
-		if($stmt){
-			return true;
-		}
-	 
-		return false;
-		 
-	}
-	
-	{loginFunction}
-	
-	
-	// update the {tableName}
-	function update(){
-	 
-		// update query
-		{updateQuery}
-
-		// sanitize
-		{updateSanitize}
-	 
-		// bind new values
-		{updateBindValue}
-	 
-		// prepare query statement
-		$stmt =pg_query_params($this->conn,$query,$paramArray);
-
-		// execute the query
-		if($stmt){
-			return true;
-		}
-	 
-		return false;
-	}
-	
-	// delete the {tableName}
-	function delete(){
-	 
-		// delete query
-		{deleteQuery}
-	 
-		// sanitize
-		{deleteSenitize}
-	 
-		// bind id of record to delete
-		{deleteBind}
-
-		// prepare query
-		$stmt =pg_query_params($this->conn,$query,$paramArray);
-
-		// execute query
-		if($stmt){
-			return true;
-		}
-	 
-		return false;
-		 
-	}
-
 	function search_record_count($columnArray,$orAnd){
-		
 		$where="";
-		$paramArray = array();
-		$bindCount=0;
 		foreach ($columnArray as $col) {
-		$bindCount++;
 			$columnName=htmlspecialchars(strip_tags($col->columnName));
 			$columnLogic=$col->columnLogic;
 			if($where==""){
-				$where="LOWER(t.".$columnName . ") ".$columnLogic." $".$bindCount;
+				$where="LOWER(t.".$columnName . ") ".$columnLogic." :".$columnName;
 			}else{
-				$where=$where." ". $orAnd ." LOWER(t." . $columnName . ") ".$columnLogic." $".$bindCount;
+				$where=$where." ". $orAnd ." LOWER(t." . $columnName . ") ".$columnLogic." :".$columnName;
 			}
 		}
 		{searchCountQueryByColumn}
 		
+		$stmt = $this->conn->prepare($query);
+		$paramCount=1;
 		foreach ($columnArray as $col) {
 			$columnName=htmlspecialchars(strip_tags($col->columnName));
 		if(strtoupper($col->columnLogic)=="LIKE"){
@@ -153,93 +51,174 @@ class {moduleName}{
 		}else{
 		$columnValue=strtolower($col->columnValue);
 		}
-		array_push($paramArray,$columnValue);
+			$stmt->bindValue(":".$columnName, $columnValue);
+			$paramCount++;
 		}
 		
-		$stmt =pg_query_params($this->conn,$query,$paramArray);
-		if($stmt){
-			$row = pg_fetch_assoc($stmt);
-			return $row? $row['total'] : 0;
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		 $num = $stmt->rowCount();
+		if($num>0){
+			return $row['total'];
 		}else{
 			return 0;
 		}
 	}
-
+	function read(){
+		if(isset($_GET["pageNo"])){
+			$this->pageNo=$_GET["pageNo"];
+		}
+		$offset = ($this->pageNo-1) * $this->no_of_records_per_page; 
+		{selectQuery}
+		$stmt = $this->conn->prepare($query);
+		$stmt->execute();
+		return $stmt;
+	}
+	function search($searchKey){
+		if(isset($_GET["pageNo"])){
+		$this->pageNo=$_GET["pageNo"];
+		}
+		$offset = ($this->pageNo-1) * $this->no_of_records_per_page; 
+		{searchQuery}
+		$stmt = $this->conn->prepare($query);
+		$searchKey=strtolower($searchKey);
+		$stmt->bindParam(':search_term', $searchKey, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt;
+	}
 	function searchByColumn($columnArray,$orAnd){
 		if(isset($_GET["pageNo"])){
 		$this->pageNo=$_GET["pageNo"];
 		}
 		$offset = ($this->pageNo-1) * $this->no_of_records_per_page; 
 		$where="";
-		$paramArray = array();
-		$bindCount=0;
+		
 		foreach ($columnArray as $col) {
-		$bindCount++;
 			$columnName=htmlspecialchars(strip_tags($col->columnName));
 			$columnLogic=$col->columnLogic;
 			if($where==""){
-				$where="LOWER(t.".$columnName . ") ".$columnLogic." $".$bindCount;
+				$where="LOWER(t.".$columnName . ") ".$columnLogic." :".$columnName;
 			}else{
-				$where=$where." ". $orAnd ." LOWER(t." . $columnName . ") ".$columnLogic." $".$bindCount;
+				$where=$where." ". $orAnd ." LOWER(t." . $columnName . ") ".$columnLogic." :".$columnName;
 			}
 		}
 		{searchQueryByColumn}
 		
+		$stmt = $this->conn->prepare($query);
+		$paramCount=1;
 		foreach ($columnArray as $col) {
 			$columnName=htmlspecialchars(strip_tags($col->columnName));
-		if(strtoupper($col->columnLogic)=="LIKE"){
-		$columnValue="%".strtolower($col->columnValue)."%";
-		}else{
-		$columnValue=strtolower($col->columnValue);
-		}
-		array_push($paramArray,$columnValue);
-			
+			if(strtoupper($col->columnLogic)=="LIKE"){
+			$columnValue="%".strtolower($col->columnValue)."%";
+			}else{
+			$columnValue=strtolower($col->columnValue);
+			}
+			$stmt->bindValue(":".$columnName, $columnValue);
+			$paramCount++;
 		}
 		
-		$stmt =pg_query_params($this->conn,$query,$paramArray);
-		if($stmt){
-			return $stmt;
-		}else{
-			return null;
+		$stmt->execute();
+		return $stmt;
+	}
+	
+	{loginValidationFunction}
+
+	function readOne(){
+		{selectOneQuery}
+		$stmt = $this->conn->prepare($query);
+		{selectOneBindValue}
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		$num = $stmt->rowCount();
+		if($num>0){
+			{selectOneSetValueToObject}
+		}
+		else{
+			$this->{primaryKey}=null;
 		}
 	}
+	function create(){
+		{insertQuery}
+		$stmt = $this->conn->prepare($query);
+		{insertSanitize}
+		{insertBindValue}
+		$lastInsertedId=0;
+		if($stmt->execute()){
+			$lastInsertedId = $this->conn->lastInsertId();
+			if($lastInsertedId==0 && $this->{primaryKey}!=null){
+				$this->readOne();
+				if($this->{primaryKey}!=null){
+					$lastInsertedId=$this->{primaryKey};
+					}
+			}
+		}
+	
+		return $lastInsertedId;
+	}
+	function update(){
+		{updateQuery}
+		$stmt = $this->conn->prepare($query);
+		{updateSanitize}
+		{updateBindValue}
+		$stmt->execute();
 
+	 if($stmt->rowCount()) {
+			return true;
+		} else {
+		   return false;
+		}
+	}
 	function update_patch($jsonObj) {
 			$query ="UPDATE ".$this->table_name. " SET ";
 			$setValue="";
 			$colCount=1;
-			$paramArray = array();
 			foreach($jsonObj as $key => $value) 
 			{
 				$columnName=htmlspecialchars(strip_tags($key));
 				if($columnName!='{primaryKey}'){
 				if($colCount===1){
-					$setValue = $columnName."=$".$colCount;
+					$setValue = $columnName."=:".$columnName;
 				}else{
-					$setValue = $setValue . "," .$columnName."=$".$colCount;
+					$setValue = $setValue . "," .$columnName."=:".$columnName;
 				}
 				$colCount++;
 				}
 			}
 			$setValue = rtrim($setValue,',');
-			$query = $query . " " . $setValue . " WHERE {primaryKey} = $".$colCount.";"; 
+			$query = $query . " " . $setValue . " WHERE {primaryKey} = :{primaryKey}"; 
+			$stmt = $this->conn->prepare($query);
 			foreach($jsonObj as $key => $value) 
 			{
 			    $columnName=htmlspecialchars(strip_tags($key));
 				if($columnName!='{primaryKey}'){
 				$colValue=htmlspecialchars(strip_tags($value));
-				array_push($paramArray,$colValue);
+				$stmt->bindValue(":".$columnName, $colValue);
 				}
 			}
-			array_push($paramArray,$this->{primaryKey});
-			$stmt =pg_query_params($this->conn,$query,$paramArray);
-			if($stmt){
+			$stmt->bindParam(":{primaryKey}", $this->{primaryKey});
+			$stmt->execute();
+
+			if($stmt->rowCount()) {
 				return true;
+			} else {
+				return false;
 			}
-	 
-			return false;
 	}
+	function delete(){
+		{deleteQuery}
+		$stmt = $this->conn->prepare($query);
+		{deleteSenitize}
+		{deleteBind}
+	 	$stmt->execute();
+
+	 if($stmt->rowCount()) {
+			return true;
+		} else {
+		   return false;
+		}
+		 
+	}
+
+	{extraFunctions}
 }
-
-
 ?>

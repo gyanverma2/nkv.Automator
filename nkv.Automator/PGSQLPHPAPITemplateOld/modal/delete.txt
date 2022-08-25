@@ -1,0 +1,46 @@
+<?php
+// required headers
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST,GET");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+// include database and object file
+include_once '../config/database.php';
+include_once '../objects/{tableName}.php';
+ include_once '../token/validatetoken.php';
+// get database connection
+$database = new Database();
+$db = $database->getConnection();
+ 
+// prepare {tableName} object
+${tableName} = new {moduleName}($db);
+ 
+// get {tableName} id
+$data = json_decode(file_get_contents("php://input"));
+ 
+// set {tableName} id to be deleted
+${tableName}->{primaryKey} = $data->{primaryKey};
+ 
+// delete the {tableName}
+if(${tableName}->delete()){
+ 
+    // set response code - 200 ok
+    http_response_code(200);
+ 
+    // tell the user
+	echo json_encode(array("status" => "success", "code" => 1,"message"=> "{moduleName} was deleted","document"=> ""));
+    
+}
+ 
+// if unable to delete the {tableName}
+else{
+ 
+    // set response code - 503 service unavailable
+    http_response_code(503);
+ 
+    // tell the user
+	echo json_encode(array("status" => "error", "code" => 0,"message"=> "Unable to delete {tableName}.","document"=> ""));
+}
+?>

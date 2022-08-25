@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace nkv.Automator
 {
@@ -13,6 +15,7 @@ namespace nkv.Automator
     {
         private readonly DataTypeEnum ActiveDataType = DataTypeEnum.PostgreSQL;
         private readonly ProductEnum ActiveProduct = ProductEnum.PGSQL_PHPAPI;
+        private readonly string SoftwareVersion = "2.0.0";
         private readonly bool isAdminPanel = false;
         Validator v { get; set; } = null!;
         List<LicenceProductModel> LicenceProductList { get; set; } = null!;
@@ -29,6 +32,30 @@ namespace nkv.Automator
         {
             InitializeComponent();
             HideTabPages();
+        }
+        private void CreateEmailFile()
+        {
+            string path = "licence.temp";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            using (var txtFile = File.AppendText(path))
+            {
+                string contents = emailTextbox.Text;
+                txtFile.WriteLine(contents);
+            }
+        }
+        private string ReadEmailFromFile()
+        {
+            var email = string.Empty;
+            string path = "licence.temp";
+            if (File.Exists(path))
+            {
+                email = File.ReadAllText(path);
+                emailTextbox.Text = email;
+            }
+            return email;
         }
         private void Form1_Shown(object sender, System.EventArgs e)
         {
@@ -85,10 +112,13 @@ namespace nkv.Automator
             v = new Validator();
             Invoke(new Action(() =>
             {
+                var email = ReadEmailFromFile();
                 systemTextbox.Text = Helper.GetSystemName();
-                DisplayLicenceGrid(Helper.GetSystemName());
+                if (!string.IsNullOrEmpty(email))
+                    DisplayLicenceGrid(Helper.GetSystemName());
                 DisplayProductList();
                 InitUserControls(ActiveDataType, isAdminPanel);
+                sourceComboBox.SelectedIndex = 0;
             }));
         }
         private void InitUserControls(DataTypeEnum dataType, bool? isAdminPanel = null)
@@ -186,7 +216,7 @@ namespace nkv.Automator
         {
             try
             {
-                LicenceProductList = v.GetAllLicence(new LoginModel() { MacID = "DESKTOP-KS8GISK", UserEmail = "nisgyan@gmail.com" });
+                LicenceProductList = v.GetAllLicence(new LoginModel() { MacID = systemName, UserEmail = emailTextbox.Text.Trim() });
                 if (LicenceProductList != null && LicenceProductList.Count > 0)
                 {
                     licenceDataGridView.DataSource = FilterLicence(ActiveProduct);
@@ -220,6 +250,8 @@ namespace nkv.Automator
             var productList = AllProductList.Where(i => int.Parse(i.ProductNumber) == (int)ActiveProduct).ToList();
             productComboBox.DisplayMember = "ProductTitle";
             productComboBox.DataSource = productList;
+            if (productList.Any())
+                productComboBox.SelectedIndex = 0;
 
         }
         private void automatorGenerateButton_Click(object sender, EventArgs e)
@@ -229,7 +261,7 @@ namespace nkv.Automator
                 MessageBox.Show("Please select at least one table to generate.");
                 return;
             }
-            if (ActiveLicence!=null && v.ClickCounter(ActiveLicence.PublicID))
+            if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID))
             {
                 backgroundWorker2.RunWorkerAsync();
             }
@@ -249,10 +281,11 @@ namespace nkv.Automator
                 {
                     AuthTableConfig = new NKVAuthTableConfig
                     {
+
                         IsSkipAuth = AuthSelectionControl.IsSkipAuth,
                         AuthTableName = AuthSelectionControl.IsSkipAuth ? "" : AuthSelectionControl.AuthTableName,
-                        PasswordColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminUsername : AuthSelectionControl.AuthUserColumnName,
-                        UsernameColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminPassword : AuthSelectionControl.AuthPasswordColumnName,
+                        UsernameColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminUsername : AuthSelectionControl.AuthUserColumnName,
+                        PasswordColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminPassword : AuthSelectionControl.AuthPasswordColumnName,
                     },
                     AdminPanelConfig = new NKVAdminPanelPermissionConfig()
                     {
@@ -273,23 +306,32 @@ namespace nkv.Automator
                     case DataTypeEnum.MSSQL:
                         break;
                     case DataTypeEnum.PostgreSQL:
-                        var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
-                        if (pgSQLDb.Connect())
-                        {
-                            PGSQL_PHPAPI pgPHPAPI = new PGSQL_PHPAPI(config, "//");
-                            pgPHPAPI.MessageEvent += MessageEvent;
-                            pgPHPAPI.CompletedEvent += CompletedEvent;
-                            pgPHPAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, pgSQLDb);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
-                        }
+                        Process(config);
                         break;
                     case DataTypeEnum.MongoDB:
                         break;
                 }
             }));
+        }
+        private void Process(NKVConfiguration config)
+        {
+            switch (ActiveProduct)
+            {
+                case ProductEnum.PGSQL_PHPAPI:
+                    var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
+                    if (pgSQLDb.Connect())
+                    {
+                        PGSQL_PHPAPI pgPHPAPI = new PGSQL_PHPAPI(config, multiTenantCheckBoxPgSQL.Checked, "//");
+                        pgPHPAPI.MessageEvent += MessageEvent;
+                        pgPHPAPI.CompletedEvent += CompletedEvent;
+                        pgPHPAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, pgSQLDb);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
+                    }
+                    break;
+            }
         }
 
         private void CompletedEvent(NKVMessage obj)
@@ -329,6 +371,56 @@ namespace nkv.Automator
             {
                 appendError(ex.Message, true);
             }
+        }
+
+        private void registerBtn_Click(object sender, EventArgs e)
+        {
+
+            if (sourceComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Please select purchase source");
+                return;
+            }
+            if (string.IsNullOrEmpty(purchaseCodeTextbox.Text.Trim()))
+            {
+                MessageBox.Show("Please provide purchase code");
+                return;
+            }
+            if (!Helper.IsValidEmail(emailTextbox.Text.Trim()))
+            {
+                MessageBox.Show("Please enter valid email");
+                return;
+            }
+            registerBtn.Enabled = false;
+            if (sourceComboBox.SelectedItem != null && productComboBox.SelectedItem != null)
+            {
+                var product = (ProductModel)productComboBox.SelectedItem;
+                var registerData = new RegisterModel()
+                {
+
+                    LicenceNumber = purchaseCodeTextbox.Text.Trim(),
+                    MacID = Helper.GetSystemName(),
+                    SoftwareVersion = SoftwareVersion,
+                    Source = sourceComboBox.SelectedItem.ToString(),
+                    ToolName = product.ProductName,
+                    UserEmail = emailTextbox.Text.Trim()
+                };
+                if (v.Register(registerData))
+                {
+                    CreateEmailFile();
+                    appendSuccess("Thanks for registration!");
+                    DisplayLicenceGrid(Helper.GetSystemName());
+                }
+                else
+                {
+                    appendError("Invalid licence, Please contact support or manage your licence at https://getautomator.com/app", true);
+                }
+            }
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            backgroundWorker1.RunWorkerAsync();
         }
     }
 }

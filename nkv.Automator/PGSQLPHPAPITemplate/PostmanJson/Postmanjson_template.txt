@@ -29,6 +29,11 @@
 						"name": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "x-tenant",
+						"value": "",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -195,6 +200,43 @@
 					"path": [
 						"notification",
 						"send.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Email Notification",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"to\":\"nisgyan@gmail.com,info@getautomator.com\",\r\n    \"subject\":\"sbuject of email\",\r\n    \"body\":\"body of email\",\r\n    \"cc\":\"nishant@migids.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{DEVServerURL}}/notification/sendemail.php",
+					"host": [
+						"{{DEVServerURL}}"
+					],
+					"path": [
+						"notification",
+						"sendemail.php"
 					]
 				}
 			},

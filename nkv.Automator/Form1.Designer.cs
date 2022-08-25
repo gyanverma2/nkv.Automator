@@ -47,6 +47,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.licenceDataGridView = new System.Windows.Forms.DataGridView();
             this.mysqlTab = new System.Windows.Forms.TabPage();
+            this.projectNameControlMySql = new nkv.Automator.ProjectNameControl();
             this.logTextAreaControl2 = new nkv.Automator.LogTextAreaControl();
             this.adminPanelPermissionControlPanel2 = new nkv.Automator.AdminPanelPermissionControlPanel();
             this.tableSelectionControl2 = new nkv.Automator.TableSelectionControl();
@@ -75,6 +76,7 @@
             this.authSelectionControlPgSQL = new nkv.Automator.AuthSelectionControl();
             this.pgSQLGenerateButton = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
+            this.multiTenantCheckBoxPgSQL = new System.Windows.Forms.CheckBox();
             this.testConPgSQLButton = new System.Windows.Forms.Button();
             this.passwordPGTextBox = new System.Windows.Forms.TextBox();
             this.usernamePGTextBox = new System.Windows.Forms.TextBox();
@@ -93,7 +95,7 @@
             this.docsTab = new System.Windows.Forms.TabPage();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.projectNameControlMySql = new nkv.Automator.ProjectNameControl();
+            this.refreshButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.licenceTab.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -141,6 +143,7 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.refreshButton);
             this.panel2.Controls.Add(this.label6);
             this.panel2.Controls.Add(this.productComboBox);
             this.panel2.Controls.Add(this.registerBtn);
@@ -161,7 +164,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(76, 189);
+            this.label6.Location = new System.Drawing.Point(83, 184);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(49, 15);
             this.label6.TabIndex = 12;
@@ -177,7 +180,7 @@
             this.productComboBox.Location = new System.Drawing.Point(166, 181);
             this.productComboBox.Name = "productComboBox";
             this.productComboBox.Size = new System.Drawing.Size(1004, 23);
-            this.productComboBox.TabIndex = 11;
+            this.productComboBox.TabIndex = 4;
             // 
             // registerBtn
             // 
@@ -188,9 +191,10 @@
             this.registerBtn.Location = new System.Drawing.Point(1002, 221);
             this.registerBtn.Name = "registerBtn";
             this.registerBtn.Size = new System.Drawing.Size(168, 42);
-            this.registerBtn.TabIndex = 10;
+            this.registerBtn.TabIndex = 5;
             this.registerBtn.Text = "Register";
             this.registerBtn.UseVisualStyleBackColor = false;
+            this.registerBtn.Click += new System.EventHandler(this.registerBtn_Click);
             // 
             // sourceComboBox
             // 
@@ -202,12 +206,12 @@
             this.sourceComboBox.Location = new System.Drawing.Point(745, 129);
             this.sourceComboBox.Name = "sourceComboBox";
             this.sourceComboBox.Size = new System.Drawing.Size(425, 23);
-            this.sourceComboBox.TabIndex = 9;
+            this.sourceComboBox.TabIndex = 3;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(76, 132);
+            this.label4.Location = new System.Drawing.Point(83, 131);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(45, 15);
             this.label4.TabIndex = 8;
@@ -220,12 +224,12 @@
             this.systemTextbox.Location = new System.Drawing.Point(166, 129);
             this.systemTextbox.Name = "systemTextbox";
             this.systemTextbox.Size = new System.Drawing.Size(425, 23);
-            this.systemTextbox.TabIndex = 7;
+            this.systemTextbox.TabIndex = 2;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(636, 132);
+            this.label5.Location = new System.Drawing.Point(629, 132);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(93, 15);
             this.label5.TabIndex = 6;
@@ -246,7 +250,7 @@
             this.emailTextbox.Location = new System.Drawing.Point(166, 56);
             this.emailTextbox.Name = "emailTextbox";
             this.emailTextbox.Size = new System.Drawing.Size(425, 23);
-            this.emailTextbox.TabIndex = 3;
+            this.emailTextbox.TabIndex = 0;
             // 
             // label2
             // 
@@ -274,7 +278,7 @@
             this.purchaseCodeTextbox.Location = new System.Drawing.Point(745, 56);
             this.purchaseCodeTextbox.Name = "purchaseCodeTextbox";
             this.purchaseCodeTextbox.Size = new System.Drawing.Size(425, 23);
-            this.purchaseCodeTextbox.TabIndex = 0;
+            this.purchaseCodeTextbox.TabIndex = 1;
             // 
             // panel1
             // 
@@ -316,6 +320,13 @@
             this.mysqlTab.TabIndex = 1;
             this.mysqlTab.Text = "MySQL";
             this.mysqlTab.UseVisualStyleBackColor = true;
+            // 
+            // projectNameControlMySql
+            // 
+            this.projectNameControlMySql.Location = new System.Drawing.Point(8, 9);
+            this.projectNameControlMySql.Name = "projectNameControlMySql";
+            this.projectNameControlMySql.Size = new System.Drawing.Size(630, 40);
+            this.projectNameControlMySql.TabIndex = 26;
             // 
             // logTextAreaControl2
             // 
@@ -583,6 +594,7 @@
             // panel8
             // 
             this.panel8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel8.Controls.Add(this.multiTenantCheckBoxPgSQL);
             this.panel8.Controls.Add(this.testConPgSQLButton);
             this.panel8.Controls.Add(this.passwordPGTextBox);
             this.panel8.Controls.Add(this.usernamePGTextBox);
@@ -602,6 +614,16 @@
             this.panel8.Size = new System.Drawing.Size(398, 383);
             this.panel8.TabIndex = 21;
             // 
+            // multiTenantCheckBoxPgSQL
+            // 
+            this.multiTenantCheckBoxPgSQL.AutoSize = true;
+            this.multiTenantCheckBoxPgSQL.Location = new System.Drawing.Point(167, 275);
+            this.multiTenantCheckBoxPgSQL.Name = "multiTenantCheckBoxPgSQL";
+            this.multiTenantCheckBoxPgSQL.Size = new System.Drawing.Size(94, 19);
+            this.multiTenantCheckBoxPgSQL.TabIndex = 21;
+            this.multiTenantCheckBoxPgSQL.Text = "Multi-Tenant";
+            this.multiTenantCheckBoxPgSQL.UseVisualStyleBackColor = true;
+            // 
             // testConPgSQLButton
             // 
             this.testConPgSQLButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(60)))), ((int)(((byte)(81)))));
@@ -609,7 +631,7 @@
             this.testConPgSQLButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.testConPgSQLButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.testConPgSQLButton.ForeColor = System.Drawing.Color.White;
-            this.testConPgSQLButton.Location = new System.Drawing.Point(121, 284);
+            this.testConPgSQLButton.Location = new System.Drawing.Point(121, 306);
             this.testConPgSQLButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.testConPgSQLButton.Name = "testConPgSQLButton";
             this.testConPgSQLButton.Size = new System.Drawing.Size(242, 53);
@@ -766,12 +788,19 @@
             // 
             this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
             // 
-            // projectNameControlMySql
+            // refreshButton
             // 
-            this.projectNameControlMySql.Location = new System.Drawing.Point(8, 9);
-            this.projectNameControlMySql.Name = "projectNameControlMySql";
-            this.projectNameControlMySql.Size = new System.Drawing.Size(630, 40);
-            this.projectNameControlMySql.TabIndex = 26;
+            this.refreshButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(60)))), ((int)(((byte)(81)))));
+            this.refreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.refreshButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.refreshButton.ForeColor = System.Drawing.Color.Transparent;
+            this.refreshButton.Location = new System.Drawing.Point(166, 221);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(168, 42);
+            this.refreshButton.TabIndex = 13;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.UseVisualStyleBackColor = false;
+            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
             // 
             // Form1
             // 
@@ -784,7 +813,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "NKV Automator : Your Trusted Code Generator";
+            this.Text = "Automator : Your Trusted Code Generator - Nishant Kumar Verma [Getautomator.com]";
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.tabControl1.ResumeLayout(false);
             this.licenceTab.ResumeLayout(false);
@@ -870,5 +899,7 @@
         private LogTextAreaControl logTextAreaControl2;
         private ProjectNameControl projectNameControlPgSQL;
         private ProjectNameControl projectNameControlMySql;
+        private System.Windows.Forms.CheckBox multiTenantCheckBoxPgSQL;
+        private System.Windows.Forms.Button refreshButton;
     }
 }

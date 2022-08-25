@@ -1,0 +1,60 @@
+<?php
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST,GET");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+include_once '../config/database.php';
+include_once '../objects/{tableName}.php';
+ include_once '../token/validatetoken.php';
+// instantiate database and {tableName} object
+$database = new Database();
+$db = $database->getConnection();
+ 
+// initialize object
+${tableName} = new {moduleName}($db);
+
+$data = json_decode(file_get_contents("php://input"));
+$orAnd = isset($_GET['orAnd']) ? $_GET['orAnd'] : "OR";
+
+${tableName}->pageNo = isset($_GET['pageno']) ? $_GET['pageno'] : 1;
+${tableName}->no_of_records_per_page = isset($_GET['pagesize']) ? $_GET['pagesize'] : 30;
+
+// query {tableName}
+$stmt = ${tableName}->searchByColumn($data,$orAnd);
+$num = pg_num_rows($stmt);
+ 
+// check if more than 0 record found
+if($num>0){
+ 
+    //{tableName} array
+    ${tableName}_arr=array();
+	${tableName}_arr["pageno"]=${tableName}->pageNo;
+	${tableName}_arr["pagesize"]=${tableName}->no_of_records_per_page;
+    ${tableName}_arr["total_count"]=${tableName}->search_record_count($data,$orAnd);
+    ${tableName}_arr["records"]=array();
+ 
+    // retrieve table contents
+    
+    while ($row = pg_fetch_assoc($stmt)){
+        extract($row);
+ 
+        ${tableName}_item=array(
+            {setPropertyValue}
+        );
+ 
+        array_push(${tableName}_arr["records"], ${tableName}_item);
+    }
+ 
+    http_response_code(200);
+	echo json_encode(array("status" => "success", "code" => 1,"message"=> "{tableName} found","document"=> ${tableName}_arr));
+    
+}else{
+
+    http_response_code(404);
+	echo json_encode(array("status" => "error", "code" => 0,"message"=> "No {tableName} found.","document"=> ""));
+    
+}
+ 
+

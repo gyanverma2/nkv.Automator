@@ -1,31 +1,22 @@
 ﻿<?php
-// required headers
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
  
-// get database connection
 include_once '../config/database.php';
-
- include_once '../token/validatetoken.php';
-$database = new Database();
+include_once '../token/validatetoken.php';
+{initDatabaseModel}
 $db = $database->getConnection();
 
 //If you have your own FCM token or user table then use the below code to read data from your table.
 //include_once '../objects/FCMTable.php';
 //$fcm = new FCMTable($db);
  
-// get posted data
 $data = json_decode(file_get_contents("php://input"));
  
-// make sure data is not empty
-if(
-!empty($data->title)
-&&!empty($data->body)
-&&!empty($data->token)
-){
+if(!empty($data->title) && !empty($data->body) && !empty($data->token)){
  
 	$url = "https://fcm.googleapis.com/fcm/send";
     $token = $data->token; //"your device token";
@@ -50,15 +41,12 @@ if(
     if ($response === FALSE) {
 		 http_response_code(503);
 		 echo json_encode(array("status" => "error", "code" => 0,"message"=> "Failed to send notification","document"=> curl_error($ch)));
-    
     }
     curl_close($ch);
-	 http_response_code(201);
-	 echo json_encode(array("status" => "success", "code" => 1,"message"=> "Created Successfully","document"=> ""));
-
+	http_response_code(201);
+	echo json_encode(array("status" => "success", "code" => 1,"message"=> "Sent Successfully","document"=> ""));
 }
 else{
-
     http_response_code(400);
 	echo json_encode(array("status" => "error", "code" => 0,"message"=> "Data is incomplete.","document"=> ""));
 }

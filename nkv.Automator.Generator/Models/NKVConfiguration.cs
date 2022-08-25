@@ -11,6 +11,7 @@
         public string AuthTableName { get; set; } = null!;
         public string UsernameColumnName { get; set; } = null!;
         public string PasswordColumnName { get; set; } = null!;
+     
     }
     public class NKVAdminPanelPermissionConfig
     {
