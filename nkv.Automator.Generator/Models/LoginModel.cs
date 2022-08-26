@@ -8,33 +8,35 @@ namespace nkv.Automator.Models
 {
     public class LoginModel
     {
-        public string MacID { get; set; }
-        public string UserEmail { get; set; }
-        public string APIKEY { get; set; }
+        public string MacID { get; set; } = null!;
+        public string UserEmail { get; set; } = null!;
+        public string APIKEY { get; set; } = null!;
     }
     public class RegisterModel
     {
-        public string MacID { get; set; }
-        public string LicenceNumber { get; set; }
-        public string UserEmail { get; set; }
-        public string Source { get; set; }
-        public string SoftwareVersion { get; set; }
-        public string ToolName { get; set; }
+        public string MacID { get; set; } = null!;
+        public string LicenceNumber { get; set; } = null!;
+        public string UserEmail { get; set; } = null!;
+        public string Source { get; set; } = null!;
+        public string SoftwareVersion { get; set; } = null!;
+        public string ToolName { get; set; } = null!;
     }
     public class LicenceProductModel
     {
-        public string ProductName { get; set; }
-        public string PublicID { get; set; }
+
+        public string ProductName { get; set; } = null!;
+        public string PurchaseCode { get; set; } = null!;
+        public string PublicID { get; set; } = null!;
         public int NumberOfDays { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public string licenceID { get; set; }
-        public string MacID { get; set; }
-        public string ProductNumber { get; set; }
-        public string ValidTill { get; set; }
+        public DateTime? CreatedOn { get; set; } = null!;
+        public string licenceID { get; set; } = null!;
+        public string MacID { get; set; } = null!;
+        public string ProductNumber { get; set; } = null!;
+        public string ValidTill { get; set; } = null!;
         public int ProductID { get; set; }
-        public string ProductTitle { get; set; }
+        public string ProductTitle { get; set; } = null!;
         public int DatabaseTypeId { get; set; }
-        public string DatabaseTypeName { get; set; }
+        public string DatabaseTypeName { get; set; } = null!;
     }
     public class APIResponseRecord<T>
     {
@@ -42,10 +44,10 @@ namespace nkv.Automator.Models
     }
     public class APIResponse<T>
     {
-        public string status { get; set; }
+        public string status { get; set; } = null!;
         public int code { get; set; }
-        public string message { get; set; }
+        public string message { get; set; } = null!;
         public T document { get; set; }
-        public string licence { get; set; }
+        public string licence { get; set; } = null!;
     }
 }

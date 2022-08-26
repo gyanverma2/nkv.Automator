@@ -222,6 +222,7 @@ namespace nkv.Automator
                     licenceDataGridView.DataSource = FilterLicence(ActiveProduct);
                     licenceDataGridView.Columns["licenceID"].Visible = false;
                     licenceDataGridView.Columns["ProductNumber"].Visible = false;
+                    licenceDataGridView.Columns["PublicId"].Visible = false;
                     licenceDataGridView.Columns["MacID"].Visible = false;
                     licenceDataGridView.Columns["ValidTill"].Visible = false;
                     licenceDataGridView.Columns["ProductID"].Visible = false;
