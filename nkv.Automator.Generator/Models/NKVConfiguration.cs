@@ -7,6 +7,7 @@
     }
     public class NKVAuthTableConfig
     {
+        public bool IsEmail { get; set; }
         public bool IsSkipAuth { get; set; }
         public string AuthTableName { get; set; } = null!;
         public string UsernameColumnName { get; set; } = null!;

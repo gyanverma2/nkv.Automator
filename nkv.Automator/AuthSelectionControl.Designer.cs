@@ -40,6 +40,7 @@
             this.label45 = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.authSkipCheckBox = new System.Windows.Forms.CheckBox();
+            this.IsEmailCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // adminPasswordTextbox
@@ -158,11 +159,22 @@
             this.authSkipCheckBox.UseVisualStyleBackColor = true;
             this.authSkipCheckBox.CheckedChanged += new System.EventHandler(this.authSkipCheckBox_CheckedChanged);
             // 
+            // IsEmailCheckBox
+            // 
+            this.IsEmailCheckBox.AutoSize = true;
+            this.IsEmailCheckBox.Location = new System.Drawing.Point(326, 109);
+            this.IsEmailCheckBox.Name = "IsEmailCheckBox";
+            this.IsEmailCheckBox.Size = new System.Drawing.Size(63, 19);
+            this.IsEmailCheckBox.TabIndex = 36;
+            this.IsEmailCheckBox.Text = "IsEmail";
+            this.IsEmailCheckBox.UseVisualStyleBackColor = true;
+            // 
             // AuthSelectionControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.IsEmailCheckBox);
             this.Controls.Add(this.adminPasswordTextbox);
             this.Controls.Add(this.label41);
             this.Controls.Add(this.adminUsernameTextBox);
@@ -196,5 +208,6 @@
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.CheckBox authSkipCheckBox;
+        private System.Windows.Forms.CheckBox IsEmailCheckBox;
     }
 }

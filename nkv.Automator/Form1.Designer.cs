@@ -33,6 +33,7 @@
             this.licenceTab = new System.Windows.Forms.TabPage();
             this.linkLabel6 = new System.Windows.Forms.LinkLabel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.labelVersion = new System.Windows.Forms.Label();
             this.refreshButton = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.productComboBox = new System.Windows.Forms.ComboBox();
@@ -51,12 +52,13 @@
             this.mysqlTab = new System.Windows.Forms.TabPage();
             this.linkLabel5 = new System.Windows.Forms.LinkLabel();
             this.projectNameControlMySql = new nkv.Automator.ProjectNameControl();
-            this.logTextAreaControl2 = new nkv.Automator.LogTextAreaControl();
-            this.adminPanelPermissionControlPanel2 = new nkv.Automator.AdminPanelPermissionControlPanel();
-            this.tableSelectionControl2 = new nkv.Automator.TableSelectionControl();
-            this.authSelectionControl2 = new nkv.Automator.AuthSelectionControl();
+            this.logTextAreaControlMysql = new nkv.Automator.LogTextAreaControl();
+            this.adminPanelPermissionControlPanelMysql = new nkv.Automator.AdminPanelPermissionControlPanel();
+            this.tableSelectionControlMysql = new nkv.Automator.TableSelectionControl();
+            this.authSelectionControlMysql = new nkv.Automator.AuthSelectionControl();
             this.mysqlGenerateButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.multiTenantCheckBoxMysql = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
@@ -110,7 +112,6 @@
             this.youtubeButton = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.labelVersion = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.licenceTab.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -192,6 +193,15 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1241, 282);
             this.panel2.TabIndex = 1;
+            // 
+            // labelVersion
+            // 
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.Location = new System.Drawing.Point(610, 236);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(45, 15);
+            this.labelVersion.TabIndex = 14;
+            this.labelVersion.Text = "Version";
             // 
             // refreshButton
             // 
@@ -354,10 +364,10 @@
             // 
             this.mysqlTab.Controls.Add(this.linkLabel5);
             this.mysqlTab.Controls.Add(this.projectNameControlMySql);
-            this.mysqlTab.Controls.Add(this.logTextAreaControl2);
-            this.mysqlTab.Controls.Add(this.adminPanelPermissionControlPanel2);
-            this.mysqlTab.Controls.Add(this.tableSelectionControl2);
-            this.mysqlTab.Controls.Add(this.authSelectionControl2);
+            this.mysqlTab.Controls.Add(this.logTextAreaControlMysql);
+            this.mysqlTab.Controls.Add(this.adminPanelPermissionControlPanelMysql);
+            this.mysqlTab.Controls.Add(this.tableSelectionControlMysql);
+            this.mysqlTab.Controls.Add(this.authSelectionControlMysql);
             this.mysqlTab.Controls.Add(this.mysqlGenerateButton);
             this.mysqlTab.Controls.Add(this.panel3);
             this.mysqlTab.Location = new System.Drawing.Point(4, 27);
@@ -386,37 +396,37 @@
             this.projectNameControlMySql.Size = new System.Drawing.Size(630, 40);
             this.projectNameControlMySql.TabIndex = 26;
             // 
-            // logTextAreaControl2
+            // logTextAreaControlMysql
             // 
-            this.logTextAreaControl2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.logTextAreaControl2.Location = new System.Drawing.Point(8, 455);
-            this.logTextAreaControl2.Name = "logTextAreaControl2";
-            this.logTextAreaControl2.Size = new System.Drawing.Size(839, 191);
-            this.logTextAreaControl2.TabIndex = 25;
+            this.logTextAreaControlMysql.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.logTextAreaControlMysql.Location = new System.Drawing.Point(8, 455);
+            this.logTextAreaControlMysql.Name = "logTextAreaControlMysql";
+            this.logTextAreaControlMysql.Size = new System.Drawing.Size(839, 191);
+            this.logTextAreaControlMysql.TabIndex = 25;
             // 
-            // adminPanelPermissionControlPanel2
+            // adminPanelPermissionControlPanelMysql
             // 
-            this.adminPanelPermissionControlPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.adminPanelPermissionControlPanel2.Location = new System.Drawing.Point(985, 55);
-            this.adminPanelPermissionControlPanel2.Name = "adminPanelPermissionControlPanel2";
-            this.adminPanelPermissionControlPanel2.Size = new System.Drawing.Size(527, 443);
-            this.adminPanelPermissionControlPanel2.TabIndex = 24;
+            this.adminPanelPermissionControlPanelMysql.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.adminPanelPermissionControlPanelMysql.Location = new System.Drawing.Point(985, 55);
+            this.adminPanelPermissionControlPanelMysql.Name = "adminPanelPermissionControlPanelMysql";
+            this.adminPanelPermissionControlPanelMysql.Size = new System.Drawing.Size(527, 443);
+            this.adminPanelPermissionControlPanelMysql.TabIndex = 24;
             // 
-            // tableSelectionControl2
+            // tableSelectionControlMysql
             // 
-            this.tableSelectionControl2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tableSelectionControl2.Location = new System.Drawing.Point(398, 239);
-            this.tableSelectionControl2.Name = "tableSelectionControl2";
-            this.tableSelectionControl2.Size = new System.Drawing.Size(570, 199);
-            this.tableSelectionControl2.TabIndex = 23;
+            this.tableSelectionControlMysql.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tableSelectionControlMysql.Location = new System.Drawing.Point(398, 239);
+            this.tableSelectionControlMysql.Name = "tableSelectionControlMysql";
+            this.tableSelectionControlMysql.Size = new System.Drawing.Size(570, 199);
+            this.tableSelectionControlMysql.TabIndex = 23;
             // 
-            // authSelectionControl2
+            // authSelectionControlMysql
             // 
-            this.authSelectionControl2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.authSelectionControl2.Location = new System.Drawing.Point(398, 55);
-            this.authSelectionControl2.Name = "authSelectionControl2";
-            this.authSelectionControl2.Size = new System.Drawing.Size(570, 172);
-            this.authSelectionControl2.TabIndex = 22;
+            this.authSelectionControlMysql.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.authSelectionControlMysql.Location = new System.Drawing.Point(398, 55);
+            this.authSelectionControlMysql.Name = "authSelectionControlMysql";
+            this.authSelectionControlMysql.Size = new System.Drawing.Size(570, 172);
+            this.authSelectionControlMysql.TabIndex = 22;
             // 
             // mysqlGenerateButton
             // 
@@ -435,6 +445,7 @@
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Controls.Add(this.multiTenantCheckBoxMysql);
             this.panel3.Controls.Add(this.button1);
             this.panel3.Controls.Add(this.label16);
             this.panel3.Controls.Add(this.label17);
@@ -452,12 +463,22 @@
             this.panel3.Size = new System.Drawing.Size(378, 383);
             this.panel3.TabIndex = 15;
             // 
+            // multiTenantCheckBoxMysql
+            // 
+            this.multiTenantCheckBoxMysql.AutoSize = true;
+            this.multiTenantCheckBoxMysql.Location = new System.Drawing.Point(161, 272);
+            this.multiTenantCheckBoxMysql.Name = "multiTenantCheckBoxMysql";
+            this.multiTenantCheckBoxMysql.Size = new System.Drawing.Size(94, 19);
+            this.multiTenantCheckBoxMysql.TabIndex = 27;
+            this.multiTenantCheckBoxMysql.Text = "Multi-Tenant";
+            this.multiTenantCheckBoxMysql.UseVisualStyleBackColor = true;
+            // 
             // button1
             // 
             this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(60)))), ((int)(((byte)(81)))));
             this.button1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(91, 292);
+            this.button1.Location = new System.Drawing.Point(88, 310);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(256, 47);
             this.button1.TabIndex = 26;
@@ -467,7 +488,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(15, 251);
+            this.label16.Location = new System.Drawing.Point(15, 234);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(57, 15);
             this.label16.TabIndex = 25;
@@ -476,7 +497,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(12, 201);
+            this.label17.Location = new System.Drawing.Point(12, 189);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(60, 15);
             this.label17.TabIndex = 24;
@@ -485,7 +506,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(12, 149);
+            this.label18.Location = new System.Drawing.Point(12, 143);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(57, 15);
             this.label18.TabIndex = 23;
@@ -503,7 +524,7 @@
             // passwordMysqlTextBox
             // 
             this.passwordMysqlTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.passwordMysqlTextBox.Location = new System.Drawing.Point(88, 248);
+            this.passwordMysqlTextBox.Location = new System.Drawing.Point(88, 231);
             this.passwordMysqlTextBox.Name = "passwordMysqlTextBox";
             this.passwordMysqlTextBox.Size = new System.Drawing.Size(259, 23);
             this.passwordMysqlTextBox.TabIndex = 21;
@@ -511,7 +532,7 @@
             // usernameMysqlTextBox
             // 
             this.usernameMysqlTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.usernameMysqlTextBox.Location = new System.Drawing.Point(88, 198);
+            this.usernameMysqlTextBox.Location = new System.Drawing.Point(88, 186);
             this.usernameMysqlTextBox.Name = "usernameMysqlTextBox";
             this.usernameMysqlTextBox.Size = new System.Drawing.Size(259, 23);
             this.usernameMysqlTextBox.TabIndex = 20;
@@ -520,7 +541,7 @@
             // dbNameMysqlTextBox
             // 
             this.dbNameMysqlTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.dbNameMysqlTextBox.Location = new System.Drawing.Point(88, 146);
+            this.dbNameMysqlTextBox.Location = new System.Drawing.Point(88, 140);
             this.dbNameMysqlTextBox.Name = "dbNameMysqlTextBox";
             this.dbNameMysqlTextBox.Size = new System.Drawing.Size(259, 23);
             this.dbNameMysqlTextBox.TabIndex = 19;
@@ -985,15 +1006,6 @@
             // 
             this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
             // 
-            // labelVersion
-            // 
-            this.labelVersion.AutoSize = true;
-            this.labelVersion.Location = new System.Drawing.Point(610, 236);
-            this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(45, 15);
-            this.labelVersion.TabIndex = 14;
-            this.labelVersion.Text = "Version";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1092,13 +1104,13 @@
         private AuthSelectionControl authSelectionControlPgSQL;
         private TableSelectionControl tableSelectionControlPgSQL;
         private AdminPanelPermissionControlPanel adminPanelPermissionControlPanelPgSQL;
-        private TableSelectionControl tableSelectionControl2;
-        private AuthSelectionControl authSelectionControl2;
-        private AdminPanelPermissionControlPanel adminPanelPermissionControlPanel2;
+        private TableSelectionControl tableSelectionControlMysql;
+        private AuthSelectionControl authSelectionControlMysql;
+        private AdminPanelPermissionControlPanel adminPanelPermissionControlPanelMysql;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private LogTextAreaControl logTextAreaControlpgSQL;
-        private LogTextAreaControl logTextAreaControl2;
+        private LogTextAreaControl logTextAreaControlMysql;
         private ProjectNameControl projectNameControlPgSQL;
         private ProjectNameControl projectNameControlMySql;
         private System.Windows.Forms.CheckBox multiTenantCheckBoxPgSQL;
@@ -1118,5 +1130,6 @@
         private System.Windows.Forms.LinkLabel linkLabel5;
         private System.Windows.Forms.LinkLabel linkLabel6;
         private System.Windows.Forms.Label labelVersion;
+        private System.Windows.Forms.CheckBox multiTenantCheckBoxMysql;
     }
 }

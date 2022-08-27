@@ -228,24 +228,7 @@ namespace nkv.Automator.PGSQL
             }
             return primaryKeys;
         }
-        public string GetTableCharacter(List<string> characterUsed,string tableName, int size=2)
-        {
-            var bannedKey = new List<string>() { "as", "on", "t" };
-            var random = new Random();
-            var key = tableName[0].ToString();
-            while (key.Length < size)
-            {
-                key += tableName[random.Next(0, tableName.Length-1)];
-            }
-            if (characterUsed.IndexOf(key) < 0 && bannedKey.IndexOf(key)<0)
-            {
-                return key;
-            }
-            else
-            {
-                return this.GetTableCharacter(characterUsed, tableName, size + 1);
-            }
-        }
+        
         public SelectQueryData GetSelectQueryData(string tableName, List<ColumnModel> columnList)
         {
             SelectQueryData data = new SelectQueryData();
@@ -273,7 +256,7 @@ namespace nkv.Automator.PGSQL
                         }
                         if (refColumnName != null && fKColumns.Where(i => i.FieldName2 == refColumnName.Field).Count() == 0)
                         {
-                            var asChar = GetTableCharacter(alphaList,c.FKDetails.REFERENCED_TABLE_NAME);
+                            var asChar = Helper.GetTableCharacter(alphaList,c.FKDetails.REFERENCED_TABLE_NAME);
                             alphaList.Add(asChar);
                             fKColumns.Add(new FKColumnClass()
                             {

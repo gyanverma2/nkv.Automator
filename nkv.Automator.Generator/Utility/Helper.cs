@@ -17,7 +17,24 @@ namespace nkv.Automator.Utility
 
             CopyAll(diSource, diTarget);
         }
-
+        public static string GetTableCharacter(List<string> characterUsed, string tableName, int size = 2)
+        {
+            var bannedKey = new List<string>() { "as", "on", "t" };
+            var random = new Random();
+            var key = tableName[0].ToString();
+            while (key.Length < size)
+            {
+                key += tableName[random.Next(0, tableName.Length - 1)];
+            }
+            if (characterUsed.IndexOf(key) < 0 && bannedKey.IndexOf(key) < 0)
+            {
+                return key;
+            }
+            else
+            {
+                return GetTableCharacter(characterUsed, tableName, size + 1);
+            }
+        }
         public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
         {
             Directory.CreateDirectory(target.FullName);

@@ -24,6 +24,7 @@ namespace nkv.Automator
         public string AuthUserColumnName { get { return ((ColumnModel)authUserColumnComboBox.SelectedItem).Field; } }
         public string AuthPasswordColumnName { get { return ((ColumnModel)authPasswordColumnCoumboBox.SelectedItem).Field; } }
         public bool IsSkipAuth { get { return authSkipCheckBox.Checked; } }
+        public bool IsEmail { get { return IsEmailCheckBox.Checked; } }
         public void SetUserAndPasswordColumn(List<ColumnModel> columns)
         {
             authUserColumnComboBox.DataSource = null;

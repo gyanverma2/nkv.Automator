@@ -3,14 +3,9 @@ using nkv.Automator.Models;
 using nkv.Automator.PGSQL;
 using nkv.Automator.Postman;
 using nkv.Automator.Utility;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace nkv.Automator.Generator.MySQL
+namespace nkv.Automator.MySQL
 {
     internal class MySQL_PHPAPI
     {

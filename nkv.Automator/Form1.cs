@@ -1,5 +1,7 @@
+using nkv.Automator.Generator.MySQL;
 using nkv.Automator.Generator.PGSQL;
 using nkv.Automator.Models;
+using nkv.Automator.MySQL;
 using nkv.Automator.PGSQL;
 using ServiceStack;
 using System;
@@ -17,10 +19,11 @@ namespace nkv.Automator
 {
     public partial class Form1 : Form
     {
-        private readonly DataTypeEnum ActiveDataType = DataTypeEnum.PostgreSQL;
-        private readonly ProductEnum ActiveProduct = ProductEnum.PGSQL_PHPAPI_React_Windows;
-        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.PostgreSQL.ToString();
-        private readonly bool isAdminPanel = false;
+        private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MySQL;
+        private readonly ProductEnum ActiveProduct = ProductEnum.MySQL_Laravel_API;
+        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MySQL.ToString();
+        private readonly bool IsAdminPanel = false;
+        private readonly bool IsMultiTenant = false;
         Validator v { get; set; } = null!;
         List<LicenceProductModel> LicenceProductList { get; set; } = null!;
         LicenceProductModel? ActiveLicence { get; set; } = null;
@@ -122,11 +125,11 @@ namespace nkv.Automator
                 if (!string.IsNullOrEmpty(email))
                     DisplayLicenceGrid(Helper.GetSystemName());
                 DisplayProductList();
-                InitUserControls(ActiveDataType, isAdminPanel);
+                InitUserControls(ActiveDataType, IsAdminPanel, IsMultiTenant);
                 sourceComboBox.SelectedIndex = 0;
             }));
         }
-        private void InitUserControls(DataTypeEnum dataType, bool? isAdminPanel = null)
+        private void InitUserControls(DataTypeEnum dataType, bool? isAdminPanel = null, bool? isMultiTenant = null)
         {
             string logTextAreaName = "logTextAreaControlpgSQL";
             string authControlName = "authSelectionControlPgSQL";
@@ -136,6 +139,11 @@ namespace nkv.Automator
             switch (dataType)
             {
                 case DataTypeEnum.MySQL:
+                    logTextAreaName = "logTextAreaControlMysql";
+                    authControlName = "authSelectionControlMysql";
+                    tableSelectionName = "tableSelectionControlMysql";
+                    adminPermissionName = "adminPanelPermissionControlPanelMysql";
+                    projectControlName = "projectNameControlMySql";
                     break;
                 case DataTypeEnum.MSSQL:
                     break;
@@ -158,6 +166,9 @@ namespace nkv.Automator
             ProjectNameControl = (ProjectNameControl)Controls.Find(projectControlName, true).First();
             if (isAdminPanel != null)
                 Controls.Find(adminPermissionName, true).First().Visible = (bool)isAdminPanel;
+            if (isMultiTenant != null)
+                multiTenantCheckBoxMysql.Visible = (bool)isMultiTenant;
+
         }
 
         private void AuthSelectionControl_AuthTableSelectionChanged(object? sender, EventArgs e)
@@ -326,6 +337,7 @@ namespace nkv.Automator
             backgroundWorker1.RunWorkerAsync();
         }
         #endregion
+        #region GenerateButtonClick
         private void automatorGenerateButton_Click(object sender, EventArgs e)
         {
             if (TableSelectionControl.SelectedTableList.Count == 0)
@@ -352,7 +364,7 @@ namespace nkv.Automator
                 {
                     AuthTableConfig = new NKVAuthTableConfig
                     {
-
+                        IsEmail = AuthSelectionControl.IsEmail,
                         IsSkipAuth = AuthSelectionControl.IsSkipAuth,
                         AuthTableName = AuthSelectionControl.IsSkipAuth ? "" : AuthSelectionControl.AuthTableName,
                         UsernameColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminUsername : AuthSelectionControl.AuthUserColumnName,
@@ -375,29 +387,30 @@ namespace nkv.Automator
                     case DataTypeEnum.MySQL:
                         break;
                     case DataTypeEnum.MSSQL:
+                        ProcessMySQL(config);
                         break;
                     case DataTypeEnum.PostgreSQL:
-                        Process(config);
+                        ProcessPGSQL(config);
                         break;
                     case DataTypeEnum.MongoDB:
                         break;
                 }
             }));
         }
-        private void Process(NKVConfiguration config)
+        private void ProcessMySQL(NKVConfiguration config)
         {
             switch (ActiveProduct)
             {
-                case ProductEnum.PGSQL_PHPAPI:
-                case ProductEnum.PGSQL_PHPAPI_React_Windows:
-                    var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
-                    if (pgSQLDb.Connect())
+                case ProductEnum.MySQL_Laravel_API:
+                case ProductEnum.MySQL_Laravel_API_React:
+                    var mySQLDb = new MySQLDBHelper(hostMysqlTextBox.Text.Trim(), portMysqlTextbox.Text.Trim(), usernameMysqlTextBox.Text.Trim(), passwordMysqlTextBox.Text.Trim(), dbNameMysqlTextBox.Text.Trim());
+                    if (mySQLDb.Connect())
                     {
-                        PGSQL_PHPAPI pgPHPAPI = new PGSQL_PHPAPI(config, multiTenantCheckBoxPgSQL.Checked, "//");
-                        pgPHPAPI.MessageEvent += MessageEvent;
-                        pgPHPAPI.CompletedEvent += CompletedEvent;
-                        var reactInput = pgPHPAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, pgSQLDb);
-                        if (ActiveProduct == ProductEnum.PGSQL_PHPAPI_React_Windows && reactInput!=null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        MySQL_LaravelAPI laravelAPI = new MySQL_LaravelAPI(config, multiTenantCheckBoxMysql.Checked, "//");
+                        laravelAPI.MessageEvent += MessageEvent;
+                        laravelAPI.CompletedEvent += CompletedEvent;
+                        var reactInput = laravelAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, mySQLDb);
+                        if (ActiveProduct == ProductEnum.PGSQL_PHPAPI_React_Windows && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
                         {
                             appendSuccess("----- Generating React App -----");
                             ReactTS_PHPPGSQL reactPGSqlTs = new ReactTS_PHPPGSQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
@@ -414,8 +427,38 @@ namespace nkv.Automator
                     break;
             }
         }
+        private void ProcessPGSQL(NKVConfiguration config)
+        {
+            switch (ActiveProduct)
+            {
+                case ProductEnum.PGSQL_PHPAPI:
+                case ProductEnum.PGSQL_PHPAPI_React_Windows:
+                    var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
+                    if (pgSQLDb.Connect())
+                    {
+                        PGSQL_PHPAPI pgPHPAPI = new PGSQL_PHPAPI(config, multiTenantCheckBoxPgSQL.Checked, "//");
+                        pgPHPAPI.MessageEvent += MessageEvent;
+                        pgPHPAPI.CompletedEvent += CompletedEvent;
+                        var reactInput = pgPHPAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, pgSQLDb);
+                        if (ActiveProduct == ProductEnum.PGSQL_PHPAPI_React_Windows && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        {
+                            appendSuccess("----- Generating React App -----");
+                            ReactTS_PHPPGSQL reactPGSqlTs = new ReactTS_PHPPGSQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
+                            reactPGSqlTs.MessageEvent += MessageEvent;
+                            reactPGSqlTs.CompletedEvent += CompletedEvent;
+                            reactPGSqlTs.CreateReactAPP(reactInput);
+                            MessageBox.Show("Task Completed! Please check the generated project folder.");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
+                    }
+                    break;
+            }
+        }
+        #endregion
 
-       
 
         private void testConPgSQLButton_Click(object sender, EventArgs e)
         {
@@ -504,6 +547,6 @@ namespace nkv.Automator
         }
         #endregion
 
-       
+
     }
 }
