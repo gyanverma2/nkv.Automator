@@ -31,7 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.licenceTab = new System.Windows.Forms.TabPage();
+            this.linkLabel6 = new System.Windows.Forms.LinkLabel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.refreshButton = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.productComboBox = new System.Windows.Forms.ComboBox();
             this.registerBtn = new System.Windows.Forms.Button();
@@ -47,6 +49,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.licenceDataGridView = new System.Windows.Forms.DataGridView();
             this.mysqlTab = new System.Windows.Forms.TabPage();
+            this.linkLabel5 = new System.Windows.Forms.LinkLabel();
             this.projectNameControlMySql = new nkv.Automator.ProjectNameControl();
             this.logTextAreaControl2 = new nkv.Automator.LogTextAreaControl();
             this.adminPanelPermissionControlPanel2 = new nkv.Automator.AdminPanelPermissionControlPanel();
@@ -67,8 +70,11 @@
             this.label20 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.msSqlTab = new System.Windows.Forms.TabPage();
+            this.linkLabel4 = new System.Windows.Forms.LinkLabel();
             this.mongodbTab = new System.Windows.Forms.TabPage();
+            this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.postgresqlTab = new System.Windows.Forms.TabPage();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.projectNameControlPgSQL = new nkv.Automator.ProjectNameControl();
             this.logTextAreaControlpgSQL = new nkv.Automator.LogTextAreaControl();
             this.adminPanelPermissionControlPanelPgSQL = new nkv.Automator.AdminPanelPermissionControlPanel();
@@ -92,10 +98,19 @@
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.communityTab = new System.Windows.Forms.TabPage();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.discordButton = new System.Windows.Forms.Button();
             this.docsTab = new System.Windows.Forms.TabPage();
+            this.footerLabel = new System.Windows.Forms.LinkLabel();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.youtubeButton = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.refreshButton = new System.Windows.Forms.Button();
+            this.labelVersion = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.licenceTab.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -103,8 +118,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.licenceDataGridView)).BeginInit();
             this.mysqlTab.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.msSqlTab.SuspendLayout();
+            this.mongodbTab.SuspendLayout();
             this.postgresqlTab.SuspendLayout();
             this.panel8.SuspendLayout();
+            this.communityTab.SuspendLayout();
+            this.docsTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -130,6 +149,7 @@
             // 
             // licenceTab
             // 
+            this.licenceTab.Controls.Add(this.linkLabel6);
             this.licenceTab.Controls.Add(this.panel2);
             this.licenceTab.Controls.Add(this.panel1);
             this.licenceTab.Location = new System.Drawing.Point(4, 27);
@@ -140,9 +160,21 @@
             this.licenceTab.Text = "Licence";
             this.licenceTab.UseVisualStyleBackColor = true;
             // 
+            // linkLabel6
+            // 
+            this.linkLabel6.AutoSize = true;
+            this.linkLabel6.Location = new System.Drawing.Point(390, 677);
+            this.linkLabel6.Name = "linkLabel6";
+            this.linkLabel6.Size = new System.Drawing.Size(431, 15);
+            this.linkLabel6.TabIndex = 28;
+            this.linkLabel6.TabStop = true;
+            this.linkLabel6.Text = "Nishant Kumar Verma | https://getautomator.com | Your Trusted Code Generator";
+            this.linkLabel6.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.footerLabel_LinkClicked);
+            // 
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.labelVersion);
             this.panel2.Controls.Add(this.refreshButton);
             this.panel2.Controls.Add(this.label6);
             this.panel2.Controls.Add(this.productComboBox);
@@ -161,10 +193,24 @@
             this.panel2.Size = new System.Drawing.Size(1241, 282);
             this.panel2.TabIndex = 1;
             // 
+            // refreshButton
+            // 
+            this.refreshButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(60)))), ((int)(((byte)(81)))));
+            this.refreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.refreshButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.refreshButton.ForeColor = System.Drawing.Color.Transparent;
+            this.refreshButton.Location = new System.Drawing.Point(166, 221);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(168, 42);
+            this.refreshButton.TabIndex = 13;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.UseVisualStyleBackColor = false;
+            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(83, 184);
+            this.label6.Location = new System.Drawing.Point(83, 179);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(49, 15);
             this.label6.TabIndex = 12;
@@ -177,7 +223,7 @@
             this.productComboBox.Items.AddRange(new object[] {
             "CodeCanyon",
             "GetAutomator.com"});
-            this.productComboBox.Location = new System.Drawing.Point(166, 181);
+            this.productComboBox.Location = new System.Drawing.Point(166, 176);
             this.productComboBox.Name = "productComboBox";
             this.productComboBox.Size = new System.Drawing.Size(1004, 23);
             this.productComboBox.TabIndex = 4;
@@ -203,7 +249,7 @@
             this.sourceComboBox.Items.AddRange(new object[] {
             "CodeCanyon",
             "GetAutomator.com"});
-            this.sourceComboBox.Location = new System.Drawing.Point(745, 129);
+            this.sourceComboBox.Location = new System.Drawing.Point(745, 118);
             this.sourceComboBox.Name = "sourceComboBox";
             this.sourceComboBox.Size = new System.Drawing.Size(425, 23);
             this.sourceComboBox.TabIndex = 3;
@@ -211,7 +257,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(83, 131);
+            this.label4.Location = new System.Drawing.Point(83, 120);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(45, 15);
             this.label4.TabIndex = 8;
@@ -221,7 +267,7 @@
             // 
             this.systemTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.systemTextbox.Enabled = false;
-            this.systemTextbox.Location = new System.Drawing.Point(166, 129);
+            this.systemTextbox.Location = new System.Drawing.Point(166, 118);
             this.systemTextbox.Name = "systemTextbox";
             this.systemTextbox.Size = new System.Drawing.Size(425, 23);
             this.systemTextbox.TabIndex = 2;
@@ -229,7 +275,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(629, 132);
+            this.label5.Location = new System.Drawing.Point(629, 121);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(93, 15);
             this.label5.TabIndex = 6;
@@ -306,6 +352,7 @@
             // 
             // mysqlTab
             // 
+            this.mysqlTab.Controls.Add(this.linkLabel5);
             this.mysqlTab.Controls.Add(this.projectNameControlMySql);
             this.mysqlTab.Controls.Add(this.logTextAreaControl2);
             this.mysqlTab.Controls.Add(this.adminPanelPermissionControlPanel2);
@@ -320,6 +367,17 @@
             this.mysqlTab.TabIndex = 1;
             this.mysqlTab.Text = "MySQL";
             this.mysqlTab.UseVisualStyleBackColor = true;
+            // 
+            // linkLabel5
+            // 
+            this.linkLabel5.AutoSize = true;
+            this.linkLabel5.Location = new System.Drawing.Point(207, 692);
+            this.linkLabel5.Name = "linkLabel5";
+            this.linkLabel5.Size = new System.Drawing.Size(431, 15);
+            this.linkLabel5.TabIndex = 27;
+            this.linkLabel5.TabStop = true;
+            this.linkLabel5.Text = "Nishant Kumar Verma | https://getautomator.com | Your Trusted Code Generator";
+            this.linkLabel5.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.footerLabel_LinkClicked);
             // 
             // projectNameControlMySql
             // 
@@ -506,6 +564,7 @@
             // 
             // msSqlTab
             // 
+            this.msSqlTab.Controls.Add(this.linkLabel4);
             this.msSqlTab.Location = new System.Drawing.Point(4, 27);
             this.msSqlTab.Name = "msSqlTab";
             this.msSqlTab.Size = new System.Drawing.Size(1549, 737);
@@ -513,8 +572,20 @@
             this.msSqlTab.Text = "MS SQL";
             this.msSqlTab.UseVisualStyleBackColor = true;
             // 
+            // linkLabel4
+            // 
+            this.linkLabel4.AutoSize = true;
+            this.linkLabel4.Location = new System.Drawing.Point(134, 697);
+            this.linkLabel4.Name = "linkLabel4";
+            this.linkLabel4.Size = new System.Drawing.Size(431, 15);
+            this.linkLabel4.TabIndex = 8;
+            this.linkLabel4.TabStop = true;
+            this.linkLabel4.Text = "Nishant Kumar Verma | https://getautomator.com | Your Trusted Code Generator";
+            this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.footerLabel_LinkClicked);
+            // 
             // mongodbTab
             // 
+            this.mongodbTab.Controls.Add(this.linkLabel3);
             this.mongodbTab.Location = new System.Drawing.Point(4, 27);
             this.mongodbTab.Name = "mongodbTab";
             this.mongodbTab.Size = new System.Drawing.Size(1549, 737);
@@ -522,8 +593,20 @@
             this.mongodbTab.Text = "MongoDB";
             this.mongodbTab.UseVisualStyleBackColor = true;
             // 
+            // linkLabel3
+            // 
+            this.linkLabel3.AutoSize = true;
+            this.linkLabel3.Location = new System.Drawing.Point(149, 695);
+            this.linkLabel3.Name = "linkLabel3";
+            this.linkLabel3.Size = new System.Drawing.Size(431, 15);
+            this.linkLabel3.TabIndex = 8;
+            this.linkLabel3.TabStop = true;
+            this.linkLabel3.Text = "Nishant Kumar Verma | https://getautomator.com | Your Trusted Code Generator";
+            this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.footerLabel_LinkClicked);
+            // 
             // postgresqlTab
             // 
+            this.postgresqlTab.Controls.Add(this.linkLabel2);
             this.postgresqlTab.Controls.Add(this.projectNameControlPgSQL);
             this.postgresqlTab.Controls.Add(this.logTextAreaControlpgSQL);
             this.postgresqlTab.Controls.Add(this.adminPanelPermissionControlPanelPgSQL);
@@ -537,6 +620,17 @@
             this.postgresqlTab.TabIndex = 5;
             this.postgresqlTab.Text = "PostgreSQL";
             this.postgresqlTab.UseVisualStyleBackColor = true;
+            // 
+            // linkLabel2
+            // 
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Location = new System.Drawing.Point(240, 697);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(431, 15);
+            this.linkLabel2.TabIndex = 35;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "Nishant Kumar Verma | https://getautomator.com | Your Trusted Code Generator";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.footerLabel_LinkClicked);
             // 
             // projectNameControlPgSQL
             // 
@@ -763,6 +857,8 @@
             // 
             // communityTab
             // 
+            this.communityTab.Controls.Add(this.linkLabel1);
+            this.communityTab.Controls.Add(this.discordButton);
             this.communityTab.Location = new System.Drawing.Point(4, 27);
             this.communityTab.Name = "communityTab";
             this.communityTab.Padding = new System.Windows.Forms.Padding(3);
@@ -771,14 +867,115 @@
             this.communityTab.Text = "Community";
             this.communityTab.UseVisualStyleBackColor = true;
             // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(567, 692);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(431, 15);
+            this.linkLabel1.TabIndex = 8;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Nishant Kumar Verma | https://getautomator.com | Your Trusted Code Generator";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.footerLabel_LinkClicked);
+            // 
+            // discordButton
+            // 
+            this.discordButton.BackgroundImage = global::nkv.Automator.Properties.Resources.discord_logo;
+            this.discordButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.discordButton.FlatAppearance.BorderSize = 0;
+            this.discordButton.Location = new System.Drawing.Point(23, 21);
+            this.discordButton.Name = "discordButton";
+            this.discordButton.Size = new System.Drawing.Size(221, 65);
+            this.discordButton.TabIndex = 0;
+            this.discordButton.UseVisualStyleBackColor = true;
+            this.discordButton.Click += new System.EventHandler(this.discordButton_Click);
+            // 
             // docsTab
             // 
+            this.docsTab.Controls.Add(this.footerLabel);
+            this.docsTab.Controls.Add(this.label24);
+            this.docsTab.Controls.Add(this.label23);
+            this.docsTab.Controls.Add(this.label22);
+            this.docsTab.Controls.Add(this.label8);
+            this.docsTab.Controls.Add(this.label7);
+            this.docsTab.Controls.Add(this.youtubeButton);
             this.docsTab.Location = new System.Drawing.Point(4, 27);
             this.docsTab.Name = "docsTab";
             this.docsTab.Size = new System.Drawing.Size(1549, 737);
             this.docsTab.TabIndex = 3;
             this.docsTab.Text = "Documentation";
             this.docsTab.UseVisualStyleBackColor = true;
+            // 
+            // footerLabel
+            // 
+            this.footerLabel.AutoSize = true;
+            this.footerLabel.Location = new System.Drawing.Point(577, 693);
+            this.footerLabel.Name = "footerLabel";
+            this.footerLabel.Size = new System.Drawing.Size(431, 15);
+            this.footerLabel.TabIndex = 7;
+            this.footerLabel.TabStop = true;
+            this.footerLabel.Text = "Nishant Kumar Verma | https://getautomator.com | Your Trusted Code Generator";
+            this.footerLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.footerLabel_LinkClicked);
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(249, 161);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(109, 15);
+            this.label24.TabIndex = 5;
+            this.label24.Text = "Skype: gyanverma2";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(18, 240);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(838, 15);
+            this.label23.TabIndex = 4;
+            this.label23.Text = "Managing this tool costs me a lot of time and support is always free, so renewal " +
+    "keeps me motivated to keep the code to the latest version. Thanks in advance.";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(18, 215);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(653, 15);
+            this.label22.TabIndex = 3;
+            this.label22.Text = "But if in any case you are unable to afford the renewal, I would suggest just pin" +
+    "g me and i will renew it for free for 1 month.";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(18, 188);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(521, 15);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "Note: Licence is valid for 6 month, you can renew it for very minimum amount for " +
+    "next 6 months.";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(18, 161);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(154, 15);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "Email : nisgyan@gmail.com";
+            // 
+            // youtubeButton
+            // 
+            this.youtubeButton.BackColor = System.Drawing.Color.Transparent;
+            this.youtubeButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("youtubeButton.BackgroundImage")));
+            this.youtubeButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.youtubeButton.Location = new System.Drawing.Point(18, 20);
+            this.youtubeButton.Name = "youtubeButton";
+            this.youtubeButton.Size = new System.Drawing.Size(231, 69);
+            this.youtubeButton.TabIndex = 0;
+            this.youtubeButton.UseVisualStyleBackColor = false;
+            this.youtubeButton.Click += new System.EventHandler(this.youtubeButton_Click);
             // 
             // backgroundWorker1
             // 
@@ -788,19 +985,14 @@
             // 
             this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
             // 
-            // refreshButton
+            // labelVersion
             // 
-            this.refreshButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(60)))), ((int)(((byte)(81)))));
-            this.refreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.refreshButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.refreshButton.ForeColor = System.Drawing.Color.Transparent;
-            this.refreshButton.Location = new System.Drawing.Point(166, 221);
-            this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(168, 42);
-            this.refreshButton.TabIndex = 13;
-            this.refreshButton.Text = "Refresh";
-            this.refreshButton.UseVisualStyleBackColor = false;
-            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.Location = new System.Drawing.Point(610, 236);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(45, 15);
+            this.labelVersion.TabIndex = 14;
+            this.labelVersion.Text = "Version";
             // 
             // Form1
             // 
@@ -823,11 +1015,21 @@
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.licenceDataGridView)).EndInit();
             this.mysqlTab.ResumeLayout(false);
+            this.mysqlTab.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.msSqlTab.ResumeLayout(false);
+            this.msSqlTab.PerformLayout();
+            this.mongodbTab.ResumeLayout(false);
+            this.mongodbTab.PerformLayout();
             this.postgresqlTab.ResumeLayout(false);
+            this.postgresqlTab.PerformLayout();
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
+            this.communityTab.ResumeLayout(false);
+            this.communityTab.PerformLayout();
+            this.docsTab.ResumeLayout(false);
+            this.docsTab.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -901,5 +1103,20 @@
         private ProjectNameControl projectNameControlMySql;
         private System.Windows.Forms.CheckBox multiTenantCheckBoxPgSQL;
         private System.Windows.Forms.Button refreshButton;
+        private System.Windows.Forms.Button discordButton;
+        private System.Windows.Forms.Button youtubeButton;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.LinkLabel footerLabel;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.LinkLabel linkLabel3;
+        private System.Windows.Forms.LinkLabel linkLabel4;
+        private System.Windows.Forms.LinkLabel linkLabel5;
+        private System.Windows.Forms.LinkLabel linkLabel6;
+        private System.Windows.Forms.Label labelVersion;
     }
 }

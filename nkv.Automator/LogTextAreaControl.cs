@@ -24,6 +24,8 @@ namespace nkv.Automator
             }
 
             richTextBox1.SelectionColor = color;
+            richTextBox1.SelectionStart = 0;
+            richTextBox1.SelectionLength = 0;
             richTextBox1.SelectedText = " " + msg + "\r\n";
             richTextBox1.Update();
         }

@@ -4,6 +4,7 @@ namespace nkv.Automator
     public enum ProductEnum
     {
         PGSQL_PHPAPI = 27899174,
+        PGSQL_PHPAPI_React_Windows = 0000000,
         MySql_PHPAPI = 25152744,
         MySQl_PHP_React_Windows= 28851741,
         MySQl_PHP_React_MacOS = 99000001,

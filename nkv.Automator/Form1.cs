@@ -1,11 +1,15 @@
+using nkv.Automator.Generator.PGSQL;
 using nkv.Automator.Models;
 using nkv.Automator.PGSQL;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -14,8 +18,8 @@ namespace nkv.Automator
     public partial class Form1 : Form
     {
         private readonly DataTypeEnum ActiveDataType = DataTypeEnum.PostgreSQL;
-        private readonly ProductEnum ActiveProduct = ProductEnum.PGSQL_PHPAPI;
-        private readonly string SoftwareVersion = "2.0.0";
+        private readonly ProductEnum ActiveProduct = ProductEnum.PGSQL_PHPAPI_React_Windows;
+        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.PostgreSQL.ToString();
         private readonly bool isAdminPanel = false;
         Validator v { get; set; } = null!;
         List<LicenceProductModel> LicenceProductList { get; set; } = null!;
@@ -32,6 +36,7 @@ namespace nkv.Automator
         {
             InitializeComponent();
             HideTabPages();
+            labelVersion.Text = "Version: " + SoftwareVersion;
         }
         private void CreateEmailFile()
         {
@@ -176,6 +181,21 @@ namespace nkv.Automator
             InitControls();
         }
         #region UIHelper
+        private void CompletedEvent(NKVMessage obj)
+        {
+            if (obj.IsSuccess)
+                appendSuccess(obj.Message);
+            else
+                appendError(obj.Message);
+        }
+
+        private void MessageEvent(NKVMessage obj)
+        {
+            if (obj.IsSuccess)
+                appendSuccess(obj.Message);
+            else
+                appendError(obj.Message);
+        }
         private void appendError(string msg, bool clearPrior = false)
         {
             Invoke(new Action(() =>
@@ -202,6 +222,7 @@ namespace nkv.Automator
             }));
         }
         #endregion
+        #region LicenceManagement
         public List<LicenceProductModel> FilterLicence(ProductEnum ActiveProduct)
         {
             var listProduct = LicenceProductList.Where(x => int.Parse(x.ProductNumber) == (int)ActiveProduct).ToList();
@@ -210,7 +231,7 @@ namespace nkv.Automator
 
                 return listProduct;
             }
-            return new List<LicenceProductModel>() { new LicenceProductModel() { ProductID = 0, ProductNumber = "0", ProductTitle = "No Product Licence Found!" } };
+            return new List<LicenceProductModel>() { new LicenceProductModel() { ProductID = 0, ProductNumber = "0", ProductName = "No Product Licence Found!" } };
         }
         private void DisplayLicenceGrid(string systemName)
         {
@@ -255,125 +276,6 @@ namespace nkv.Automator
                 productComboBox.SelectedIndex = 0;
 
         }
-        private void automatorGenerateButton_Click(object sender, EventArgs e)
-        {
-            if (TableSelectionControl.SelectedTableList.Count == 0)
-            {
-                MessageBox.Show("Please select at least one table to generate.");
-                return;
-            }
-            if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID))
-            {
-                backgroundWorker2.RunWorkerAsync();
-            }
-            else
-            {
-                appendError("Please vaidate your licence or register new to generate! Licence Management at https://getautomator.com/app");
-                MessageBox.Show("Invalid Licence!");
-                return;
-            }
-        }
-
-        private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            Invoke(new Action(() =>
-            {
-                NKVConfiguration config = new NKVConfiguration()
-                {
-                    AuthTableConfig = new NKVAuthTableConfig
-                    {
-
-                        IsSkipAuth = AuthSelectionControl.IsSkipAuth,
-                        AuthTableName = AuthSelectionControl.IsSkipAuth ? "" : AuthSelectionControl.AuthTableName,
-                        UsernameColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminUsername : AuthSelectionControl.AuthUserColumnName,
-                        PasswordColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminPassword : AuthSelectionControl.AuthPasswordColumnName,
-                    },
-                    AdminPanelConfig = new NKVAdminPanelPermissionConfig()
-                    {
-                        AdminPassword = PermissionControlPanel.AdminPassword,
-                        AdminUsername = PermissionControlPanel.AdminUsername,
-                        GuestPassword = PermissionControlPanel.GuestPassword,
-                        GuestUsername = PermissionControlPanel.GuestUsername,
-                        SuperAdminPassword = PermissionControlPanel.SuperAdminPassword,
-                        SuperAdminUsername = PermissionControlPanel.SuperAdminUsername,
-                        FileColumns = PermissionControlPanel.FileColumns,
-                        ImageColumns = PermissionControlPanel.ImageColumns
-                    }
-                };
-                switch (SelectedDataType)
-                {
-                    case DataTypeEnum.MySQL:
-                        break;
-                    case DataTypeEnum.MSSQL:
-                        break;
-                    case DataTypeEnum.PostgreSQL:
-                        Process(config);
-                        break;
-                    case DataTypeEnum.MongoDB:
-                        break;
-                }
-            }));
-        }
-        private void Process(NKVConfiguration config)
-        {
-            switch (ActiveProduct)
-            {
-                case ProductEnum.PGSQL_PHPAPI:
-                    var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
-                    if (pgSQLDb.Connect())
-                    {
-                        PGSQL_PHPAPI pgPHPAPI = new PGSQL_PHPAPI(config, multiTenantCheckBoxPgSQL.Checked, "//");
-                        pgPHPAPI.MessageEvent += MessageEvent;
-                        pgPHPAPI.CompletedEvent += CompletedEvent;
-                        pgPHPAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, pgSQLDb);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
-                    }
-                    break;
-            }
-        }
-
-        private void CompletedEvent(NKVMessage obj)
-        {
-            if (obj.IsSuccess)
-                appendSuccess(obj.Message);
-            else
-                appendError(obj.Message);
-            MessageBox.Show("Task Completed! Please check the generated project folder.");
-        }
-
-        private void MessageEvent(NKVMessage obj)
-        {
-            if (obj.IsSuccess)
-                appendSuccess(obj.Message);
-            else
-                appendError(obj.Message);
-        }
-
-        private void testConPgSQLButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                SelectedDataType = DataTypeEnum.PostgreSQL;
-
-                pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
-                if (pgSQLDb.Connect())
-                {
-                    MessageBox.Show("Connection Successful!");
-                    appendSuccess("Connection Successful!", true);
-                    var tableList = pgSQLDb.GetTables();
-                    AuthSelectionControl.SetTableList(tableList);
-                    TableSelectionControl.SetTableList(tableList);
-                };
-            }
-            catch (Exception ex)
-            {
-                appendError(ex.Message, true);
-            }
-        }
-
         private void registerBtn_Click(object sender, EventArgs e)
         {
 
@@ -423,5 +325,185 @@ namespace nkv.Automator
         {
             backgroundWorker1.RunWorkerAsync();
         }
+        #endregion
+        private void automatorGenerateButton_Click(object sender, EventArgs e)
+        {
+            if (TableSelectionControl.SelectedTableList.Count == 0)
+            {
+                MessageBox.Show("Please select at least one table to generate.");
+                return;
+            }
+            if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID))
+            {
+                backgroundWorker2.RunWorkerAsync();
+            }
+            else
+            {
+                appendError("Please vaidate your licence or register new to generate! Licence Management at https://getautomator.com/app");
+                MessageBox.Show("Invalid Licence!");
+                return;
+            }
+        }
+        private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            Invoke(new Action(() =>
+            {
+                NKVConfiguration config = new NKVConfiguration()
+                {
+                    AuthTableConfig = new NKVAuthTableConfig
+                    {
+
+                        IsSkipAuth = AuthSelectionControl.IsSkipAuth,
+                        AuthTableName = AuthSelectionControl.IsSkipAuth ? "" : AuthSelectionControl.AuthTableName,
+                        UsernameColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminUsername : AuthSelectionControl.AuthUserColumnName,
+                        PasswordColumnName = AuthSelectionControl.IsSkipAuth ? AuthSelectionControl.AdminPassword : AuthSelectionControl.AuthPasswordColumnName,
+                    },
+                    AdminPanelConfig = new NKVAdminPanelPermissionConfig()
+                    {
+                        AdminPassword = PermissionControlPanel.AdminPassword,
+                        AdminUsername = PermissionControlPanel.AdminUsername,
+                        GuestPassword = PermissionControlPanel.GuestPassword,
+                        GuestUsername = PermissionControlPanel.GuestUsername,
+                        SuperAdminPassword = PermissionControlPanel.SuperAdminPassword,
+                        SuperAdminUsername = PermissionControlPanel.SuperAdminUsername,
+                        FileColumns = PermissionControlPanel.FileColumns,
+                        ImageColumns = PermissionControlPanel.ImageColumns
+                    }
+                };
+                switch (SelectedDataType)
+                {
+                    case DataTypeEnum.MySQL:
+                        break;
+                    case DataTypeEnum.MSSQL:
+                        break;
+                    case DataTypeEnum.PostgreSQL:
+                        Process(config);
+                        break;
+                    case DataTypeEnum.MongoDB:
+                        break;
+                }
+            }));
+        }
+        private void Process(NKVConfiguration config)
+        {
+            switch (ActiveProduct)
+            {
+                case ProductEnum.PGSQL_PHPAPI:
+                case ProductEnum.PGSQL_PHPAPI_React_Windows:
+                    var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
+                    if (pgSQLDb.Connect())
+                    {
+                        PGSQL_PHPAPI pgPHPAPI = new PGSQL_PHPAPI(config, multiTenantCheckBoxPgSQL.Checked, "//");
+                        pgPHPAPI.MessageEvent += MessageEvent;
+                        pgPHPAPI.CompletedEvent += CompletedEvent;
+                        var reactInput = pgPHPAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, pgSQLDb);
+                        if (ActiveProduct == ProductEnum.PGSQL_PHPAPI_React_Windows && reactInput!=null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        {
+                            appendSuccess("----- Generating React App -----");
+                            ReactTS_PHPPGSQL reactPGSqlTs = new ReactTS_PHPPGSQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
+                            reactPGSqlTs.MessageEvent += MessageEvent;
+                            reactPGSqlTs.CompletedEvent += CompletedEvent;
+                            reactPGSqlTs.CreateReactAPP(reactInput);
+                            MessageBox.Show("Task Completed! Please check the generated project folder.");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
+                    }
+                    break;
+            }
+        }
+
+       
+
+        private void testConPgSQLButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SelectedDataType = DataTypeEnum.PostgreSQL;
+
+                pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
+                if (pgSQLDb.Connect())
+                {
+                    MessageBox.Show("Connection Successful!");
+                    appendSuccess("Connection Successful!", true);
+                    var tableList = pgSQLDb.GetTables();
+                    AuthSelectionControl.SetTableList(tableList);
+                    TableSelectionControl.SetTableList(tableList);
+                };
+            }
+            catch (Exception ex)
+            {
+                appendError(ex.Message, true);
+            }
+        }
+
+
+        #region OpenURL
+        private void youtubeButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenUrl("https://www.youtube.com/channel/UCeHZQzRKLzwXykuLb_RXhvw?sub_confirmation=1");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void footerLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                OpenUrl("https://getautomator.com");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void discordButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenUrl("https://discord.gg/RzYRHJmwaE");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void OpenUrl(string url)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(url);
+            }
+            catch
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&");
+                    System.Diagnostics.Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    System.Diagnostics.Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    System.Diagnostics.Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        #endregion
+
+       
     }
 }

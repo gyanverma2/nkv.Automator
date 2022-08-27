@@ -60,7 +60,10 @@ namespace nkv.Automator
             try
             {
                 var response = RegisterAPI(register);
-                return true;
+                if (register != null)
+                    return true;
+                else
+                    return false;
             }
             catch (Exception ex)
             {

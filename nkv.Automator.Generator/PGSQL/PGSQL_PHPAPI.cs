@@ -46,18 +46,21 @@ namespace nkv.Automator.PGSQL
                 while (Directory.Exists(newName));
             }
             Directory.CreateDirectory(newName);
-            Directory.CreateDirectory(newName + "//config//");
-            Directory.CreateDirectory(newName + "//objects//");
-            Directory.CreateDirectory(newName + "//token//");
-            Directory.CreateDirectory(newName + "//jwt//");
-            Directory.CreateDirectory(newName + "//POSTMAN_IMPORT_FILE//");
-            Directory.CreateDirectory(newName + "//files//");
-            Directory.CreateDirectory(newName + "//files//upload//");
-            Directory.CreateDirectory(newName + "//notification//");
-            Directory.CreateDirectory(newName + "//notification//PHPMailer");
+            string apiFolder = newName + "//API";
+            DestinationFolder = apiFolder;
+            Directory.CreateDirectory(apiFolder + "//API//");
+            Directory.CreateDirectory(apiFolder + "//config//");
+            Directory.CreateDirectory(apiFolder + "//objects//");
+            Directory.CreateDirectory(apiFolder + "//token//");
+            Directory.CreateDirectory(apiFolder + "//jwt//");
+            Directory.CreateDirectory(apiFolder + "//POSTMAN_IMPORT_FILE//");
+            Directory.CreateDirectory(apiFolder + "//files//");
+            Directory.CreateDirectory(apiFolder + "//files//upload//");
+            Directory.CreateDirectory(apiFolder + "//notification//");
+            Directory.CreateDirectory(apiFolder + "//notification//PHPMailer");
             return newName;
         }
-        public string CreateTemplatePath(string filePathString)
+        private string CreateTemplatePath(string filePathString)
         {
             string path = TemplateFolder;
             foreach (var p in filePathString.Split(","))
@@ -67,7 +70,7 @@ namespace nkv.Automator.PGSQL
             }
             return path;
         }
-        public string CreateDestinationPath(string filePathString)
+        private string CreateDestinationPath(string filePathString)
         {
             string path = DestinationFolder;
             foreach (var p in filePathString.Split(","))
@@ -81,17 +84,24 @@ namespace nkv.Automator.PGSQL
             }
             return path;
         }
-        public bool Automator(string projectName, List<string> selectedTable, PGSQLDBHelper pgSql)
+        public ReactJSInput<FinalDataPHP> Automator(string projectName, List<string> selectedTable, PGSQLDBHelper pgSql)
         {
+
             pgSQLDB = pgSql;
             SelectedTable = selectedTable;
             ProjectName = projectName;
-            DestinationFolder = CreateDirectory();
+            string projectFolder = CreateDirectory();
+            ReactJSInput<FinalDataPHP> reactInput = new ReactJSInput<FinalDataPHP>()
+            {
+                DestinationFolder = projectFolder,
+                FinalDataDic = new Dictionary<string, FinalDataPHP>(),
+                PostmanJson = new List<PostmanModel>()
+            };
             MessageEvent?.Invoke(new NKVMessage("Project Folder Created : " + DestinationFolder));
             CopyExistingFile();
             CreateDBFile();
             MessageEvent?.Invoke(new NKVMessage("Database Config File Created"));
-            
+            Dictionary<string, FinalDataPHP> FinalDataDic = new Dictionary<string, FinalDataPHP>();
             string primaryKeyAuth = "";
             foreach (string t in selectedTable)
             {
@@ -108,8 +118,12 @@ namespace nkv.Automator.PGSQL
                     Directory.CreateDirectory(CreateDestinationPath(table));
                     var columnList = pgSQLDB.GetColumns(table);
                     var finalData = pgSQLDB.BuildQuery(table);
+                    if (!isView)
+                    {
+                        reactInput.FinalDataDic[table] = finalData;
+                    }
                     string modelName = ti.ToTitleCase(table);
-                    if(table == ConfigApp.AuthTableConfig.AuthTableName)
+                    if (table == ConfigApp.AuthTableConfig.AuthTableName)
                     {
                         primaryKeyAuth = finalData.PrimaryKeyString;
                     }
@@ -127,7 +141,7 @@ namespace nkv.Automator.PGSQL
                 }
                 catch (Exception ex)
                 {
-                    MessageEvent?.Invoke(new NKVMessage("Exception on table " +t,false));
+                    MessageEvent?.Invoke(new NKVMessage("Exception on table " + t, false));
                     MessageEvent?.Invoke(new NKVMessage(ex.Message, false));
                     ExceptionList.Add(ex);
                 }
@@ -135,10 +149,12 @@ namespace nkv.Automator.PGSQL
             CreateAuthTokenFile(primaryKeyAuth);
             MessageEvent?.Invoke(new NKVMessage("Login created for jwt token"));
             CreatePostmanFile(postmanJson);
+            reactInput.PostmanJson = postmanJson;
             MessageEvent?.Invoke(new NKVMessage("Postman import collection file generated"));
             CreateIndexFile();
+            MessageEvent?.Invoke(new NKVMessage("----- PHP API Generated -----"));
             CompletedEvent?.Invoke(new NKVMessage("Thanks for using GetAutomator.com! Please check the generated code at : " + DestinationFolder));
-            return true;
+            return reactInput;
         }
         private string initDBStr()
         {
@@ -255,7 +271,7 @@ namespace nkv.Automator.PGSQL
             string contents = File.ReadAllText(CreateTemplatePath("config,database.txt"));
             using (var txtFile = File.AppendText(path))
             {
-                contents = contents.Replace("{hostName}",pgSQLDB.Host);
+                contents = contents.Replace("{hostName}", pgSQLDB.Host);
                 contents = contents.Replace("{userName}", pgSQLDB.Username);
                 contents = contents.Replace("{password}", pgSQLDB.Password);
                 contents = contents.Replace("{dbName}", pgSQLDB.DBName);
@@ -367,7 +383,7 @@ namespace nkv.Automator.PGSQL
         }
         public void CreateObjectFile(string tableName, FinalDataPHP finalData, bool isView = false)
         {
-            string path = CreateDestinationPath("objects,"+tableName + ".php");
+            string path = CreateDestinationPath("objects," + tableName + ".php");
             string loginFunction = "";
             if (!ConfigApp.AuthTableConfig.IsSkipAuth && tableName == ConfigApp.AuthTableConfig.AuthTableName)
             {
@@ -438,7 +454,7 @@ namespace nkv.Automator.PGSQL
                 txtFile.WriteLine(contents);
             }
         }
-        public void CreateInsertFile(string tableName,FinalDataPHP finalData)
+        public void CreateInsertFile(string tableName, FinalDataPHP finalData)
         {
             string path = CreateDestinationPath(tableName + ",create.php");
             string requiredFields = "";
@@ -504,7 +520,7 @@ namespace nkv.Automator.PGSQL
             }
         }
 
-        public void CreateUpdateFile(string tableName,FinalDataPHP finalData)
+        public void CreateUpdateFile(string tableName, FinalDataPHP finalData)
         {
             string path = CreateDestinationPath(tableName + ",update.php");
             string requiredFields = "";
@@ -650,11 +666,11 @@ namespace nkv.Automator.PGSQL
             string moduleName = ti.ToTitleCase(tableName);
             string path = CreateDestinationPath(tableName + ",read.php");
             string path_search = CreateDestinationPath(tableName + ",search.php");
-           
+
             string path_search_byColumn = CreateDestinationPath(tableName + ",search_by_column.php");
-            
+
             string path_one = CreateDestinationPath(tableName + ",read_one.php");
-            
+
             string setPropertyValue = "";
             string setPropertyValue1 = "";
 
@@ -770,7 +786,7 @@ namespace nkv.Automator.PGSQL
             {
                 foreach (var fk in finalData.FKQueryDic)
                 {
-                    string pathFK = CreateDestinationPath(tableName +","+ "read_by_" + Helper.RemoveSpecialCharacters(fk.Key).ToLower() + ".php");
+                    string pathFK = CreateDestinationPath(tableName + "," + "read_by_" + Helper.RemoveSpecialCharacters(fk.Key).ToLower() + ".php");
                     string contentsFK = File.ReadAllText(CreateTemplatePath("modal,onetomany.txt"));
                     using (var txtFile = File.AppendText(pathFK))
                     {
@@ -928,7 +944,7 @@ namespace nkv.Automator.PGSQL
                 txtFile.WriteLine(contents2);
             }
         }
-        
+
         public void CreateIndexFile()
         {
             string pathHTaccess = CreateDestinationPath(".htaccess");
@@ -938,7 +954,7 @@ namespace nkv.Automator.PGSQL
                 File.Delete(path);
             }
             string completeTableString = "";
-          
+
             foreach (var t in SelectedTable)
             {
                 bool isView = false;
