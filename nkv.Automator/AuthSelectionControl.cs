@@ -34,6 +34,16 @@ namespace nkv.Automator
             authPasswordColumnCoumboBox.DataSource = new List<ColumnModel>(columns);
             authPasswordColumnCoumboBox.DisplayMember = "Field";
         }
+        public void HideDefaultValueControl()
+        {
+            authSkipCheckBox.Checked = false;
+            authSkipCheckBox.Visible = false;
+            adminUsernameTextBox.Visible = false;
+            adminPasswordTextbox.Visible = false;
+            orLabel.Visible = false;
+            usernameLabel.Visible = false;
+            passwordLabel.Visible = false;
+        }
         public void SetTableList(List<string> tables)
         {
             authTableComboBox.DataSource = null;

@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.adminPasswordTextbox = new System.Windows.Forms.TextBox();
-            this.label41 = new System.Windows.Forms.Label();
+            this.orLabel = new System.Windows.Forms.Label();
             this.adminUsernameTextBox = new System.Windows.Forms.TextBox();
             this.authPasswordColumnCoumboBox = new System.Windows.Forms.ComboBox();
             this.authUserColumnComboBox = new System.Windows.Forms.ComboBox();
-            this.label42 = new System.Windows.Forms.Label();
+            this.passwordLabel = new System.Windows.Forms.Label();
             this.authTableComboBox = new System.Windows.Forms.ComboBox();
             this.label43 = new System.Windows.Forms.Label();
-            this.label44 = new System.Windows.Forms.Label();
+            this.usernameLabel = new System.Windows.Forms.Label();
             this.label45 = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.authSkipCheckBox = new System.Windows.Forms.CheckBox();
@@ -52,14 +52,14 @@
             this.adminPasswordTextbox.TabIndex = 35;
             this.adminPasswordTextbox.Text = "admin123";
             // 
-            // label41
+            // orLabel
             // 
-            this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(255, 82);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(23, 15);
-            this.label41.TabIndex = 31;
-            this.label41.Text = "OR";
+            this.orLabel.AutoSize = true;
+            this.orLabel.Location = new System.Drawing.Point(255, 82);
+            this.orLabel.Name = "orLabel";
+            this.orLabel.Size = new System.Drawing.Size(23, 15);
+            this.orLabel.TabIndex = 31;
+            this.orLabel.Text = "OR";
             // 
             // adminUsernameTextBox
             // 
@@ -90,14 +90,14 @@
             this.authUserColumnComboBox.Size = new System.Drawing.Size(154, 23);
             this.authUserColumnComboBox.TabIndex = 28;
             // 
-            // label42
+            // passwordLabel
             // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(304, 50);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(57, 15);
-            this.label42.TabIndex = 33;
-            this.label42.Text = "Password";
+            this.passwordLabel.AutoSize = true;
+            this.passwordLabel.Location = new System.Drawing.Point(304, 50);
+            this.passwordLabel.Name = "passwordLabel";
+            this.passwordLabel.Size = new System.Drawing.Size(57, 15);
+            this.passwordLabel.TabIndex = 33;
+            this.passwordLabel.Text = "Password";
             // 
             // authTableComboBox
             // 
@@ -119,14 +119,14 @@
             this.label43.TabIndex = 26;
             this.label43.Text = "Password Column";
             // 
-            // label44
+            // usernameLabel
             // 
-            this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(31, 50);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(60, 15);
-            this.label44.TabIndex = 32;
-            this.label44.Text = "Username";
+            this.usernameLabel.AutoSize = true;
+            this.usernameLabel.Location = new System.Drawing.Point(31, 50);
+            this.usernameLabel.Name = "usernameLabel";
+            this.usernameLabel.Size = new System.Drawing.Size(60, 15);
+            this.usernameLabel.TabIndex = 32;
+            this.usernameLabel.Text = "Username";
             // 
             // label45
             // 
@@ -176,14 +176,14 @@
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.IsEmailCheckBox);
             this.Controls.Add(this.adminPasswordTextbox);
-            this.Controls.Add(this.label41);
+            this.Controls.Add(this.orLabel);
             this.Controls.Add(this.adminUsernameTextBox);
             this.Controls.Add(this.authPasswordColumnCoumboBox);
             this.Controls.Add(this.authUserColumnComboBox);
-            this.Controls.Add(this.label42);
+            this.Controls.Add(this.passwordLabel);
             this.Controls.Add(this.authTableComboBox);
             this.Controls.Add(this.label43);
-            this.Controls.Add(this.label44);
+            this.Controls.Add(this.usernameLabel);
             this.Controls.Add(this.label45);
             this.Controls.Add(this.label46);
             this.Controls.Add(this.authSkipCheckBox);
@@ -197,14 +197,14 @@
         #endregion
 
         private System.Windows.Forms.TextBox adminPasswordTextbox;
-        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.Label orLabel;
         private System.Windows.Forms.TextBox adminUsernameTextBox;
         private System.Windows.Forms.ComboBox authPasswordColumnCoumboBox;
         private System.Windows.Forms.ComboBox authUserColumnComboBox;
-        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.Label passwordLabel;
         private System.Windows.Forms.ComboBox authTableComboBox;
         private System.Windows.Forms.Label label43;
-        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label usernameLabel;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.CheckBox authSkipCheckBox;

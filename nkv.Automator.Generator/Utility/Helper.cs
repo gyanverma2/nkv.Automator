@@ -344,6 +344,75 @@ namespace nkv.Automator.Utility
                     return "text";
             }
         }
+        public static string GetValueFromDataType(string input)
+        {
+            string subDataType = "";
+            string dataType = input;
+            if (input.Contains("unsigned"))
+            {
+                subDataType = "unsigned";
+            }
+            if (input.Contains("("))
+            {
+                dataType = input.Split('(', ')')[0];
+            }
+            switch (dataType.ToLower())
+            {
+                case "binary":
+                case "bit":
+                case "boolean":
+                case "tinyint":
+                    return "true";
+                case "datetime2":
+                case "datetime":
+                case "date":
+                case "timestamp":
+                    return "";
+                case "time":
+                    return "";
+                case "int":
+                case "int32":
+                case "int16":
+                case "mediumint":
+                case "smallint":
+                    switch (subDataType)
+                    {
+                        case "unsigned":
+                            return "number";
+                    }
+                    return "0";
+                case "bigint":
+                case "int64":
+                    switch (subDataType)
+                    {
+                        case "unsigned":
+                            return "number";
+                    }
+                    return "0";
+                case "decimal":
+                    return "0";
+                case "double":
+                case "float":
+                case "real":
+                    return "0";
+                case "nvarchar":
+                case "varchar":
+                case "char":
+                case "nchar":
+                    return "";
+                case "text":
+                case "tinytext":
+                case "tinyblob":
+                case "longtext":
+                case "mediumblob":
+                case "longblob":
+                case "blob":
+                case "mediumtext":
+                    return "";
+                default:
+                    return "";
+            }
+        }
         public static string GetDataTypeTypeYup(string input)
         {
             string subDataType = "";

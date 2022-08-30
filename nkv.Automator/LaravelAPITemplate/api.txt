@@ -24,6 +24,8 @@ Route::group(['middleware' => 'api'], function($router) {
 });
 
 Route::group(['middleware' =>  ['jwt.auth'],'prefix' => 'auth'], function ($router) {
+Route::post('/upload/file','App\Http\Controllers\Api\Auth\FileUploadController@upload')->name('api.auth.upload.file');
+Route::post('/upload/image','App\Http\Controllers\Api\Auth\FileUploadController@uploadimage')->name('api.auth.upload.image');
     {apiRoutes}
    
 });

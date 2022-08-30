@@ -1,4 +1,5 @@
-﻿using nkv.Automator.Models;
+﻿using nkv.Automator.Generator.Models;
+using nkv.Automator.Models;
 using nkv.Automator.Postman;
 using nkv.Automator.Utility;
 using System.Globalization;
@@ -7,6 +8,7 @@ namespace nkv.Automator.MySQL
 {
     public class MySQL_LaravelAPI
     {
+        List<PostmanModel> postmanJson = new List<PostmanModel>();
         public Action<NKVMessage> MessageEvent { get; set; } = null!;
         public Action<NKVMessage> CompletedEvent { get; set; } = null!;
         TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
@@ -54,7 +56,71 @@ namespace nkv.Automator.MySQL
             return path;
         }
 
-        
+        public ReactJSInput<FinalQueryData> Automator(string projectName, List<string> selectedTable, MySQLDBHelper mySQLDB)
+        {
+            mysqlDB = mySQLDB;
+            SelectedTable = selectedTable;
+            ProjectName = projectName;
+            string projectFolder = CreateDirectory();
+            MessageEvent?.Invoke(new NKVMessage("Project Folder Created : " + projectFolder));
+            MessageEvent?.Invoke(new NKVMessage("Creating Larvel Project"));
+            CopyProject();
+            ReactJSInput<FinalQueryData> reactInput = new ReactJSInput<FinalQueryData>()
+            {
+                DestinationFolder = projectFolder,
+                FinalDataDic = new Dictionary<string, FinalQueryData>(),
+                PostmanJson = new List<PostmanModel>()
+            };
+            foreach (string tableName in selectedTable)
+            {
+                try
+                {
+                    MessageEvent?.Invoke(new NKVMessage("Processing for Table => " + tableName));
+                    string modelName = Helper.ToPascalCase(tableName);
+                    var insertUpdateData = mysqlDB.GetInsertUpdateQueryData(tableName);
+                    var finalData = mysqlDB.BuildLaravelQuery(tableName);
+                    reactInput.FinalDataDic.Add(tableName, finalData);
+                    if (tableName == ConfigApp.AuthTableConfig.AuthTableName)
+                    {
+                        GenerateAuthModels(tableName, insertUpdateData);
+                    }
+                    else
+                    {
+                        GenerateModels(tableName, insertUpdateData, finalData);
+                    }
+                    GenerateController(tableName, insertUpdateData, finalData);
+
+                    postmanJson.Add(CreatePostmanJson(tableName, modelName, "add", finalData));
+                    postmanJson.Add(CreatePostmanJson(tableName, modelName, "update", finalData));
+                    postmanJson.Add(CreatePostmanJson(tableName, modelName, "get", finalData));
+                    postmanJson.Add(CreatePostmanJson(tableName, modelName, "getbyid", finalData));
+                    postmanJson.Add(CreatePostmanJson(tableName, modelName, "search", finalData));
+                    postmanJson.Add(CreatePostmanJson(tableName, modelName, "delete", finalData));
+                }
+                catch (Exception ex)
+                {
+                    MessageEvent?.Invoke(new NKVMessage("Exception on table " + tableName, false));
+                    MessageEvent?.Invoke(new NKVMessage(ex.Message, false));
+                }
+            }
+
+            GenerateAuthFile(ConfigApp.AuthTableConfig.AuthTableName);
+            MessageEvent?.Invoke(new NKVMessage("JWT Token Auth generated"));
+            InsertUpdateQueryData authData = mysqlDB.GetInsertUpdateQueryData(ConfigApp.AuthTableConfig.AuthTableName);
+            GenerateAuthController(ConfigApp.AuthTableConfig.AuthTableName, authData);
+            GenerateRoutes();
+            MessageEvent?.Invoke(new NKVMessage("Routes created"));
+            CreatePostmanJsonFile(postmanJson, authData);
+            MessageEvent?.Invoke(new NKVMessage("Postman import collection file generated"));
+            reactInput.PostmanJson = postmanJson;
+            GenerateEnvFile();
+            MessageEvent?.Invoke(new NKVMessage("Env file created"));
+            GenerateDatabaseFile();
+            MessageEvent?.Invoke(new NKVMessage("Database file created"));
+            MessageEvent?.Invoke(new NKVMessage("----- Laravel API Generated -----"));
+            CompletedEvent?.Invoke(new NKVMessage("Thanks for using GetAutomator.com! Please check the generated code at : " + DestinationFolder));
+            return reactInput;
+        }
         public string CreateDirectory()
         {
             string destFile = ProjectName;
@@ -69,15 +135,20 @@ namespace nkv.Automator.MySQL
                 }
                 while (Directory.Exists(newName));
             }
-            string sourceDirectory = TemplateFolder + @"\\LaravelProject";
+
             destFile = newName;
             string targetDirectory = destFile + "\\LaravelAPI";
             Directory.CreateDirectory(newName);
-            Directory.CreateDirectory(targetDirectory + "\\POSTMAN_IMPORT_FILE");
-            CopyDir.Copy(sourceDirectory, targetDirectory, ProjectName.ToLower(), "nkv.LaravelProject");
-            Directory.CreateDirectory(destFile + "\\LaravelAPI\\app\\Models");
-            Directory.CreateDirectory(destFile + "\\LaravelAPI\\app\\Http\\Controllers\\Api\\Auth");
+            DestinationFolder = targetDirectory;
             return destFile;
+        }
+        public void CopyProject()
+        {
+            string sourceDirectory = TemplateFolder + @"\\LaravelProject";
+            Directory.CreateDirectory(DestinationFolder + "\\POSTMAN_IMPORT_FILE");
+            CopyDir.Copy(sourceDirectory, DestinationFolder, ProjectName.ToLower(), "nkv.LaravelProject");
+            Directory.CreateDirectory(DestinationFolder + "\\app\\Models");
+            Directory.CreateDirectory(DestinationFolder + "\\app\\Http\\Controllers\\Api\\Auth");
         }
         public void GenerateRoutes()
         {
@@ -105,13 +176,14 @@ namespace nkv.Automator.MySQL
             }
         }
 
-        public void GenerateAuthFile(string userModel)
+        public void GenerateAuthFile(string authTable)
         {
+            string authTableModel = ti.ToTitleCase(authTable);
             string path = CreateDestinationPath("config,auth.php");
             string contents = File.ReadAllText(CreateTemplatePath("auth.txt"));
             using (var txtFile = File.AppendText(path))
             {
-                contents = contents.Replace("{userModelName}", userModel);
+                contents = contents.Replace("{userModelName}", authTableModel);
                 txtFile.WriteLine(contents);
             }
         }
@@ -202,11 +274,12 @@ namespace nkv.Automator.MySQL
             string primaryKey = string.Empty;
             if (data.PrimaryKeys != null && data.PrimaryKeys.Count > 1)
             {
-                foreach (var r in data.PrimaryKeys)
-                {
-                    primaryKey = primaryKey + "'" + r.FieldName + "',";
-                }
-                primaryKey = "[" + primaryKey.Trim(',') + "]";
+                //foreach (var r in data.PrimaryKeys)
+                //{
+                //    primaryKey = primaryKey + "'" + r.FieldName + "',";
+                //}
+                //primaryKey = "[" + primaryKey.Trim(',') + "]";
+                primaryKey = "'" + data.PrimaryKeys[0].FieldName + "'";
             }
             else if (data.PrimaryKeys != null && data.PrimaryKeys.Count == 1)
             {
@@ -255,11 +328,12 @@ namespace nkv.Automator.MySQL
             string primaryKey = string.Empty;
             if (data.PrimaryKeys != null && data.PrimaryKeys.Count > 1)
             {
-                foreach (var r in data.PrimaryKeys)
-                {
-                    primaryKey = primaryKey + "'" + r.FieldName + "',";
-                }
-                primaryKey = "[" + primaryKey.Trim(',') + "]";
+                //foreach (var r in data.PrimaryKeys)
+                //{
+                //    primaryKey = primaryKey + "'" + r.FieldName + "',";
+                //}
+                //primaryKey = "[" + primaryKey.Trim(',') + "]";
+                primaryKey = "'" + data.PrimaryKeys[0].FieldName + "'";
             }
             else if (data.PrimaryKeys != null && data.PrimaryKeys.Count == 1)
             {
@@ -386,7 +460,7 @@ namespace nkv.Automator.MySQL
             }
             else
             {
-                usernameValidation = "'" + ConfigApp.AuthTableConfig.PasswordColumnName + "' => 'required|string|min:6',";
+                usernameValidation = "'" + ConfigApp.AuthTableConfig.UsernameColumnName + "' => 'required|string|min:6',";
             }
             foreach (var c in data.ColumnList)
             {
@@ -462,10 +536,7 @@ namespace nkv.Automator.MySQL
                     p.Method = "PUT";
                     if (data.SelectQueryData.PrimaryKeys != null && data.SelectQueryData.PrimaryKeys.Count > 1)
                     {
-                        foreach (var pk in data.SelectQueryData.PrimaryKeys)
-                        {
-                            pathList.Add("${" + pk.FieldName + "}");
-                        }
+                        pathList.Add("${" + data.SelectQueryData.PrimaryKeys[0].FieldName + "}");
                     }
                     else if (data.SelectQueryData.PrimaryKeys != null && data.SelectQueryData.PrimaryKeys.Count == 1)
                     {
@@ -483,10 +554,7 @@ namespace nkv.Automator.MySQL
                     p.Method = "DELETE";
                     if (data.SelectQueryData.PrimaryKeys != null && data.SelectQueryData.PrimaryKeys.Count > 1)
                     {
-                        foreach (var pk in data.SelectQueryData.PrimaryKeys)
-                        {
-                            pathList.Add("${" + pk.FieldName + "}");
-                        }
+                        pathList.Add("${" + data.SelectQueryData.PrimaryKeys[0].FieldName + "}");
                     }
                     else if (data.SelectQueryData.PrimaryKeys != null && data.SelectQueryData.PrimaryKeys.Count == 1)
                     {
@@ -508,10 +576,7 @@ namespace nkv.Automator.MySQL
                     p.Name = modelName + " - GetById";
                     if (data.SelectQueryData.PrimaryKeys != null && data.SelectQueryData.PrimaryKeys.Count > 1)
                     {
-                        foreach (var pk in data.SelectQueryData.PrimaryKeys)
-                        {
-                            pathList.Add("${" + pk.FieldName + "}");
-                        }
+                        pathList.Add("${" + data.SelectQueryData.PrimaryKeys[0].FieldName + "}");
                     }
                     else if (data.SelectQueryData.PrimaryKeys != null && data.SelectQueryData.PrimaryKeys.Count == 1)
                     {
@@ -539,7 +604,8 @@ namespace nkv.Automator.MySQL
             {
                 if (c.Extra != "auto_increment" && c.DefaultValue != "CURRENT_TIMESTAMP")
                 {
-                    bodyList.Add(new PRequestBody(c.Field, c.TypeName, (c.IsNull == "NO" ? true : false), c.DefaultValue));
+                    if (bodyList.FirstOrDefault(i => i.PropName == c.Field) == null)
+                        bodyList.Add(new PRequestBody(c.Field, c.TypeName, (c.IsNull == "NO" ? true : false), c.DefaultValue));
                 }
             }
             if (type == "update" || type == "add")
@@ -548,24 +614,27 @@ namespace nkv.Automator.MySQL
                 {
                     foreach (var pKey in data.SelectQueryData.PrimaryKeys)
                     {
-                        bodyList.Add(new PRequestBody(pKey.FieldName, pKey.DataType, false, null));
+                        if (bodyList.FirstOrDefault(i => i.PropName == pKey.FieldName) == null)
+                            bodyList.Add(new PRequestBody(pKey.FieldName, pKey.DataType, false, null));
                     }
                 }
                 else if (data.SelectQueryData.PrimaryKeys != null && data.SelectQueryData.PrimaryKeys.Count == 1)
                 {
                     var pkey = data.SelectQueryData.PrimaryKeys[0];
-                    bodyList.Add(new PRequestBody(pkey.FieldName, pkey.DataType, false, null));
+                    if (bodyList.FirstOrDefault(i => i.PropName == pkey.FieldName) == null)
+                        bodyList.Add(new PRequestBody(pkey.FieldName, pkey.DataType, false, null));
                 }
                 else
                 {
                     var c = data.SelectQueryData.ColumnList[0];
-                    bodyList.Add(new PRequestBody(c.Field, c.TypeName, (c.IsNull == "NO" ? true : false), c.DefaultValue));
+                    if (bodyList.FirstOrDefault(i => i.PropName == c.Field) == null)
+                        bodyList.Add(new PRequestBody(c.Field, c.TypeName, (c.IsNull == "NO" ? true : false), c.DefaultValue));
                 }
             }
             p.Body = bodyList;
             return p;
         }
-        public void CreatePostmanJsonFile(List<PostmanModel> postmanModels, InsertUpdateQueryData data)
+        public void CreatePostmanJsonFile(List<PostmanModel> postmanModels, InsertUpdateQueryData authTableData)
         {
             try
             {
@@ -574,7 +643,7 @@ namespace nkv.Automator.MySQL
                 string path = CreateDestinationPath("POSTMAN_IMPORT_FILE,postman_import_file.json");
                 string path2 = CreateDestinationPath("POSTMAN_IMPORT_FILE,EnvironmentVariable_ImportThisAlso.postman_environment.json");
                 var bodyList = new List<PRequestBody>();
-                foreach (var c in data.InsertColumnList)
+                foreach (var c in authTableData.InsertColumnList)
                 {
                     bodyList.Add(new PRequestBody(c.FieldName, c.DataType, false, null));
                 }
@@ -608,6 +677,7 @@ namespace nkv.Automator.MySQL
             }
             catch (Exception ex)
             {
+                MessageEvent?.Invoke(new NKVMessage(ex.Message, false));
                 ExceptionList.Add(ex);
             }
         }

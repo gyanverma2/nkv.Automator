@@ -20,6 +20,7 @@ namespace nkv.Automator.Models
         public string Source { get; set; } = null!;
         public string SoftwareVersion { get; set; } = null!;
         public string ToolName { get; set; } = null!;
+        public string ItemName { get; set; } = null!;
     }
     public class LicenceProductModel
     {

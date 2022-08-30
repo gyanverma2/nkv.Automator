@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using nkv.Automator.Models;
 using ServiceStack;
+using ServiceStack.Web;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,7 @@ namespace nkv.Automator
     internal class Validator
     {
         private const string baseURL = "http://localhost:82/getautomator";
-        
+        public Action<NKVMessage> MessageEvent { get; set; } = null!;
         public List<ProductModel> GetAllProduct()
         {
             try
@@ -46,6 +47,7 @@ namespace nkv.Automator
                     {
                         return apiResponse.document.records;
                     }
+                   
                 }
                 return new List<LicenceProductModel>();
             }
@@ -60,13 +62,24 @@ namespace nkv.Automator
             try
             {
                 var response = RegisterAPI(register);
-                if (register != null)
+                if(response != null && response.code == 1)
+                {
+                    MessageEvent?.Invoke(new NKVMessage(response.message));
                     return true;
+                }
+                else if (response != null)
+                {
+                    MessageEvent?.Invoke(new NKVMessage(response.message));
+                }
                 else
-                    return false;
+                {
+                    MessageEvent?.Invoke(new NKVMessage("Some error occured!, Please restart the app and try again."));
+                }
+                return false;
             }
             catch (Exception ex)
             {
+                MessageEvent?.Invoke(new NKVMessage(ex.Message,false));
                 return false;
             }
         }
@@ -77,19 +90,16 @@ namespace nkv.Automator
             if (response != null)
             {
                 var apiResponse = JsonConvert.DeserializeObject<APIResponse<string>>(response);
-                if (apiResponse != null)
-                {
-                    return apiResponse;
-                }
+                return apiResponse;
             }
             return null;
         }
-        public bool ClickCounter(string publicID)
+        public bool ClickCounter(string publicID,string remarks)
         {
             try
             {
                 var client = new JsonServiceClient(baseURL);
-                var param = new { LicencePublicID = publicID };
+                var param = new { LicencePublicID = publicID, Remarks= remarks };
 
                 var response = client.Post<string>("/api/licence_check/validate_click.php", param);
                 if (response != null)

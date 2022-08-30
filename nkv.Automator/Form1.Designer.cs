@@ -59,7 +59,7 @@
             this.mysqlGenerateButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.multiTenantCheckBoxMysql = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.testConnectionButtonMySql = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
@@ -446,7 +446,7 @@
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel3.Controls.Add(this.multiTenantCheckBoxMysql);
-            this.panel3.Controls.Add(this.button1);
+            this.panel3.Controls.Add(this.testConnectionButtonMySql);
             this.panel3.Controls.Add(this.label16);
             this.panel3.Controls.Add(this.label17);
             this.panel3.Controls.Add(this.label18);
@@ -473,17 +473,18 @@
             this.multiTenantCheckBoxMysql.Text = "Multi-Tenant";
             this.multiTenantCheckBoxMysql.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // testConnectionButtonMySql
             // 
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(60)))), ((int)(((byte)(81)))));
-            this.button1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(88, 310);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(256, 47);
-            this.button1.TabIndex = 26;
-            this.button1.Text = "Test Connection";
-            this.button1.UseVisualStyleBackColor = false;
+            this.testConnectionButtonMySql.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(60)))), ((int)(((byte)(81)))));
+            this.testConnectionButtonMySql.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.testConnectionButtonMySql.ForeColor = System.Drawing.Color.White;
+            this.testConnectionButtonMySql.Location = new System.Drawing.Point(88, 310);
+            this.testConnectionButtonMySql.Name = "testConnectionButtonMySql";
+            this.testConnectionButtonMySql.Size = new System.Drawing.Size(256, 47);
+            this.testConnectionButtonMySql.TabIndex = 26;
+            this.testConnectionButtonMySql.Text = "Test Connection";
+            this.testConnectionButtonMySql.UseVisualStyleBackColor = false;
+            this.testConnectionButtonMySql.Click += new System.EventHandler(this.testConnectionButtonMySql_Click);
             // 
             // label16
             // 
@@ -1088,7 +1089,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button testConnectionButtonMySql;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label18;

@@ -1,12 +1,8 @@
-using nkv.Automator.Generator.MySQL;
-using nkv.Automator.Generator.PGSQL;
-using nkv.Automator.Models;
 using nkv.Automator.MySQL;
 using nkv.Automator.PGSQL;
-using ServiceStack;
+using nkv.Automator.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -20,11 +16,12 @@ namespace nkv.Automator
     public partial class Form1 : Form
     {
         private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MySQL;
-        private readonly ProductEnum ActiveProduct = ProductEnum.MySQL_Laravel_API;
+        private readonly ProductEnum ActiveProduct = ProductEnum.MySQL_Laravel_API_React;
         private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MySQL.ToString();
         private readonly bool IsAdminPanel = false;
         private readonly bool IsMultiTenant = false;
         Validator v { get; set; } = null!;
+        #region VariableDeclaration
         List<LicenceProductModel> LicenceProductList { get; set; } = null!;
         LicenceProductModel? ActiveLicence { get; set; } = null;
         List<ProductModel> AllProductList { get; set; } = null!;
@@ -34,13 +31,14 @@ namespace nkv.Automator
         AdminPanelPermissionControlPanel PermissionControlPanel { get; set; } = null!;
         ProjectNameControl ProjectNameControl { get; set; } = null!;
         DataTypeEnum SelectedDataType { get; set; }
-        PGSQLDBHelper pgSQLDb { get; set; } = null!;
+        #endregion
         public Form1()
         {
             InitializeComponent();
             HideTabPages();
             labelVersion.Text = "Version: " + SoftwareVersion;
         }
+        #region FormInit
         private void CreateEmailFile()
         {
             string path = "licence.temp";
@@ -120,12 +118,13 @@ namespace nkv.Automator
             v = new Validator();
             Invoke(new Action(() =>
             {
+                v.MessageEvent += MessageBoxEvent;
+                InitUserControls(ActiveDataType, IsAdminPanel, IsMultiTenant);
                 var email = ReadEmailFromFile();
                 systemTextbox.Text = Helper.GetSystemName();
                 if (!string.IsNullOrEmpty(email))
                     DisplayLicenceGrid(Helper.GetSystemName());
                 DisplayProductList();
-                InitUserControls(ActiveDataType, IsAdminPanel, IsMultiTenant);
                 sourceComboBox.SelectedIndex = 0;
             }));
         }
@@ -168,44 +167,71 @@ namespace nkv.Automator
                 Controls.Find(adminPermissionName, true).First().Visible = (bool)isAdminPanel;
             if (isMultiTenant != null)
                 multiTenantCheckBoxMysql.Visible = (bool)isMultiTenant;
+            switch (ActiveProduct)
+            {
+                case ProductEnum.MySQL_Laravel_API_React:
+                case ProductEnum.MySQL_Laravel_API:
+                    AuthSelectionControl.HideDefaultValueControl();
+                    break;
+            }
 
         }
-
         private void AuthSelectionControl_AuthTableSelectionChanged(object? sender, EventArgs e)
         {
             switch (SelectedDataType)
             {
                 case DataTypeEnum.MySQL:
+                    var mySQLDb = new MySQLDBHelper(hostMysqlTextBox.Text.Trim(), portMysqlTextbox.Text.Trim(), usernameMysqlTextBox.Text.Trim(), passwordMysqlTextBox.Text.Trim(), dbNameMysqlTextBox.Text.Trim());
+                    if (mySQLDb.Connect() && AuthSelectionControl != null)
+                    {
+                        AuthSelectionControl.SetUserAndPasswordColumn(mySQLDb.GetTableColumns(AuthSelectionControl.AuthTableName));
+                    }
                     break;
                 case DataTypeEnum.MSSQL:
                     break;
                 case DataTypeEnum.PostgreSQL:
-                    AuthSelectionControl.SetUserAndPasswordColumn(pgSQLDb.GetColumns(AuthSelectionControl.AuthTableName));
+                    var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
+                    if (pgSQLDb.Connect() && AuthSelectionControl != null)
+                    {
+                        AuthSelectionControl.SetUserAndPasswordColumn(pgSQLDb.GetColumns(AuthSelectionControl.AuthTableName));
+                    }
                     break;
                 case DataTypeEnum.MongoDB:
                     break;
             }
         }
-
+        #endregion
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             InitControls();
         }
         #region UIHelper
+        private void MessageBoxEvent(NKVMessage obj)
+        {
+            Invoke(new Action(() =>
+            {
+                MessageBox.Show(obj.Message);
+            }));
+        }
         private void CompletedEvent(NKVMessage obj)
         {
-            if (obj.IsSuccess)
-                appendSuccess(obj.Message);
-            else
-                appendError(obj.Message);
+            Invoke(new Action(() =>
+            {
+                if (obj.IsSuccess)
+                    appendSuccess(obj.Message);
+                else
+                    appendError(obj.Message);
+            }));
         }
-
         private void MessageEvent(NKVMessage obj)
         {
-            if (obj.IsSuccess)
-                appendSuccess(obj.Message);
-            else
-                appendError(obj.Message);
+            Invoke(new Action(() =>
+            {
+                if (obj.IsSuccess)
+                    appendSuccess(obj.Message);
+                else
+                    appendError(obj.Message);
+            }));
         }
         private void appendError(string msg, bool clearPrior = false)
         {
@@ -217,19 +243,17 @@ namespace nkv.Automator
                         MessageBox.Show(msg);
                 }));
 
-
         }
         private void appendSuccess(string msg, bool clearPrior = false)
         {
             Invoke(new Action(() =>
             {
-                Invoke(new Action(() =>
+                if (LogTextAreaControl != null)
                 {
-                    if (LogTextAreaControl != null)
-                        LogTextAreaControl.SetLogText(msg, Color.Green, clearPrior);
-                    else
-                        MessageBox.Show(msg);
-                }));
+                    LogTextAreaControl.SetLogText(msg, Color.Green, clearPrior);
+                }
+                else
+                    MessageBox.Show(msg);
             }));
         }
         #endregion
@@ -306,7 +330,7 @@ namespace nkv.Automator
                 return;
             }
             registerBtn.Enabled = false;
-            if (sourceComboBox.SelectedItem != null && productComboBox.SelectedItem != null)
+            if (sourceComboBox != null && sourceComboBox.SelectedItem != null && productComboBox.SelectedItem != null)
             {
                 var product = (ProductModel)productComboBox.SelectedItem;
                 var registerData = new RegisterModel()
@@ -317,17 +341,20 @@ namespace nkv.Automator
                     SoftwareVersion = SoftwareVersion,
                     Source = sourceComboBox.SelectedItem.ToString(),
                     ToolName = product.ProductName,
-                    UserEmail = emailTextbox.Text.Trim()
+                    UserEmail = emailTextbox.Text.Trim(),
+                    ItemName = product.ProductName,
                 };
                 if (v.Register(registerData))
                 {
                     CreateEmailFile();
                     appendSuccess("Thanks for registration!");
                     DisplayLicenceGrid(Helper.GetSystemName());
+                    registerBtn.Enabled = true;
                 }
                 else
                 {
                     appendError("Invalid licence, Please contact support or manage your licence at https://getautomator.com/app", true);
+                    registerBtn.Enabled = true;
                 }
             }
         }
@@ -345,7 +372,7 @@ namespace nkv.Automator
                 MessageBox.Show("Please select at least one table to generate.");
                 return;
             }
-            if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID))
+            if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID, TableSelectionControl.SelectedTableList.Count.ToString()))
             {
                 backgroundWorker2.RunWorkerAsync();
             }
@@ -360,6 +387,7 @@ namespace nkv.Automator
         {
             Invoke(new Action(() =>
             {
+
                 NKVConfiguration config = new NKVConfiguration()
                 {
                     AuthTableConfig = new NKVAuthTableConfig
@@ -385,12 +413,16 @@ namespace nkv.Automator
                 switch (SelectedDataType)
                 {
                     case DataTypeEnum.MySQL:
+                        mysqlGenerateButton.Enabled = false;
+                            ProcessMySQL(config);
+                        mysqlGenerateButton.Enabled = true;
                         break;
                     case DataTypeEnum.MSSQL:
-                        ProcessMySQL(config);
                         break;
                     case DataTypeEnum.PostgreSQL:
+                        pgSQLGenerateButton.Enabled = false;
                         ProcessPGSQL(config);
+                        pgSQLGenerateButton.Enabled = true;
                         break;
                     case DataTypeEnum.MongoDB:
                         break;
@@ -410,15 +442,15 @@ namespace nkv.Automator
                         laravelAPI.MessageEvent += MessageEvent;
                         laravelAPI.CompletedEvent += CompletedEvent;
                         var reactInput = laravelAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, mySQLDb);
-                        if (ActiveProduct == ProductEnum.PGSQL_PHPAPI_React_Windows && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        if (ActiveProduct == ProductEnum.MySQL_Laravel_API_React && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
                         {
                             appendSuccess("----- Generating React App -----");
-                            ReactTS_PHPPGSQL reactPGSqlTs = new ReactTS_PHPPGSQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
-                            reactPGSqlTs.MessageEvent += MessageEvent;
-                            reactPGSqlTs.CompletedEvent += CompletedEvent;
-                            reactPGSqlTs.CreateReactAPP(reactInput);
-                            MessageBox.Show("Task Completed! Please check the generated project folder.");
+                            ReactTs_LaravelMySQL reactLaravel = new ReactTs_LaravelMySQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
+                            reactLaravel.MessageEvent += MessageEvent;
+                            reactLaravel.CompletedEvent += CompletedEvent;
+                            reactLaravel.CreateReactAPP(reactInput);
                         }
+                        MessageBox.Show("Task Completed! Please check the generated project folder.");
                     }
                     else
                     {
@@ -426,6 +458,7 @@ namespace nkv.Automator
                     }
                     break;
             }
+
         }
         private void ProcessPGSQL(NKVConfiguration config)
         {
@@ -447,8 +480,8 @@ namespace nkv.Automator
                             reactPGSqlTs.MessageEvent += MessageEvent;
                             reactPGSqlTs.CompletedEvent += CompletedEvent;
                             reactPGSqlTs.CreateReactAPP(reactInput);
-                            MessageBox.Show("Task Completed! Please check the generated project folder.");
                         }
+                        MessageBox.Show("Task Completed! Please check the generated project folder.");
                     }
                     else
                     {
@@ -459,14 +492,14 @@ namespace nkv.Automator
         }
         #endregion
 
-
+        #region TestConnectionButton
         private void testConPgSQLButton_Click(object sender, EventArgs e)
         {
             try
             {
                 SelectedDataType = DataTypeEnum.PostgreSQL;
 
-                pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
+                var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
                 if (pgSQLDb.Connect())
                 {
                     MessageBox.Show("Connection Successful!");
@@ -481,8 +514,27 @@ namespace nkv.Automator
                 appendError(ex.Message, true);
             }
         }
-
-
+        private void testConnectionButtonMySql_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SelectedDataType = DataTypeEnum.MySQL;
+                var mysqlDb = new MySQLDBHelper(hostMysqlTextBox.Text.Trim(), portMysqlTextbox.Text.Trim(), usernameMysqlTextBox.Text.Trim(), passwordMysqlTextBox.Text.Trim(), dbNameMysqlTextBox.Text.Trim());
+                if (mysqlDb.Connect())
+                {
+                    MessageBox.Show("Connection Successful!");
+                    appendSuccess("Connection Successful!", true);
+                    var tableList = mysqlDb.GetListOfTable();
+                    AuthSelectionControl.SetTableList(tableList);
+                    TableSelectionControl.SetTableList(tableList);
+                };
+            }
+            catch (Exception ex)
+            {
+                appendError(ex.Message, true);
+            }
+        }
+        #endregion
         #region OpenURL
         private void youtubeButton_Click(object sender, EventArgs e)
         {
@@ -495,7 +547,6 @@ namespace nkv.Automator
                 MessageBox.Show(ex.Message);
             }
         }
-
         private void footerLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
@@ -545,6 +596,7 @@ namespace nkv.Automator
                 }
             }
         }
+
         #endregion
 
 

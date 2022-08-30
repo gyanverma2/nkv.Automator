@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nkv.Automator.Generator.PGSQL
+namespace nkv.Automator.PGSQL
 {
     public class ReactTS_PHPPGSQL
     {
