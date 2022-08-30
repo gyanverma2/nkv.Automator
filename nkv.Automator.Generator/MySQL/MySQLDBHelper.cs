@@ -90,7 +90,7 @@ namespace nkv.Automator.MySQL
             List<ColumnModel> columnList = new List<ColumnModel>();
             if (dbCon != null)
             {
-                if (IsConnect())
+                if (IsConnect() && !string.IsNullOrEmpty(tableName))
                 {
                     string query = "SHOW COLUMNS FROM " + DBName + "." + tableName;
                     var cmd = new MySqlCommand(query, dbCon);

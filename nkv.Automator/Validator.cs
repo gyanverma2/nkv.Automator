@@ -9,7 +9,8 @@ namespace nkv.Automator
 {
     internal class Validator
     {
-        private const string baseURL = "http://localhost:82/getautomator";
+        //private const string baseURL = "http://localhost:82/getautomator";
+        private const string baseURL = "https://getautomator.com";
         public Action<NKVMessage> MessageEvent { get; set; } = null!;
         public List<ProductModel> GetAllProduct()
         {

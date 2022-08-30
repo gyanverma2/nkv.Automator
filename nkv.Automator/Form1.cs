@@ -16,7 +16,7 @@ namespace nkv.Automator
     public partial class Form1 : Form
     {
         private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MySQL;
-        private readonly ProductEnum ActiveProduct = ProductEnum.MySQL_Laravel_API_React;
+        private readonly ProductEnum ActiveProduct = ProductEnum.MySQL_Laravel_API;
         private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MySQL.ToString();
         private readonly bool IsAdminPanel = false;
         private readonly bool IsMultiTenant = false;
@@ -414,15 +414,19 @@ namespace nkv.Automator
                 {
                     case DataTypeEnum.MySQL:
                         mysqlGenerateButton.Enabled = false;
-                            ProcessMySQL(config);
+                        mysqlGenerateButton.Text = "Processing...";
+                        ProcessMySQL(config);
                         mysqlGenerateButton.Enabled = true;
+                        mysqlGenerateButton.Text = "Generate";
                         break;
                     case DataTypeEnum.MSSQL:
                         break;
                     case DataTypeEnum.PostgreSQL:
+                        pgSQLGenerateButton.Text = "Processing...";
                         pgSQLGenerateButton.Enabled = false;
                         ProcessPGSQL(config);
                         pgSQLGenerateButton.Enabled = true;
+                        pgSQLGenerateButton.Text = "Generate";
                         break;
                     case DataTypeEnum.MongoDB:
                         break;
