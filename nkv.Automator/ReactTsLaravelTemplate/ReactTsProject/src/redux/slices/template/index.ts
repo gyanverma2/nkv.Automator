@@ -44,6 +44,6 @@ const templateSlice = createSlice({
   },
 });
 
-export const { sidebarToggle, activateMenu, activateTopMenu } = templateSlice.actions;
+export const { sidebarToggle, activateMenu, activateTopMenu, setUserProfie } = templateSlice.actions;
 
 export default templateSlice.reducer;

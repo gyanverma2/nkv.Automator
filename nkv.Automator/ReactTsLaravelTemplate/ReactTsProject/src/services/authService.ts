@@ -15,7 +15,7 @@ export const tokenAPICALL = async (user, pass) => {
         const data = response.data.data;
         const now = new Date().getTime();
         const expiryDate = now + data.expires_in;
-        return { jwtToken: data.access_token, expiryDate: expiryDate };
+        return { jwtToken: data.access_token, expiryDate: expiryDate, userProfile: data.user };
     } else {
         return null;
     }

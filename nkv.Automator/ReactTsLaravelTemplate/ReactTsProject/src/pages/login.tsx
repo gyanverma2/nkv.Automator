@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useAppDispatch } from "redux/store";
 import { tokenAPICALL } from "services/authService";
-import { setJWTToken } from "redux/actions";
+import { setJWTToken, setUserProfie } from "redux/actions";
 import { setError } from "redux/slices/auth";
 import { Alert, Button, Form } from "react-bootstrap";
 import { useSelector } from "react-redux";
@@ -22,6 +22,7 @@ const Login: React.FC = () => {
         onSubmit: async (values) => {
             const response = await tokenAPICALL(values.username, values.password);
             if (response) {
+                dispatch(setUserProfie(response.userProfile));
                 dispatch(setJWTToken(response));
                 navigate('/dashboard', { replace: true });
             } else {
