@@ -1,0 +1,146 @@
+﻿<?php
+class {moduleName}{
+ 
+    private $conn;
+    private $table_name = "{tableName}";
+	public $pageNo = 1;
+	public  $no_of_records_per_page=30;
+	{objectProperties}
+    
+    public function __construct($db){
+        $this->conn = $db;
+    }
+
+	function total_record_count() {
+		$query = "select count(1) as total from ". $this->table_name ."";
+		$stmt = $this->conn->prepare($query);
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		return $row['total'];
+	}
+
+	function search_count($searchKey) {
+		{searchCountQuery}
+		$stmt = $this->conn->prepare($query);
+		$searchKey="%".strtolower($searchKey)."%";
+		{searchBindValue}
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		return $row['total'];
+	}
+	
+	function search_record_count($columnArray,$orAnd){
+		$where="";
+		$paramCount = 1;
+		foreach ($columnArray as $col) {
+			$pre_param = "P" . $paramCount . "_";
+			$columnName=htmlspecialchars(strip_tags($col->columnName));
+			$columnLogic=$col->columnLogic;
+			if($where==""){
+				$where="LOWER(t.".$columnName . ") ".$columnLogic." :".$pre_param.$columnName;
+			}else{
+				$where=$where." ". $orAnd ." LOWER(t." . $columnName . ") ".$columnLogic." :".$pre_param.$columnName;
+			}
+			 $paramCount++;
+		}
+		{searchCountQueryByColumn}
+		
+		$stmt = $this->conn->prepare($query);
+		$paramCount=1;
+		foreach ($columnArray as $col) {
+		$pre_param = "P" . $paramCount . "_";
+		$columnName=htmlspecialchars(strip_tags($col->columnName));
+		if(strtoupper($col->columnLogic)=="LIKE"){
+		$columnValue="%".strtolower($col->columnValue)."%";
+		}else{
+		$columnValue=strtolower($col->columnValue);
+		}
+			$stmt->bindValue(":".$pre_param.$columnName, $columnValue);
+			$paramCount++;
+		}
+		
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		 $num = $stmt->rowCount();
+		if($num>0){
+			return $row['total'];
+		}else{
+			return 0;
+		}
+	}
+	function read(){
+		if(isset($_GET["pageNo"])){
+			$this->pageNo=$_GET["pageNo"];
+		}
+		$offset = ($this->pageNo-1) * $this->no_of_records_per_page; 
+		{selectQuery}
+		$stmt = $this->conn->prepare($query);
+		$stmt->execute();
+		return $stmt;
+	}
+	function search($searchKey){
+		if(isset($_GET["pageNo"])){
+		$this->pageNo=$_GET["pageNo"];
+		}
+		$offset = ($this->pageNo-1) * $this->no_of_records_per_page; 
+		{searchQuery}
+		$stmt = $this->conn->prepare($query);
+		$searchKey="%".strtolower($searchKey)."%";
+		{searchBindValue}
+		$stmt->execute();
+		return $stmt;
+	}
+	function searchByColumn($columnArray,$orAnd){
+		if(isset($_GET["pageNo"])){
+		$this->pageNo=$_GET["pageNo"];
+		}
+		$offset = ($this->pageNo-1) * $this->no_of_records_per_page; 
+		$where="";
+		$paramCount = 1;
+		foreach ($columnArray as $col) {
+			$pre_param = "P" . $paramCount . "_";
+			$columnName=htmlspecialchars(strip_tags($col->columnName));
+			$columnLogic=$col->columnLogic;
+			if($where==""){
+				$where="LOWER(t.".$columnName . ") ".$columnLogic." :".$pre_param.$columnName;
+			}else{
+				$where=$where." ". $orAnd ." LOWER(t." . $columnName . ") ".$columnLogic." :".$pre_param.$columnName;
+			}
+			 $paramCount++;
+		}
+		{searchQueryByColumn}
+		
+		$stmt = $this->conn->prepare($query);
+		$paramCount=1;
+		foreach ($columnArray as $col) {
+			$pre_param = "P" . $paramCount . "_";
+			$columnName=htmlspecialchars(strip_tags($col->columnName));
+			if(strtoupper($col->columnLogic)=="LIKE"){
+			$columnValue="%".strtolower($col->columnValue)."%";
+			}else{
+			$columnValue=strtolower($col->columnValue);
+			}
+			$stmt->bindValue(":".$pre_param.$columnName, $columnValue);
+			$paramCount++;
+		}
+		
+		$stmt->execute();
+		return $stmt;
+	}
+
+	function readOne(){
+		{selectOneQuery}
+		$stmt = $this->conn->prepare($query);
+		{selectOneBindValue}
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		$num = $stmt->rowCount();
+		if($num>0){
+			{selectOneSetValueToObject}
+		}
+		else{
+			$this->{primaryKey}=null;
+		}
+	}
+}
+?>

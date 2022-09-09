@@ -10,16 +10,21 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using nkv.Automator.Generator.MySQL;
 
 namespace nkv.Automator
 {
     public partial class Form1 : Form
     {
+        //----- Licence Management Start------//
+
         private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MySQL;
-        private readonly ProductEnum ActiveProduct = ProductEnum.MySQL_Laravel_API;
+        private readonly ProductEnum ActiveProduct = ProductEnum.MySql_PHPAPI;
         private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MySQL.ToString();
         private readonly bool IsAdminPanel = false;
-        private readonly bool IsMultiTenant = false;
+        private readonly bool IsMultiTenant = true;
+
+        //----- Licence Management End------//
         Validator v { get; set; } = null!;
         #region VariableDeclaration
         List<LicenceProductModel> LicenceProductList { get; set; } = null!;
@@ -172,6 +177,10 @@ namespace nkv.Automator
                 case ProductEnum.MySQL_Laravel_API_React:
                 case ProductEnum.MySQL_Laravel_API:
                     AuthSelectionControl.HideDefaultValueControl();
+                    break;
+                case ProductEnum.MySQL_NodeJSAPI_React_Windows:
+                case ProductEnum.MySQL_NodeJSAPI_Windows:
+                    
                     break;
             }
 
@@ -456,6 +465,56 @@ namespace nkv.Automator
                         }
                         MessageBox.Show("Task Completed! Please check the generated project folder.");
                     }
+                    else
+                    {
+                        MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
+                    }
+                    break;
+                case ProductEnum.MySQL_NodeJSAPI_React_Windows:
+                case ProductEnum.MySQL_NodeJSAPI_Windows:
+                    var mySQLDbNode = new MySQLDBHelper(hostMysqlTextBox.Text.Trim(), portMysqlTextbox.Text.Trim(), usernameMysqlTextBox.Text.Trim(), passwordMysqlTextBox.Text.Trim(), dbNameMysqlTextBox.Text.Trim());
+                    if (mySQLDbNode.Connect())
+                    {
+                        MySQL_NodeJSAPI nodejsAPI = new MySQL_NodeJSAPI(config, multiTenantCheckBoxMysql.Checked, "//");
+                        nodejsAPI.MessageEvent += MessageEvent;
+                        nodejsAPI.CompletedEvent += CompletedEvent;
+                        var reactInput = nodejsAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, mySQLDbNode);
+                        if (ActiveProduct == ProductEnum.MySQL_NodeJSAPI_React_Windows && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        {
+                            appendSuccess("----- Generating React App -----");
+                            ReactTs_LaravelMySQL reactLaravel = new ReactTs_LaravelMySQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
+                            reactLaravel.MessageEvent += MessageEvent;
+                            reactLaravel.CompletedEvent += CompletedEvent;
+                            reactLaravel.CreateReactAPP(reactInput);
+                        }
+                        MessageBox.Show("Task Completed! Please check the generated project folder.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
+                    }
+                    break;
+                case ProductEnum.MySql_PHPAPI:
+                case ProductEnum.MySQl_PHP_React_Windows:
+                case ProductEnum.MySQl_PHP_React_MacOS:
+                    var mySQLDbPHP = new MySQLDBHelper(hostMysqlTextBox.Text.Trim(), portMysqlTextbox.Text.Trim(), usernameMysqlTextBox.Text.Trim(), passwordMysqlTextBox.Text.Trim(), dbNameMysqlTextBox.Text.Trim());
+                    if (mySQLDbPHP.Connect())
+                    {
+                        MySQL_PHPAPI phpAPI = new MySQL_PHPAPI(config, multiTenantCheckBoxPgSQL.Checked, "//");
+                        phpAPI.MessageEvent += MessageEvent;
+                        phpAPI.CompletedEvent += CompletedEvent;
+                        var reactInput = phpAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, mySQLDbPHP);
+                        if (ActiveProduct == ProductEnum.PGSQL_PHPAPI_React_Windows && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        {
+                            appendSuccess("----- Generating React App -----");
+                            ReactTS_PHPPGSQL reactPGSqlTs = new ReactTS_PHPPGSQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
+                            reactPGSqlTs.MessageEvent += MessageEvent;
+                            reactPGSqlTs.CompletedEvent += CompletedEvent;
+                            reactPGSqlTs.CreateReactAPP(reactInput);
+                        }
+                        MessageBox.Show("Task Completed! Please check the generated project folder.");
+                    }
+                    
                     else
                     {
                         MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");

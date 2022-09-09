@@ -1,0 +1,13 @@
+﻿const express = require('express');
+const router = express.Router();
+const checkAuth = require('../middleware/jwtVerify');
+const tokenController = require('../controllers/token');
+const uploadController = require('../controllers/upload');
+
+{tableRouteImport}
+
+router.post('/token', tokenController.authLogin);
+router.post('/upload', checkAuth, uploadController.uploadFile);
+
+{tableRouteUse}
+module.exports = router;

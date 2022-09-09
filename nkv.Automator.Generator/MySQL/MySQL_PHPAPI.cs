@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace nkv.Automator.MySQL
 {
-    internal class MySQL_PHPAPI
+    public class MySQL_PHPAPI
     {
         List<PostmanModel> postmanJson = new List<PostmanModel>();
         TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
@@ -19,7 +19,7 @@ namespace nkv.Automator.MySQL
         public List<Exception> ExceptionList { get; set; }
         public List<string> SelectedTable { get; set; } = null!;
         public NKVConfiguration ConfigApp { get; set; } = null!;
-        public PGSQLDBHelper pgSQLDB { get; set; } = null!;
+        public MySQLDBHelper mysqlSQLDB { get; set; } = null!;
         public Action<NKVMessage> MessageEvent { get; set; } = null!;
         public Action<NKVMessage> CompletedEvent { get; set; } = null!;
         public bool IsMultiTenant { get; set; }
@@ -28,7 +28,7 @@ namespace nkv.Automator.MySQL
             IsMultiTenant = isMultiTenant;
             ConfigApp = config;
             ExceptionList = new List<Exception>();
-            TemplateFolder = "MySQLPHPAPITemplate";
+            TemplateFolder = "MySQLPHPRESTAPITemplate";
             TemplateFolderSeparator = "\\";
             DestinationFolderSeparator = destinationFolderSeparator;
         }
@@ -47,17 +47,21 @@ namespace nkv.Automator.MySQL
                 while (Directory.Exists(newName));
             }
             Directory.CreateDirectory(newName);
-            Directory.CreateDirectory(newName + "//config//");
-            Directory.CreateDirectory(newName + "//objects//");
-            Directory.CreateDirectory(newName + "//token//");
-            Directory.CreateDirectory(newName + "//jwt//");
-            Directory.CreateDirectory(newName + "//POSTMAN_IMPORT_FILE//");
-            Directory.CreateDirectory(newName + "//files//");
-            Directory.CreateDirectory(newName + "//files//upload//");
-            Directory.CreateDirectory(newName + "//notification//");
+            string apiFolder = newName + "//API";
+            DestinationFolder = apiFolder;
+            Directory.CreateDirectory(apiFolder + "//API//");
+            Directory.CreateDirectory(apiFolder + "//config//");
+            Directory.CreateDirectory(apiFolder + "//objects//");
+            Directory.CreateDirectory(apiFolder + "//token//");
+            Directory.CreateDirectory(apiFolder + "//jwt//");
+            Directory.CreateDirectory(apiFolder + "//POSTMAN_IMPORT_FILE//");
+            Directory.CreateDirectory(apiFolder + "//files//");
+            Directory.CreateDirectory(apiFolder + "//files//upload//");
+            Directory.CreateDirectory(apiFolder + "//notification//");
+            Directory.CreateDirectory(apiFolder + "//notification//PHPMailer");
             return newName;
         }
-        public string CreateTemplatePath(string filePathString)
+        private string CreateTemplatePath(string filePathString)
         {
             string path = TemplateFolder;
             foreach (var p in filePathString.Split(","))
@@ -67,7 +71,7 @@ namespace nkv.Automator.MySQL
             }
             return path;
         }
-        public string CreateDestinationPath(string filePathString)
+        private string CreateDestinationPath(string filePathString)
         {
             string path = DestinationFolder;
             foreach (var p in filePathString.Split(","))
@@ -81,17 +85,24 @@ namespace nkv.Automator.MySQL
             }
             return path;
         }
-        public bool Automator(string projectName, List<string> selectedTable, PGSQLDBHelper pgSql)
+        public ReactJSInput<FinalDataPHP> Automator(string projectName, List<string> selectedTable, MySQLDBHelper dbMySql)
         {
-            pgSQLDB = pgSql;
+
+            mysqlSQLDB = dbMySql;
             SelectedTable = selectedTable;
             ProjectName = projectName;
-            DestinationFolder = CreateDirectory();
+            string projectFolder = CreateDirectory();
+            ReactJSInput<FinalDataPHP> reactInput = new ReactJSInput<FinalDataPHP>()
+            {
+                DestinationFolder = projectFolder,
+                FinalDataDic = new Dictionary<string, FinalDataPHP>(),
+                PostmanJson = new List<PostmanModel>()
+            };
             MessageEvent?.Invoke(new NKVMessage("Project Folder Created : " + DestinationFolder));
             CopyExistingFile();
             CreateDBFile();
             MessageEvent?.Invoke(new NKVMessage("Database Config File Created"));
-
+            Dictionary<string, FinalDataPHP> FinalDataDic = new Dictionary<string, FinalDataPHP>();
             string primaryKeyAuth = "";
             foreach (string t in selectedTable)
             {
@@ -106,8 +117,12 @@ namespace nkv.Automator.MySQL
                         table = table.Replace("View - ", "");
                     }
                     Directory.CreateDirectory(CreateDestinationPath(table));
-                    var columnList = pgSQLDB.GetColumns(table);
-                    var finalData = pgSQLDB.BuildQuery(table);
+                    var columnList = mysqlSQLDB.GetTableColumns(table);
+                    var finalData = mysqlSQLDB.BuildQueryPHP(table);
+                    if (!isView)
+                    {
+                        reactInput.FinalDataDic[table] = finalData;
+                    }
                     string modelName = ti.ToTitleCase(table);
                     if (table == ConfigApp.AuthTableConfig.AuthTableName)
                     {
@@ -135,10 +150,12 @@ namespace nkv.Automator.MySQL
             CreateAuthTokenFile(primaryKeyAuth);
             MessageEvent?.Invoke(new NKVMessage("Login created for jwt token"));
             CreatePostmanFile(postmanJson);
+            reactInput.PostmanJson = postmanJson;
             MessageEvent?.Invoke(new NKVMessage("Postman import collection file generated"));
             CreateIndexFile();
+            MessageEvent?.Invoke(new NKVMessage("----- PHP API Generated -----"));
             CompletedEvent?.Invoke(new NKVMessage("Thanks for using GetAutomator.com! Please check the generated code at : " + DestinationFolder));
-            return true;
+            return reactInput;
         }
         private string initDBStr()
         {
@@ -252,18 +269,14 @@ namespace nkv.Automator.MySQL
         public void CreateDBFile()
         {
             string path = CreateDestinationPath("config,database.php");
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
             string contents = File.ReadAllText(CreateTemplatePath("config,database.txt"));
             using (var txtFile = File.AppendText(path))
             {
-                contents = contents.Replace("{hostName}", pgSQLDB.Host);
-                contents = contents.Replace("{userName}", pgSQLDB.Username);
-                contents = contents.Replace("{password}", pgSQLDB.Password);
-                contents = contents.Replace("{dbName}", pgSQLDB.DBName);
-                contents = contents.Replace("{port}", pgSQLDB.Port.ToString());
+                contents = contents.Replace("{hostName}", mysqlSQLDB.Host);
+                contents = contents.Replace("{userName}", mysqlSQLDB.Username);
+                contents = contents.Replace("{password}", mysqlSQLDB.Password);
+                contents = contents.Replace("{dbName}", mysqlSQLDB.DBName);
+                contents = contents.Replace("{port}", mysqlSQLDB.Port.ToString());
                 txtFile.WriteLine(contents);
             }
         }
@@ -361,7 +374,7 @@ namespace nkv.Automator.MySQL
             loginValidationFunction = loginValidationFunction + "$row = $stmt->fetch(PDO::FETCH_ASSOC);" + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "$num = $stmt->rowCount();" + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "if($num>0){" + Environment.NewLine;
-            loginValidationFunction = loginValidationFunction + "{selectOneSetValueToObject}" + Environment.NewLine;
+            loginValidationFunction = loginValidationFunction + "{selectLoginSetValues}" + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "}" + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "else{" + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "$this->{primaryKey}=null;" + Environment.NewLine;
@@ -386,7 +399,7 @@ namespace nkv.Automator.MySQL
                 loginFunction = loginFunction.Replace("{primaryKey}", finalData.PrimaryKeyString);
                 loginFunction = loginFunction.Replace("{objectProperties}", finalData.ObjectProperties);
                 loginFunction = loginFunction.Replace("{moduleName}", finalData.TableModuleName);
-                loginFunction = loginFunction.Replace("{selectOneSetValueToObject}", finalData.SelectOneSetValues);
+                loginFunction = loginFunction.Replace("{selectLoginSetValues}", finalData.SelectLoginSetValues);
             }
             string templateObjectFile = "objects.txt";
             if (isView)
@@ -666,7 +679,7 @@ namespace nkv.Automator.MySQL
             {
                 if (c.FKDetails != null)
                 {
-                    var refColumns = pgSQLDB.GetColumns(c.FKDetails.REFERENCED_TABLE_NAME);
+                    var refColumns = mysqlSQLDB.GetTableColumns(c.FKDetails.REFERENCED_TABLE_NAME);
                     if (refColumns != null && refColumns.Count > 0)
                     {
                         var refColumnName = refColumns.Where(i => i.IsNull == "NO" && i.Key != "PRI" && i.TypeName.Contains("varchar")).FirstOrDefault();
