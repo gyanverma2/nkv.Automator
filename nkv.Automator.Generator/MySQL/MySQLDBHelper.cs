@@ -800,6 +800,7 @@ namespace nkv.Automator.MySQL
             data.InsertParam = "";
             data.DeleteQuery = deleteQuery;
             data.RequiredFieldString_CreateUpdate = importantFieldForCreate;
+            data.InsertUpdateQueryData = insertUpdateQueryData;
             return data;
         }
         public FinalDataPHP BuildQueryPHP(string tableName)
@@ -988,13 +989,14 @@ namespace nkv.Automator.MySQL
             #endregion
 
             #region InsertUpdate
-            var insertUpdateData = GetInsertUpdateQueryData(tableName);
+            var insertUpdateQueryData = GetInsertUpdateQueryData(tableName);
+            data.InsertUpdateQueryData = insertUpdateQueryData;
             string insertQuery = "INSERT INTO \".$this->table_name.\" SET ";
             string updateQuery = "UPDATE \".$this->table_name.\" SET {fieldName} WHERE {primaryKey} = :{primaryKey}";
             string sanitize = string.Empty;
             string bindvalues = string.Empty;
             string fieldName = string.Empty;
-            foreach (var c in insertUpdateData.InsertColumnList)
+            foreach (var c in insertUpdateQueryData.InsertColumnList)
             {
                 sanitize = sanitize + Environment.NewLine + "$this->" + c.FieldName + "=htmlspecialchars(strip_tags($this->" + c.FieldName + "));";
                 bindvalues = bindvalues + Environment.NewLine + "$stmt->bindParam(\":" + c.FieldName + "\", $this->" + c.FieldName + ");";

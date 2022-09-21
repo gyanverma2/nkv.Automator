@@ -18,6 +18,7 @@ namespace nkv.Automator
         MySQL_NodeJS_Angular= 35104961,
         MySQL_DotNetCore_API= 26655809,
         MSSQL_DotnetCore_API= 28571454,
-        MSSQL_Blazor_Admin= 34901472
+        MSSQL_Blazor_Admin= 34901472,
+        MSSQL_PHP_API = 0000001
     }
 }

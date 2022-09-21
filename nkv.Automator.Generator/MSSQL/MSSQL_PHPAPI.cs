@@ -1,12 +1,14 @@
 ﻿using nkv.Automator.Generator.Models;
 using nkv.Automator.Models;
+using nkv.Automator.MSSQL;
+using nkv.Automator.MySQL;
 using nkv.Automator.Postman;
 using nkv.Automator.Utility;
 using System.Globalization;
 
-namespace nkv.Automator.MySQL
+namespace nkv.Automator.Generator.MSSQL
 {
-    public class MySQL_PHPAPI
+    public class MSSQL_PHPAPI
     {
         List<PostmanModel> postmanJson = new List<PostmanModel>();
         TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
@@ -18,16 +20,16 @@ namespace nkv.Automator.MySQL
         public List<Exception> ExceptionList { get; set; }
         public List<string> SelectedTable { get; set; } = null!;
         public NKVConfiguration ConfigApp { get; set; } = null!;
-        public MySQLDBHelper mysqlSQLDB { get; set; } = null!;
+        public MSSQLDBHelper mssqlSQLDB { get; set; } = null!;
         public Action<NKVMessage> MessageEvent { get; set; } = null!;
         public Action<NKVMessage> CompletedEvent { get; set; } = null!;
         public bool IsMultiTenant { get; set; }
-        public MySQL_PHPAPI(NKVConfiguration config, bool isMultiTenant, string destinationFolderSeparator)
+        public MSSQL_PHPAPI(NKVConfiguration config, bool isMultiTenant, string destinationFolderSeparator)
         {
             IsMultiTenant = isMultiTenant;
             ConfigApp = config;
             ExceptionList = new List<Exception>();
-            TemplateFolder = "MySQLPHPRESTAPITemplate";
+            TemplateFolder = "MSSQLPHPRESTAPITemplate";
             TemplateFolderSeparator = "\\";
             DestinationFolderSeparator = destinationFolderSeparator;
         }
@@ -83,10 +85,10 @@ namespace nkv.Automator.MySQL
             }
             return path;
         }
-        public ReactJSInput<FinalDataPHP> Automator(string projectName, List<string> selectedTable, MySQLDBHelper dbMySql)
+        public ReactJSInput<FinalDataPHP> Automator(string projectName, List<string> selectedTable, MSSQLDBHelper dbMSSql)
         {
 
-            mysqlSQLDB = dbMySql;
+            mssqlSQLDB = dbMSSql;
             SelectedTable = selectedTable;
             ProjectName = projectName;
             string projectFolder = CreateDirectory();
@@ -115,8 +117,8 @@ namespace nkv.Automator.MySQL
                         table = table.Replace("View - ", "");
                     }
                     Directory.CreateDirectory(CreateDestinationPath(table));
-                    var columnList = mysqlSQLDB.GetTableColumns(table);
-                    var finalData = mysqlSQLDB.BuildQueryPHP(table);
+                    var columnList = mssqlSQLDB.GetTableColumns(table);
+                    var finalData = mssqlSQLDB.BuildQueryPHP(table);
                     if (!isView)
                     {
                         reactInput.FinalDataDic[table] = finalData;
@@ -270,11 +272,11 @@ namespace nkv.Automator.MySQL
             string contents = File.ReadAllText(CreateTemplatePath("config,database.txt"));
             using (var txtFile = File.AppendText(path))
             {
-                contents = contents.Replace("{hostName}", mysqlSQLDB.Host);
-                contents = contents.Replace("{userName}", mysqlSQLDB.Username);
-                contents = contents.Replace("{password}", mysqlSQLDB.Password);
-                contents = contents.Replace("{dbName}", mysqlSQLDB.DBName);
-                contents = contents.Replace("{port}", mysqlSQLDB.Port.ToString());
+                contents = contents.Replace("{hostName}", mssqlSQLDB.Host);
+                contents = contents.Replace("{userName}", mssqlSQLDB.Username);
+                contents = contents.Replace("{password}", mssqlSQLDB.Password);
+                contents = contents.Replace("{dbName}", mssqlSQLDB.DBName);
+                contents = contents.Replace("{port}", mssqlSQLDB.Port.ToString());
                 txtFile.WriteLine(contents);
             }
         }
@@ -677,7 +679,7 @@ namespace nkv.Automator.MySQL
             {
                 if (c.FKDetails != null)
                 {
-                    var refColumns = mysqlSQLDB.GetTableColumns(c.FKDetails.REFERENCED_TABLE_NAME);
+                    var refColumns = mssqlSQLDB.GetTableColumns(c.FKDetails.REFERENCED_TABLE_NAME);
                     if (refColumns != null && refColumns.Count > 0)
                     {
                         var refColumnName = refColumns.Where(i => i.IsNull == "NO" && i.Key != "PRI" && i.TypeName.Contains("varchar")).FirstOrDefault();
@@ -880,7 +882,7 @@ namespace nkv.Automator.MySQL
                 tableName,
                 "update.php"
             };
-            update.Body = bodyJson.Distinct().ToList();
+            
 
             //UpdatePatch
             PostmanModel updatePatch = new PostmanModel();
@@ -892,12 +894,15 @@ namespace nkv.Automator.MySQL
                 tableName,
                 "update_patch.php"
             };
+            update.Body = bodyJson.Distinct().ToList();
             updatePatch.Body = bodyJson.Distinct().ToList();
             foreach (var x in insertUpdateData.PrimaryKeys)
             {
                 update.Body.Add(new PRequestBody(x.FieldName, x.DataType, true, ""));
                 updatePatch.Body.Add(new PRequestBody(x.FieldName, x.DataType, true, ""));
             }
+            update.Body = bodyJson.Distinct().ToList();
+            updatePatch.Body = bodyJson.Distinct().ToList();
             //SearchByColumn
             PostmanModel searchByCol = new PostmanModel();
             searchByCol.TableName = tableName;

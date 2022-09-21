@@ -11,6 +11,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using nkv.Automator.Generator.MySQL;
+using nkv.Automator.MSSQL;
+using nkv.Automator.Generator.MSSQL;
 
 namespace nkv.Automator
 {
@@ -18,9 +20,9 @@ namespace nkv.Automator
     {
         //----- Licence Management Start------//
 
-        private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MySQL;
-        private readonly ProductEnum ActiveProduct = ProductEnum.MySql_PHPAPI;
-        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MySQL.ToString();
+        private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MSSQL;
+        private readonly ProductEnum ActiveProduct = ProductEnum.MSSQL_PHP_API;
+        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MSSQL.ToString();
         private readonly bool IsAdminPanel = false;
         private readonly bool IsMultiTenant = true;
 
@@ -44,7 +46,7 @@ namespace nkv.Automator
             labelVersion.Text = "Version: " + SoftwareVersion;
         }
         #region FormInit
-        private void CreateEmailFile()
+        private void CreateEmailFile(string email)
         {
             string path = "licence.temp";
             if (File.Exists(path))
@@ -53,7 +55,7 @@ namespace nkv.Automator
             }
             using (var txtFile = File.AppendText(path))
             {
-                string contents = emailTextbox.Text;
+                string contents = email;
                 txtFile.WriteLine(contents);
             }
         }
@@ -70,6 +72,7 @@ namespace nkv.Automator
         }
         private void Form1_Shown(object sender, System.EventArgs e)
         {
+            ReadEmailFromFile();
             backgroundWorker1.RunWorkerAsync();
         }
         private void HideTabPages()
@@ -118,19 +121,23 @@ namespace nkv.Automator
                     break;
             }
         }
-        private void InitControls()
+        private void InitControls(string emailNew="")
         {
             v = new Validator();
             Invoke(new Action(() =>
             {
                 v.MessageEvent += MessageBoxEvent;
                 InitUserControls(ActiveDataType, IsAdminPanel, IsMultiTenant);
-                var email = ReadEmailFromFile();
                 systemTextbox.Text = Helper.GetSystemName();
-                if (!string.IsNullOrEmpty(email))
-                    DisplayLicenceGrid(Helper.GetSystemName());
+                if (!string.IsNullOrEmpty(emailNew))
+                {
+                    CreateEmailFile(emailTextbox.Text.Trim());
+                }
                 DisplayProductList();
                 sourceComboBox.SelectedIndex = 0;
+                if (!string.IsNullOrEmpty(emailNew))
+                    DisplayLicenceGrid(Helper.GetSystemName());
+               
             }));
         }
         private void InitUserControls(DataTypeEnum dataType, bool? isAdminPanel = null, bool? isMultiTenant = null)
@@ -150,6 +157,11 @@ namespace nkv.Automator
                     projectControlName = "projectNameControlMySql";
                     break;
                 case DataTypeEnum.MSSQL:
+                    logTextAreaName = "logTextAreaControlMSSQL";
+                    authControlName = "authSelectionControlMSSQL";
+                    tableSelectionName = "tableSelectionControlMSSQL";
+                    adminPermissionName = "adminPanelPermissionControlPanelMSSQL";
+                    projectControlName = "projectNameControlMSSQL";
                     break;
                 case DataTypeEnum.PostgreSQL:
                     logTextAreaName = "logTextAreaControlpgSQL";
@@ -212,7 +224,7 @@ namespace nkv.Automator
         #endregion
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            InitControls();
+            InitControls(emailTextbox.Text.Trim());
         }
         #region UIHelper
         private void MessageBoxEvent(NKVMessage obj)
@@ -272,7 +284,6 @@ namespace nkv.Automator
             var listProduct = LicenceProductList.Where(x => int.Parse(x.ProductNumber) == (int)ActiveProduct).ToList();
             if (listProduct.Any())
             {
-
                 return listProduct;
             }
             return new List<LicenceProductModel>() { new LicenceProductModel() { ProductID = 0, ProductNumber = "0", ProductName = "No Product Licence Found!" } };
@@ -299,14 +310,14 @@ namespace nkv.Automator
                 }
                 else
                 {
-                    appendError("No Licence Found, Please register. Or Licence Management at : https://getautomator.com/app");
+                    MessageBox.Show("No Licence Found, Please register. Or Licence Management at : https://getautomator.com/app");
                 }
 
 
             }
             catch (Exception ex)
             {
-                appendError(ex.Message);
+                MessageBox.Show(ex.Message);
             }
 
         }
@@ -355,7 +366,7 @@ namespace nkv.Automator
                 };
                 if (v.Register(registerData))
                 {
-                    CreateEmailFile();
+                    CreateEmailFile(emailTextbox.Text.Trim());
                     appendSuccess("Thanks for registration!");
                     DisplayLicenceGrid(Helper.GetSystemName());
                     registerBtn.Enabled = true;
@@ -381,16 +392,17 @@ namespace nkv.Automator
                 MessageBox.Show("Please select at least one table to generate.");
                 return;
             }
-            if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID, TableSelectionControl.SelectedTableList.Count.ToString()))
-            {
-                backgroundWorker2.RunWorkerAsync();
-            }
-            else
-            {
-                appendError("Please vaidate your licence or register new to generate! Licence Management at https://getautomator.com/app");
-                MessageBox.Show("Invalid Licence!");
-                return;
-            }
+            backgroundWorker2.RunWorkerAsync();
+            //if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID, TableSelectionControl.SelectedTableList.Count.ToString()))
+            //{
+                
+            //}
+            //else
+            //{
+            //    appendError("Please vaidate your licence or register new to generate! Licence Management at https://getautomator.com/app");
+            //    MessageBox.Show("Invalid Licence!");
+            //    return;
+            //}
         }
         private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
@@ -429,6 +441,11 @@ namespace nkv.Automator
                         mysqlGenerateButton.Text = "Generate";
                         break;
                     case DataTypeEnum.MSSQL:
+                        mssqlGenerateButton.Enabled = false;
+                        mssqlGenerateButton.Text = "Processing...";
+                        ProcessMSSQL(config);
+                        mssqlGenerateButton.Enabled = true;
+                        mssqlGenerateButton.Text = "Generate";
                         break;
                     case DataTypeEnum.PostgreSQL:
                         pgSQLGenerateButton.Text = "Processing...";
@@ -504,7 +521,7 @@ namespace nkv.Automator
                         phpAPI.MessageEvent += MessageEvent;
                         phpAPI.CompletedEvent += CompletedEvent;
                         var reactInput = phpAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, mySQLDbPHP);
-                        if (ActiveProduct == ProductEnum.PGSQL_PHPAPI_React_Windows && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        if (ActiveProduct == ProductEnum.MySQl_PHP_React_Windows && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
                         {
                             appendSuccess("----- Generating React App -----");
                             ReactTS_PHPPGSQL reactPGSqlTs = new ReactTS_PHPPGSQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
@@ -515,6 +532,30 @@ namespace nkv.Automator
                         MessageBox.Show("Task Completed! Please check the generated project folder.");
                     }
                     
+                    else
+                    {
+                        MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
+                    }
+                    break;
+            }
+
+        }
+        private void ProcessMSSQL(NKVConfiguration config)
+        {
+            switch (ActiveProduct)
+            {
+               
+                case ProductEnum.MSSQL_PHP_API:
+                    var msSQLDbPHP = new MSSQLDBHelper(hostTextboxMSSQL.Text.Trim(), portTextBoxMSSQL.Text.Trim(), usernameTextBoxMSSQL.Text.Trim(), passwordTextBoxMSSQL.Text.Trim(), dbNameTextBoxMSSQL.Text.Trim(), winAuthCheckBoxMSSQL.Checked);
+                    if (msSQLDbPHP.Connect())
+                    {
+                        MSSQL_PHPAPI phpAPI = new MSSQL_PHPAPI(config, false, "//");
+                        phpAPI.MessageEvent += MessageEvent;
+                        phpAPI.CompletedEvent += CompletedEvent;
+                        var reactInput = phpAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, msSQLDbPHP);
+                        MessageBox.Show("Task Completed! Please check the generated project folder.");
+                    }
+
                     else
                     {
                         MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
@@ -597,6 +638,26 @@ namespace nkv.Automator
                 appendError(ex.Message, true);
             }
         }
+        private void testConnectionBtnMSSQL_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SelectedDataType = DataTypeEnum.MSSQL;
+                var mssqlDb = new MSSQLDBHelper(hostTextboxMSSQL.Text.Trim(), portTextBoxMSSQL.Text.Trim(), usernameTextBoxMSSQL.Text.Trim(), passwordTextBoxMSSQL.Text.Trim(), dbNameTextBoxMSSQL.Text.Trim(),winAuthCheckBoxMSSQL.Checked);
+                if (mssqlDb.Connect())
+                {
+                    MessageBox.Show("Connection Successful!");
+                    appendSuccess("Connection Successful!", true);
+                    var tableList = mssqlDb.GetListOfTable();
+                    AuthSelectionControl.SetTableList(tableList);
+                    TableSelectionControl.SetTableList(tableList);
+                };
+            }
+            catch (Exception ex)
+            {
+                appendError(ex.Message, true);
+            }
+        }
         #endregion
         #region OpenURL
         private void youtubeButton_Click(object sender, EventArgs e)
@@ -660,8 +721,9 @@ namespace nkv.Automator
             }
         }
 
+
         #endregion
 
-
+       
     }
 }
