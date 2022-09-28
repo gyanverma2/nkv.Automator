@@ -392,17 +392,25 @@ namespace nkv.Automator
                 MessageBox.Show("Please select at least one table to generate.");
                 return;
             }
-            backgroundWorker2.RunWorkerAsync();
-            //if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID, TableSelectionControl.SelectedTableList.Count.ToString()))
-            //{
-                
-            //}
-            //else
-            //{
-            //    appendError("Please vaidate your licence or register new to generate! Licence Management at https://getautomator.com/app");
-            //    MessageBox.Show("Invalid Licence!");
-            //    return;
-            //}
+
+            if (ValidateLicenceOnGenerate())
+            {
+                backgroundWorker2.RunWorkerAsync();
+            }
+            else
+            {
+                appendError("Please vaidate your licence or register new to generate! Licence Management at https://getautomator.com/app");
+                MessageBox.Show("Invalid Licence!");
+                return;
+            }
+        }
+        private bool ValidateLicenceOnGenerate()
+        {
+            if (ActiveLicence != null && v.ClickCounter(ActiveLicence.PublicID, TableSelectionControl.SelectedTableList.Count.ToString()))
+            {
+                return true;
+            }
+            return false;
         }
         private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
