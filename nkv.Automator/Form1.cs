@@ -209,7 +209,12 @@ namespace nkv.Automator
                     }
                     break;
                 case DataTypeEnum.MSSQL:
-                    break;
+                    var msSQLDbPHP = new MSSQLDBHelper(hostTextboxMSSQL.Text.Trim(), portTextBoxMSSQL.Text.Trim(), usernameTextBoxMSSQL.Text.Trim(), passwordTextBoxMSSQL.Text.Trim(), dbNameTextBoxMSSQL.Text.Trim(), winAuthCheckBoxMSSQL.Checked);
+                    if (msSQLDbPHP.Connect() && AuthSelectionControl != null)
+                    {
+                        AuthSelectionControl.SetUserAndPasswordColumn(msSQLDbPHP.GetTableColumns(AuthSelectionControl.AuthTableName));
+                    }
+                        break;
                 case DataTypeEnum.PostgreSQL:
                     var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
                     if (pgSQLDb.Connect() && AuthSelectionControl != null)
@@ -666,6 +671,12 @@ namespace nkv.Automator
                 appendError(ex.Message, true);
             }
         }
+
+        private void winAuthCheckBoxMSSQL_CheckedChanged(object sender, EventArgs e)
+        {
+            usernameTextBoxMSSQL.Enabled = !winAuthCheckBoxMSSQL.Checked;
+            passwordTextBoxMSSQL.Enabled = !winAuthCheckBoxMSSQL.Checked;
+        }
         #endregion
         #region OpenURL
         private void youtubeButton_Click(object sender, EventArgs e)
@@ -730,8 +741,8 @@ namespace nkv.Automator
         }
 
 
+
         #endregion
 
-       
     }
 }

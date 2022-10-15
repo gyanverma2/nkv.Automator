@@ -6,3 +6,12 @@
     --mud-appbar-height: 58px !important;
 }
 
+.play-button .mud-icon-button-label .mud-icon-size-large {
+    font-size: 5.25rem;
+}
+.home-dialog .mud-dialog-content {
+    padding: 0px !important;
+}
+.mud-icon-big-font {
+    font-size: 4.25rem;
+}

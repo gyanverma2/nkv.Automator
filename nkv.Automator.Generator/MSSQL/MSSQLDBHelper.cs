@@ -180,7 +180,7 @@ namespace nkv.Automator.MSSQL
             List<string> tableList = new List<string>();
             if (IsConnect())
             {
-                    using (SqlCommand command = new SqlCommand("SELECT * FROM " + DBName + ".INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'", dbCon))
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM " + DBName + ".INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' Order by TABLE_NAME", dbCon))
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())

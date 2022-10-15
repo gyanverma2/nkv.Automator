@@ -1,0 +1,61 @@
+﻿<MudGrid >
+    <MudItem xs="12" md="5" lg="5">
+        <MudPaper Class="px-4 py-8" Elevation="0" Style="background-color:transparent">
+            <MudText Typo="Typo.h3" Color="Color.Tertiary">Premium &lt;Code&gt; Automation Tool</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Tertiary">
+                Are you investing too much of your time on writing the same code? Are you still waiting for backend APIs for your mobile app ideas?
+                Let's make your development easier with  Automator by reducing cost & time. It helps you to generate REST API with JWT token authentication & Admin Panel. The tool also generate the API documentation like Postman / Swagger.
+              
+            </MudText>
+             <MudText Typo="Typo.h3" Color="Color.Tertiary">
+                 <MudStack Row="true">
+                 <MudTooltip Text=".Net C# REST API Generator">
+                    <MudIcon Icon="devicons devicons-netmagazine" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                 <MudTooltip Text="PHP REST API & Admin Panel Generator">
+                        <MudIcon Icon="devicons devicons-php" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                 <MudTooltip Text="NodeJS REST API & Admin Panel Generator">
+                        <MudIcon Icon="devicons devicons-nodejs" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                 <MudTooltip Text="Angular Admin Panel Generator">
+                        <MudIcon Icon="devicons devicons-angular" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                  <MudTooltip Text="ReactJS Admin Panel Generator">
+                        <MudIcon Icon="devicons devicons-react" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                  <MudTooltip Text="MySQL REST API & Admin Panel Generator">
+                        <MudIcon Icon="devicons devicons-mysql" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                  <MudTooltip Text="PostgreSql REST API & Admin Panel Generator">
+                        <MudIcon Icon="devicons devicons-postgresql" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                  <MudTooltip Text="MSSQL Server REST API & Admin Panel Generator">
+                        <MudIcon Icon="devicons devicons-msql_server" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                 <MudTooltip Text="Mongodb REST API & Admin Panel Generator">
+                        <MudIcon Icon="devicons devicons-mongodb" Color="Color.Tertiary" Size="Size.Large" />
+                </MudTooltip>
+                </MudStack>
+            </MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="7" lg="7">
+        <MudPaper Style="position: relative;background-color:transparent" Elevation="0">
+            <MudImage ObjectFit="ObjectFit.Cover" Fluid="true" Src="images/restapi_generator.png" Alt="GetAutomator - REST API Generator" Elevation="25" Class="rounded-lg">
+        </MudImage>
+        <MudOverlay Visible="true" DarkBackground="false" Absolute="true">
+                <MudIconButton Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle" Class="play-button" aria-label="play" OnClick="@OpenDialog"></MudIconButton>
+               
+        </MudOverlay>
+        </MudPaper>
+        
+        <MudDialog @bind-IsVisible="IsShowVideo" Options="dialogOptions" Class="home-dialog">
+            <DialogContent>
+                <MudPaper Height="415px" Elevation="0">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/qF5-FzqAW9g?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </MudPaper>
+            </DialogContent>
+        </MudDialog>
+    </MudItem>
+</MudGrid>

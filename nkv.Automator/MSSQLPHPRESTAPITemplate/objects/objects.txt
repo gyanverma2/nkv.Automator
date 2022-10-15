@@ -13,7 +13,7 @@ class {moduleName}{
 
 	function total_record_count() {
 		$query = "select count(1) as total from ". $this->table_name ."";
-		$stmt = $this->conn->prepare($query);
+		$stmt = $this->conn->prepare($query,array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 		$stmt->execute();
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		return $row['total'];

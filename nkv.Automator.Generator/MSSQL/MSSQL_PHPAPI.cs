@@ -368,7 +368,7 @@ namespace nkv.Automator.Generator.MSSQL
         {
             string loginValidationFunction = "function login_validation(){ " + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "{selectLoginQuery}" + Environment.NewLine;
-            loginValidationFunction = loginValidationFunction + "$stmt = $this->conn->prepare($query);" + Environment.NewLine;
+            loginValidationFunction = loginValidationFunction + "$stmt = $this->conn->prepare($query,array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));" + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "{selectLoginBindValue}" + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "$stmt->execute();" + Environment.NewLine;
             loginValidationFunction = loginValidationFunction + "$row = $stmt->fetch(PDO::FETCH_ASSOC);" + Environment.NewLine;
@@ -399,7 +399,7 @@ namespace nkv.Automator.Generator.MSSQL
                 loginFunction = loginFunction.Replace("{primaryKey}", finalData.PrimaryKeyString);
                 loginFunction = loginFunction.Replace("{objectProperties}", finalData.ObjectProperties);
                 loginFunction = loginFunction.Replace("{moduleName}", finalData.TableModuleName);
-                loginFunction = loginFunction.Replace("{selectLoginSetValues}", finalData.SelectLoginSetValues);
+                loginFunction = loginFunction.Replace("{selectLoginSetValues}", finalData.SelectOneSetValues);
             }
             string templateObjectFile = "objects.txt";
             if (isView)

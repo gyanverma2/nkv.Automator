@@ -397,7 +397,7 @@ namespace nkv.Automator.MySQL
                 loginFunction = loginFunction.Replace("{primaryKey}", finalData.PrimaryKeyString);
                 loginFunction = loginFunction.Replace("{objectProperties}", finalData.ObjectProperties);
                 loginFunction = loginFunction.Replace("{moduleName}", finalData.TableModuleName);
-                loginFunction = loginFunction.Replace("{selectLoginSetValues}", finalData.SelectLoginSetValues);
+                loginFunction = loginFunction.Replace("{selectLoginSetValues}", finalData.SelectOneSetValues);
             }
             string templateObjectFile = "objects.txt";
             if (isView)

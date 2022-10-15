@@ -5,31 +5,36 @@
 <MudLayout>
     <AppBarLandingPage></AppBarLandingPage>
     <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-2 pt-2">
-            @Body
-        </MudContainer>
+        @Body
+
     </MudMainContent>
 </MudLayout>
 @code {
     MudTheme GetAutomatorTheme = new MudTheme()
-        { 
+        {
             Palette = new Palette()
             {
-                Primary = Colors.DeepPurple.Darken1,
-                Dark = Colors.DeepPurple.Darken4,
-                Secondary = Colors.DeepPurple.Lighten1,
+                Primary = "#AD24A2",
+                Dark = Colors.Grey.Darken4,
+                Background = Colors.Shades.White,
+                Secondary = Colors.DeepPurple.Default,
                 AppbarBackground = Colors.DeepPurple.Darken2,
+                TextSecondary = Colors.Shades.White,
+                TextPrimary = Colors.Grey.Darken3,
+                Tertiary = Colors.Shades.White,
             },
             PaletteDark = new Palette()
             {
-                Primary = Colors.DeepPurple.Darken4
+                Primary = Colors.Grey.Darken4,
+                Secondary = Colors.DeepPurple.Default
             },
+           
             Typography = new Typography()
             {
                 Default = new Default()
                 {
                     FontFamily = new[] { "Dosis", "Roboto", "Helvetica", "Arial", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" }
-                }
+                },
             }
         };
 }

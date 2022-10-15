@@ -795,6 +795,7 @@
             this.winAuthCheckBoxMSSQL.TabIndex = 9;
             this.winAuthCheckBoxMSSQL.Text = "Windows Authentication";
             this.winAuthCheckBoxMSSQL.UseVisualStyleBackColor = true;
+            this.winAuthCheckBoxMSSQL.CheckedChanged += new System.EventHandler(this.winAuthCheckBoxMSSQL_CheckedChanged);
             // 
             // label27
             // 
