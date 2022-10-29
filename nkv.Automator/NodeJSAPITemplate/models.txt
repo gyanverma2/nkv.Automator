@@ -1,5 +1,5 @@
 ﻿const {getRows, insertRow, updateRow, deleteRow} = require('../database/query');
-var SqlString = require('sqlstring');
+const SqlString = require('sqlstring');
 
 exports.find = async (offset, pageSize) => {
     {selectAllQuery}

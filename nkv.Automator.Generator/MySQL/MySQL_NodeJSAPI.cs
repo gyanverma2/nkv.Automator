@@ -119,6 +119,7 @@ namespace nkv.Automator.Generator.MySQL
             CreateUtilFiles();
             CreatePackageJsonFiles();
             CreatePostmanJsonFile();
+            reactInput.PostmanJson = postmanJson;
             MessageEvent?.Invoke(new NKVMessage("Postman json file created"));
             MessageEvent?.Invoke(new NKVMessage("----- NodeJS API Generated -----"));
             CompletedEvent?.Invoke(new NKVMessage("Thanks for using GetAutomator.com! Please check the generated code at : " + DestinationFolder));

@@ -1,0 +1,12 @@
+﻿import { combineReducers } from "redux";
+
+import template from "redux/slices/template";
+import authToken from "redux/slices/auth";
+
+{reducerImport}
+
+const rootReducer = combineReducers({ template,authToken,{reducerList} });
+
+export type RootState = ReturnType<typeof rootReducer>;
+
+export default rootReducer;

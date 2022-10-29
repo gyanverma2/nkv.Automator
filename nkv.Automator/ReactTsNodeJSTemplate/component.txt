@@ -1,0 +1,53 @@
+﻿import React, { useState } from "react";
+import { Alert, Button } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { set{modelName}List, set{modelName}Message } from "redux/actions";
+import { RootState } from "redux/reducers";
+import { useAppDispatch } from "redux/store";
+import { get{modelName} } from "services/{tableName}Service";
+import Layout from "template";
+import { Constant } from "template/Constant";
+import { {modelName}Form } from "./form";
+import { {modelName}Table } from "./table";
+
+export const {modelName}: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const rData = useSelector((state: RootState) => state.{tableName});
+  const [row, setRow] = useState(undefined);
+  const [action, setAction] = useState('');
+  const getData = (page, pageSize, searchKey) => {
+    get{modelName}(page, pageSize, searchKey).then((response) => {
+      if (response && response.records) {
+        dispatch(set{modelName}List({ pageNo: page, pageSize: pageSize, list: response.records, totalCount: response.totalCount, searchKey: searchKey }));
+      } else {
+		dispatch(set{modelName}Message("No Record Found"));
+      }
+    })
+  }
+
+  const handleRowEdit = (rowData) => {
+    setRow(rowData);
+    dispatch(set{modelName}Message(''));
+    setAction('edit');
+  }
+  return (
+    <Layout>
+      <div className="container-fluid">
+        <div className="d-sm-flex align-items-center justify-content-between mb-4">
+          <h1 className="h3 mb-0 text-gray-800">{modelName}</h1>
+        </div>
+        <div className="d-flex flex-column min-vh-100">
+          {rData.message ?
+            <Alert variant={Constant.defaultAlertVarient} className="alert-dismissible fade">{rData.message}
+              <Button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={() => dispatch(set{modelName}Message(''))}>
+                <span aria-hidden="true">&times;</span>
+              </Button>
+            </Alert> : null}
+          {action ? <{modelName}Form hideShowForm={setAction} action={action} row={row} getData={getData} /> :
+            <{modelName}Table handleRowEdit={handleRowEdit} hideShowForm={setAction} getData={getData} />}
+        </div>
+
+      </div>
+    </Layout >
+  );
+};

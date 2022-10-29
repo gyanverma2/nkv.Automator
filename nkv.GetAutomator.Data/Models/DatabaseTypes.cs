@@ -12,8 +12,10 @@ namespace nkv.GetAutomator.Data.Models
     public class DatabaseTypes
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DatabaseTypeId { get; set; }
         public string DatabaseTypeName { get; set; }
         public bool DatabaseTypeIsActive { get; set; }
+        public string DataTypeIconClass { get; set; }
     }
 }

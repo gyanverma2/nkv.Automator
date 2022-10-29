@@ -1,0 +1,37 @@
+﻿@{
+    @if (UserCart != null)
+    {
+        <MudDialog IsVisible="@IsVisible" Options="@dialogOptions" IsVisibleChanged="OnVisibleChange" OnBackdropClick="HideCheckoutDialog">
+            <TitleContent>
+                <MudText Typo="Typo.h6">
+                    <MudIcon Icon="@Icons.Material.Filled.ShoppingCartCheckout" Class="mr-3" /> Checkout
+                </MudText>
+            </TitleContent>
+            <DialogContent>
+                <MudTable Items="@UserCart.CartDetails" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+
+                    <RowTemplate>
+                        <MudTd DataLabel="Name">@context.Product.ProductTitle</MudTd>
+                        <MudTd DataLabel="Price">$ @context.Price.Price</MudTd>
+                        <MudTd DataLabel="Quantity"><MudNumericField @bind-Value="@context.Quantity" Label="Standard" Variant="Variant.Text" Min="1" Max="10" /></MudTd>
+                        <MudTd DataLabel="Remove"> <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="remove" OnClick="@(()=>RemoveRowClickAsync(context))"></MudIconButton></MudTd>
+                    </RowTemplate>
+                    <FooterContent>
+                        <MudTd colspan="2"></MudTd>
+                        <MudTd>Total</MudTd>
+                        <MudTd>$ @UserCart.CartDetails.AsEnumerable().Sum(o=>o.Price.Price * o.Quantity)</MudTd>
+                    </FooterContent>
+                </MudTable>
+               
+            </DialogContent>
+            <DialogActions>
+                <MudButton OnClick="@HideCheckoutDialog">Close</MudButton>
+                <MudButton Color="Color.Primary" OnClick="@ConfirmCheckout">Checkout</MudButton>
+            </DialogActions>
+
+        </MudDialog>
+        <MudOverlay Visible="@isLoading" DarkBackground="false" Absolute="true">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true" />
+        </MudOverlay>
+    }
+}

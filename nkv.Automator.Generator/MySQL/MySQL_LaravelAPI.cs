@@ -63,8 +63,11 @@ namespace nkv.Automator.MySQL
             ProjectName = projectName;
             string projectFolder = CreateDirectory();
             MessageEvent?.Invoke(new NKVMessage("Project Folder Created : " + projectFolder));
-            MessageEvent?.Invoke(new NKVMessage("Generating Larvel Project"));
+            MessageEvent?.Invoke(new NKVMessage("Generating Larvel Project..."));
+            MessageEvent?.Invoke(new NKVMessage("Copying Project File, Might take some time..."));
             CopyProject();
+            MessageEvent?.Invoke(new NKVMessage("Finished Copying Project File"));
+            MessageEvent?.Invoke(new NKVMessage("Analyzing Database..."));
             ReactJSInput<FinalQueryData> reactInput = new ReactJSInput<FinalQueryData>()
             {
                 DestinationFolder = projectFolder,

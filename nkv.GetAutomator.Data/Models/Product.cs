@@ -12,6 +12,7 @@ namespace nkv.GetAutomator.Data.Models
     public class Product
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProductID { get; set; }
         public string ProductTitle { get; set; }
         public string ProductDescription { get; set; }

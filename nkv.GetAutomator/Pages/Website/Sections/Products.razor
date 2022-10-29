@@ -1,32 +1,39 @@
-﻿<MudContainer MaxWidth="MaxWidth.Large" Class="pb-2">
-    <MudPaper Elevation="0" Class="d-flex justify-center flex-grow-1">
-        <MudStack>
-            <MudChipSet Filter="true" Mandatory="false">
-                @{
-                    if (DatabaseTypes != null)
-                    {
-                        foreach (var d in DatabaseTypes)
+﻿<div Style="background-color:#AD24A2" class="pt-2">
+    <MudContainer MaxWidth="MaxWidth.Large" Class="pb-2">
+        <MudPaper Elevation="0" Class="d-flex justify-center flex-grow-1" Style="background-color:transparent">
+            <MudStack>
+                <MudText Typo="Typo.h4" Class="align-self-center" Color="Color.Tertiary">
+                    Products
+                </MudText>
+                <MudChipSet Filter="true" Mandatory="false">
+                    @{
+                        if (DatabaseTypes != null)
                         {
-                            <MudChip OnClick="@(()=>SelectDatabase(d))" Text="@d.DatabaseTypeName" Color="Color.Primary">@d.DatabaseTypeName</MudChip>
+                            <MudChip Icon="@Icons.Filled.AllInclusive" OnClick="@AllDatabaseSelect" Text="All" Color="Color.Warning" SelectedColor="Color.Info">All</MudChip>
+                            foreach (var d in DatabaseTypes)
+                            {
+                                <MudChip Icon="@d.DataTypeIconClass" OnClick="@(()=>SelectDatabase(d))" Text="@d.DatabaseTypeName" Color="Color.Warning" SelectedColor="Color.Info">@d.DatabaseTypeName</MudChip>
+                            }
                         }
                     }
-                }
-            </MudChipSet>
-            <MudChipSet Filter="true" Mandatory="false">
-                @{
-                    if (Categories != null)
-                    {
-                        foreach (var c in Categories)
+                </MudChipSet>
+                <MudChipSet Filter="true" Mandatory="false">
+                    @{
+                        if (Categories != null)
                         {
-                            <MudChip  OnClick="@(()=>SelectCategory(c))"  Text="@c.CategoryName" Color="Color.Primary">@c.CategoryName</MudChip>
+                            <MudChip Icon="@Icons.Filled.AllInclusive" OnClick="@AllCategorySelect" Text="All" Color="Color.Warning" SelectedColor="Color.Info">All</MudChip>
+                            foreach (var c in Categories)
+                            {
+                                <MudChip Icon="@c.CategoryImage" OnClick="@(()=>SelectCategory(c))" Text="@c.CategoryName" Color="Color.Warning" SelectedColor="Color.Info">@c.CategoryName</MudChip>
+                            }
                         }
                     }
-                }
-            </MudChipSet>
-        </MudStack>
-    </MudPaper>
-</MudContainer>
-<MudContainer MaxWidth="MaxWidth.Large" Class="pt-4 pb-2">
+                </MudChipSet>
+            </MudStack>
+        </MudPaper>
+    </MudContainer>
+</div>
+<MudContainer MaxWidth="MaxWidth.Large" Class="pt-4 pb-2" Style="min-height:300px">
     <MudGrid>
         @{
             if (ProductList != null && ProductList.Any())
@@ -36,32 +43,68 @@
                     <MudItem xs="12" sm="12" md="4" lg="4">
                         <MudCard>
 
-                            <MudCarousel Class="mud-width-full" Style="height:200px;" ShowArrows="@(d.ProductImages.Split(',').Count()>1)" ShowBullets="@(d.ProductImages.Split(',').Count()>1)" EnableSwipeGesture="true" AutoCycle="true" TData="object">
-                                @foreach (var img in d.ProductImages.Split(',')){                            
-                                    <MudCarouselItem Transition="Transition.Slide" Color="@Color.Primary">
-                                        <MudCardMedia Image="@("https://getautomator.com/admin5/app/media_automator/upload/"+@img)" Height="200" />
-                                </MudCarouselItem>
-                                }
-                            </MudCarousel>
+                            @if (d.ProductImages.Split(',').Count() > 1)
+                            {
+                                <MudCarousel Class="mud-width-full" Style="height:200px;" ShowArrows="@(d.ProductImages.Split(',').Count()>1)" ShowBullets="@(d.ProductImages.Split(',').Count()>1)" EnableSwipeGesture="true" AutoCycle="true" TData="object">
+                                    @foreach (var img in d.ProductImages.Split(','))
+                                    {
+                                        <MudCarouselItem Transition="Transition.Slide" Color="@Color.Primary">
+                                            <MudCardMedia Image="@("https://getautomator.com/admin5/app/media_automator/upload/"+@img)" Height="200" />
+                                        </MudCarouselItem>
+                                    }
+                                </MudCarousel>
+                            }
+                            else
+                            {
+                                <MudCardMedia Image="@("https://getautomator.com/admin5/app/media_automator/upload/"+@d.ProductImages)" Height="200" />
+                            }
                             <MudCardContent>
                                 <MudText Typo="Typo.h6">@d.ProductTitle</MudText>
                                 <MudText Typo="Typo.body2">@d.ProductSubTitle</MudText>
-                               
+
                             </MudCardContent>
                             <MudCardActions>
-                                <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
-                                <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+
+                                @if (ProductPriceDic.ContainsKey(d.ProductID))
+                                {
+                                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.AddShoppingCart" Class="mr-2" Color="Color.Primary" OnClick="@(()=>OnBuyNowClick(d))">$@ProductPriceDic[d.ProductID].Price Buy Now</MudButton>
+                                }
+                                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.OndemandVideo" Class="mr-2" Color="Color.Warning" Style="" OnClick="@(()=>OpenProductDemoDialog(d))">Demo</MudButton>
+
+                                <MudMenu Label="Details" Variant="Variant.Filled" Color="Color.Dark" EndIcon="@Icons.Filled.KeyboardArrowDown">
+                                    <MudMenuItem OnClick="@(()=>OpenCodeCanyonAsync(d))">
+                                        Buy From CodeCanyon
+                                    </MudMenuItem>
+                                    <MudMenuItem>Share</MudMenuItem>
+                                    <MudMenuItem>Learn More</MudMenuItem>
+                                </MudMenu>
+
+
                             </MudCardActions>
                         </MudCard>
                     </MudItem>
                 }
-            }else{
-                 <MudItem xs="12" sm="12" md="12" lg="12">
+            }
+            else
+            {
+                <MudItem xs="12" sm="12" md="12" lg="12">
                     <MudPaper Elevation="0" Class="d-flex align-center justify-center mud-width-full">
-                 No Product Found
-                 </MudPaper>
-                 </MudItem>
+                        No Product Found
+                    </MudPaper>
+                </MudItem>
             }
         }
     </MudGrid>
 </MudContainer>
+
+<MudDialog @bind-IsVisible="IsShowVideo" Options="dialogOptions" Class="home-dialog">
+    <DialogContent>
+        <MudPaper Height="415px" Elevation="0">
+            @if (SelectedProduct != null)
+            {
+                <iframe width="560" height="315" src="@SelectedProduct.ProductVideo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+            }
+        </MudPaper>
+    </DialogContent>
+</MudDialog>

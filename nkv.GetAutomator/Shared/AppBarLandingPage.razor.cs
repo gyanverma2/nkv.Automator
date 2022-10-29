@@ -7,6 +7,10 @@ namespace nkv.GetAutomator.Shared
 {
     public partial class AppBarLandingPage : ComponentBase
     {
-
+        [CascadingParameter] StateProvider StateProvider { get; set; }
+        private void ShowCheckoutDialog()
+        {
+            StateProvider.DisplayCheckOut();
+        }
     }
 }

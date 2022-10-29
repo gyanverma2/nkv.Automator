@@ -1,0 +1,11 @@
+﻿@if (hasLoaded)
+{
+    <CascadingValue Value="@this">
+        @ChildContent
+        <CartCheckout IsVisible="@IsCheckoutVisible"></CartCheckout>
+    </CascadingValue>
+}
+else
+{
+    <p>Loading...</p>
+}

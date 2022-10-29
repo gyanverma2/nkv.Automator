@@ -20,11 +20,11 @@ namespace nkv.Automator
     {
         //----- Licence Management Start------//
 
-        private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MSSQL;
-        private readonly ProductEnum ActiveProduct = ProductEnum.MSSQL_PHP_API;
-        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MSSQL.ToString();
+        private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MySQL;
+        private readonly ProductEnum ActiveProduct = ProductEnum.MySQL_Laravel_API_React;
+        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MySQL.ToString();
         private readonly bool IsAdminPanel = false;
-        private readonly bool IsMultiTenant = true;
+        private readonly bool IsMultiTenant = false;
 
         //----- Licence Management End------//
         Validator v { get; set; } = null!;
@@ -512,10 +512,10 @@ namespace nkv.Automator
                         if (ActiveProduct == ProductEnum.MySQL_NodeJSAPI_React_Windows && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
                         {
                             appendSuccess("----- Generating React App -----");
-                            ReactTs_LaravelMySQL reactLaravel = new ReactTs_LaravelMySQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
-                            reactLaravel.MessageEvent += MessageEvent;
-                            reactLaravel.CompletedEvent += CompletedEvent;
-                            reactLaravel.CreateReactAPP(reactInput);
+                            ReactTs_NodeJSMySQL reactNodeJS = new ReactTs_NodeJSMySQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
+                            reactNodeJS.MessageEvent += MessageEvent;
+                            reactNodeJS.CompletedEvent += CompletedEvent;
+                            reactNodeJS.CreateReactAPP(reactInput);
                         }
                         MessageBox.Show("Task Completed! Please check the generated project folder.");
                     }
