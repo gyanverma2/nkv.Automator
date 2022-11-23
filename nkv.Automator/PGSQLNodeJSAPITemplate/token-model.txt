@@ -1,0 +1,5 @@
+﻿const {getRows} = require('../database/query');
+
+exports.authLogin = async (username,password) => {
+    {userCheck}
+}

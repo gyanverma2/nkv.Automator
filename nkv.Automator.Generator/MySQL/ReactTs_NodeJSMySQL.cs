@@ -195,8 +195,14 @@ namespace nkv.Automator.Generator.MySQL
                         }
                         else if (f.functionType == "update")
                         {
-                            template = template.Replace("${" + tableData.PrimaryKeys[0].FieldName + "}", "${data." + tableData.PrimaryKeys[0].FieldName + "}");
-                            paramList = "data";
+                            string primaryKeyUpdateParam = "";
+                            foreach (var pKey in tableData.PrimaryKeys)
+                            {
+                                template = template.Replace("${" + pKey.FieldName + "}", "${" + pKey.FieldName + "}");
+                                primaryKeyUpdateParam = primaryKeyUpdateParam + "" + pKey.FieldName + ",";
+                            }
+                            //primaryKeyUpdateParam = primaryKeyUpdateParam.Trim(',');
+                            paramList = primaryKeyUpdateParam + "data";
                             paramData = ",data";
                         }
                         else if (f.functionType == "search")
@@ -437,18 +443,17 @@ namespace nkv.Automator.Generator.MySQL
                         }
                     }
                     string primaryKeyList = "";
-                    //foreach (var p in tableData.PrimaryKeys)
-                    //{
-                    //    if (!string.IsNullOrEmpty(primaryKeyList))
-                    //    {
-                    //        primaryKeyList = primaryKeyList + ",rowData." + p.FieldName;
-                    //    }
-                    //    else
-                    //    {
-                    //        primaryKeyList = "rowData." + p.FieldName;
-                    //    }
-                    //}
-                    primaryKeyList = "rowData." + tableData.PrimaryKeys[0].FieldName;
+                    foreach (var p in tableData.PrimaryKeys)
+                    {
+                        if (!string.IsNullOrEmpty(primaryKeyList))
+                        {
+                            primaryKeyList = primaryKeyList + ",rowData." + p.FieldName;
+                        }
+                        else
+                        {
+                            primaryKeyList = "rowData." + p.FieldName;
+                        }
+                    }
                     primaryKeyList = primaryKeyList.Trim(',');
                     using (var txtFile = File.AppendText(path))
                     {
@@ -609,10 +614,24 @@ namespace nkv.Automator.Generator.MySQL
                         importFKService = importFKService + "import { get" + mName + " } from \"services/" + tName + "Service\";" + Environment.NewLine;
                         fkReduxInit = fkReduxInit + "const " + tName + "Data = useSelector((state: RootState) => state." + tName + ");" + Environment.NewLine;
                     }
+                    string useEffectImport = "";
                     if (!string.IsNullOrEmpty(useEffectForFK))
                     {
                         useEffectForFK = "useEffect(() => {" + Environment.NewLine + useEffectForFK + "})";
+                        useEffectImport = useEffectImport + "import React, { useEffect } from \"react\";" + Environment.NewLine;
+                        useEffectImport = useEffectImport + "import { useSelector } from \"react-redux\";" + Environment.NewLine;
+                        useEffectImport = useEffectImport + "import { RootState } from \"redux/reducers\";" + Environment.NewLine;
                     }
+                    else
+                    {
+                        useEffectImport = useEffectImport + "import React from \"react\";" + Environment.NewLine;
+                    }
+                    string primaryKeyUpdateParam = "";
+                    foreach (var p in FinalDataDic[tableName].PrimaryKeys)
+                    {
+                        primaryKeyUpdateParam = primaryKeyUpdateParam + "row." + p.FieldName + ",";
+                    }
+                    primaryKeyUpdateParam = primaryKeyUpdateParam.Trim(',');
 
                     string contents = File.ReadAllText(CreateTemplatePath("form.txt"));
                     using (var txtFile = File.AppendText(path))
@@ -624,9 +643,9 @@ namespace nkv.Automator.Generator.MySQL
                         contents = contents.Replace("{yupValidationList}", yupValidationList);
                         contents = contents.Replace("{importFKRedux}", importFKRedux);
                         contents = contents.Replace("{fkReduxInit}", fkReduxInit);
-
+                        contents = contents.Replace("{useEffectImport}", useEffectImport);
                         contents = contents.Replace("{importFKService}", importFKService);
-
+                        contents = contents.Replace("{primaryKeyUpdateParam}", primaryKeyUpdateParam);
                         contents = contents.Replace("{formGroupWithValidation}", formGroupWithValidation);
                         txtFile.WriteLine(contents);
                     }

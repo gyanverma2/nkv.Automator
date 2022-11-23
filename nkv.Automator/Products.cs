@@ -3,6 +3,8 @@ namespace nkv.Automator
 {
     public enum ProductEnum
     {
+        PGSQL_NodeJS = 1000000,
+        PGSQL_NodeJS_ReactJS = 2000000,
         PGSQL_PHPAPI = 27899174,
         PGSQL_PHPAPI_React_Windows = 0000000,
         MySql_PHPAPI = 25152744,

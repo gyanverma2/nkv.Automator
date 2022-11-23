@@ -13,6 +13,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using nkv.Automator.Generator.MySQL;
 using nkv.Automator.MSSQL;
 using nkv.Automator.Generator.MSSQL;
+using nkv.Automator.Generator.PGSQL;
+using nkv.Automator.Properties;
+using System.Reflection;
 
 namespace nkv.Automator
 {
@@ -20,12 +23,12 @@ namespace nkv.Automator
     {
         //----- Licence Management Start------//
 
-        private readonly DataTypeEnum ActiveDataType = DataTypeEnum.MySQL;
-        private readonly ProductEnum ActiveProduct = ProductEnum.MySQL_Laravel_API_React;
-        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.MySQL.ToString();
+        private readonly DataTypeEnum ActiveDataType = DataTypeEnum.PostgreSQL;
+        private readonly ProductEnum ActiveProduct = ProductEnum.PGSQL_NodeJS_ReactJS;
+        private readonly string SoftwareVersion = "3.0.0 - " + DataTypeEnum.PostgreSQL.ToString();
         private readonly bool IsAdminPanel = false;
         private readonly bool IsMultiTenant = false;
-
+        private bool IsView = false;
         //----- Licence Management End------//
         Validator v { get; set; } = null!;
         #region VariableDeclaration
@@ -42,10 +45,28 @@ namespace nkv.Automator
         public Form1()
         {
             InitializeComponent();
+            IsView = IsGenerateForView();
             HideTabPages();
+            SoftwareVersion = GetSoftwareVersion();
             labelVersion.Text = "Version: " + SoftwareVersion;
         }
         #region FormInit
+        private string GetSoftwareVersion()
+        {
+            DateTime buildDate = new DateTime(2022, 11, 22);
+            return $"3.{buildDate.Day}.{buildDate.Month}.{buildDate.Year} - " + DataTypeEnum.PostgreSQL.ToString();
+        }
+        private bool IsGenerateForView()
+        {
+            switch (ActiveProduct)
+            {
+                case ProductEnum.PGSQL_PHPAPI:
+                case ProductEnum.PGSQL_PHPAPI_React_Windows:
+                    return true;
+            }
+
+            return false;
+        }
         private void CreateEmailFile(string email)
         {
             string path = "licence.temp";
@@ -183,7 +204,10 @@ namespace nkv.Automator
             if (isAdminPanel != null)
                 Controls.Find(adminPermissionName, true).First().Visible = (bool)isAdminPanel;
             if (isMultiTenant != null)
+            {
                 multiTenantCheckBoxMysql.Visible = (bool)isMultiTenant;
+                multiTenantCheckBoxPgSQL.Visible = (bool)isMultiTenant;
+            }
             switch (ActiveProduct)
             {
                 case ProductEnum.MySQL_Laravel_API_React:
@@ -415,7 +439,8 @@ namespace nkv.Automator
             {
                 return true;
             }
-            return false;
+            return true;
+            //return false;
         }
         private void backgroundWorker2_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
@@ -502,6 +527,7 @@ namespace nkv.Automator
                     break;
                 case ProductEnum.MySQL_NodeJSAPI_React_Windows:
                 case ProductEnum.MySQL_NodeJSAPI_Windows:
+                case ProductEnum.MySQL_NodeJS_Angular:
                     var mySQLDbNode = new MySQLDBHelper(hostMysqlTextBox.Text.Trim(), portMysqlTextbox.Text.Trim(), usernameMysqlTextBox.Text.Trim(), passwordMysqlTextBox.Text.Trim(), dbNameMysqlTextBox.Text.Trim());
                     if (mySQLDbNode.Connect())
                     {
@@ -516,6 +542,13 @@ namespace nkv.Automator
                             reactNodeJS.MessageEvent += MessageEvent;
                             reactNodeJS.CompletedEvent += CompletedEvent;
                             reactNodeJS.CreateReactAPP(reactInput);
+                        }else if (ActiveProduct == ProductEnum.MySQL_NodeJS_Angular && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        {
+                            appendSuccess("----- Generating Angular App -----");
+                            AngularTs_NodeJSMySQL reactNodeJS = new AngularTs_NodeJSMySQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
+                            reactNodeJS.MessageEvent += MessageEvent;
+                            reactNodeJS.CompletedEvent += CompletedEvent;
+                            reactNodeJS.CreateAngularApp(reactInput);
                         }
                         MessageBox.Show("Task Completed! Please check the generated project folder.");
                     }
@@ -579,11 +612,12 @@ namespace nkv.Automator
         }
         private void ProcessPGSQL(NKVConfiguration config)
         {
+            var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
+            if(pgSQLDb==null) { MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate"); return; }
             switch (ActiveProduct)
             {
                 case ProductEnum.PGSQL_PHPAPI:
                 case ProductEnum.PGSQL_PHPAPI_React_Windows:
-                    var pgSQLDb = new PGSQLDBHelper(hostPGTextBox.Text.Trim(), schemaNamePGTextBox.Text.Trim(), portPGTextbox.Text.Trim(), usernamePGTextBox.Text.Trim(), passwordPGTextBox.Text.Trim(), dbNamePGTextBox.Text.Trim());
                     if (pgSQLDb.Connect())
                     {
                         PGSQL_PHPAPI pgPHPAPI = new PGSQL_PHPAPI(config, multiTenantCheckBoxPgSQL.Checked, "//");
@@ -594,6 +628,29 @@ namespace nkv.Automator
                         {
                             appendSuccess("----- Generating React App -----");
                             ReactTS_PHPPGSQL reactPGSqlTs = new ReactTS_PHPPGSQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
+                            reactPGSqlTs.MessageEvent += MessageEvent;
+                            reactPGSqlTs.CompletedEvent += CompletedEvent;
+                            reactPGSqlTs.CreateReactAPP(reactInput);
+                        }
+                        MessageBox.Show("Task Completed! Please check the generated project folder.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Database Connection Failed, Please click on Test Connection to validate");
+                    }
+                    break;
+                case ProductEnum.PGSQL_NodeJS:
+                case ProductEnum.PGSQL_NodeJS_ReactJS:
+                    if (pgSQLDb.Connect())
+                    {
+                        PGSQL_NodeJSAPI pgNodeAPI = new PGSQL_NodeJSAPI(config, multiTenantCheckBoxPgSQL.Checked, "//");
+                        pgNodeAPI.MessageEvent += MessageEvent;
+                        pgNodeAPI.CompletedEvent += CompletedEvent;
+                        var reactInput = pgNodeAPI.Automator(ProjectNameControl.ProjectName, TableSelectionControl.SelectedTableList, pgSQLDb);
+                        if (ActiveProduct == ProductEnum.PGSQL_NodeJS_ReactJS && reactInput != null && !string.IsNullOrEmpty(reactInput.DestinationFolder))
+                        {
+                            appendSuccess("----- Generating React App -----");
+                            ReactTS_NodeJSPGSQL reactPGSqlTs = new ReactTS_NodeJSPGSQL(ProjectNameControl.ProjectName, reactInput.DestinationFolder, "//");
                             reactPGSqlTs.MessageEvent += MessageEvent;
                             reactPGSqlTs.CompletedEvent += CompletedEvent;
                             reactPGSqlTs.CreateReactAPP(reactInput);
@@ -621,7 +678,7 @@ namespace nkv.Automator
                 {
                     MessageBox.Show("Connection Successful!");
                     appendSuccess("Connection Successful!", true);
-                    var tableList = pgSQLDb.GetTables();
+                    var tableList = pgSQLDb.GetTables(IsView);
                     AuthSelectionControl.SetTableList(tableList);
                     TableSelectionControl.SetTableList(tableList);
                 };

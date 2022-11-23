@@ -1,0 +1,5 @@
+﻿module.exports = {
+    {columnList}
+};
+
+// allowed types - number, string, boolean, object, undefined

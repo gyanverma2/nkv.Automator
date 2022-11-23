@@ -1,0 +1,37 @@
+<div class="mt20" fxLayout="row" fxLayoutAlign="space-between stretch" fxLayout.lt-md="column" fxLayoutGap="20px">
+    <mat-card fxFlex>
+
+        <mat-card-title>File Upload</mat-card-title>
+
+        <mat-card-content class="">
+
+            <form>
+                <mat-card [ngClass]="'success'" *ngIf="fileName" class="mt-10">
+                    File Uploaded : {{fileName}}
+                </mat-card>
+                <mat-card *ngIf="loading" class="mt-10">
+                    uploading...
+                </mat-card> 
+                <input type="file" #fileInput aria-disabled="loading" id="uploadFile" (change)="uploadFileEvt($event)" name="uploadFile" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+                text/plain, application/pdf" />
+            </form>
+        </mat-card-content>
+    </mat-card>
+    <mat-card fxFlex>
+
+        <mat-card-title>Upload Image</mat-card-title>
+        <mat-card-content class="">
+            <form>
+                <mat-card [ngClass]="'success'" *ngIf="fileImageName" class="mt-10">
+                    File Uploaded : {{fileImageName}}
+                </mat-card> 
+                <mat-card *ngIf="loading" class="mt-10">
+                    uploading...
+                </mat-card> 
+                <input aria-disabled="loading"  #fileInput type="file" id="uploadImage" (change)="uploadImageEvt($event)" name="uploadImage"
+                    accept="image/*" />
+            </form>
+
+        </mat-card-content>
+    </mat-card>
+</div>

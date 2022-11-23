@@ -1,0 +1,5 @@
+<div fxLayout="row wrap" fxLayout.xs="column" fxLayoutAlign="space-between stretch">
+  <div class="mb10" fxFlex="24" fxFlex.lt-lg="49" *ngFor="let item of tableList">
+    <app-stat [bgClass]="'success'" [icon]="'view_list'" [path]="item.path" [label]="item.data.text"></app-stat>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+﻿import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { {tableListComponent} } from './list/{tableName}.component';
+import { {tableAddEditComponent} } from './manage/{tableName}-form.component';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: {tableListComponent}
+  },
+  {
+    path: 'add',
+    component: {tableAddEditComponent}
+  },
+  {
+    path: '{primaryKeyParam}',
+    component: {tableAddEditComponent}
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class {tableRoutingModuleName} { }

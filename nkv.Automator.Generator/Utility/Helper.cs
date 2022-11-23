@@ -607,7 +607,7 @@ namespace nkv.Automator.Utility
                 case "datetime":
                 case "date":
                 case "timestamp":
-                    return "Date";
+                    return "datetime";
                 case "time":
                     return "string";
                 case "int":

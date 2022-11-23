@@ -86,7 +86,7 @@ namespace nkv.Automator.PGSQL
             return schemaList;
         }
 
-        public List<string> GetTables()
+        public List<string> GetTables(bool isView)
         {
             List<string> tableList = new List<string>();
             using var con = new NpgsqlConnection(ConnectionString);
@@ -100,10 +100,13 @@ namespace nkv.Automator.PGSQL
             {
                 tableList.Add(rdr.GetString(0));
             }
-            var listOfView = GetListOfView();
-            foreach (var t in listOfView)
+            if (isView)
             {
-                tableList.Add("View - " + t);
+                var listOfView = GetListOfView();
+                foreach (var t in listOfView)
+                {
+                    tableList.Add("View - " + t);
+                }
             }
             return tableList;
         }
@@ -146,7 +149,7 @@ namespace nkv.Automator.PGSQL
                     Key = "",
                     IsNull = rdr.IsDBNull(2) ? "NO" : rdr.GetString(2).ToUpper(),
                 };
-                if (c.DefaultValue != null && c.DefaultValue.Contains("now"))
+                if ((c.DefaultValue != null && c.DefaultValue.Contains("now")) || c.TypeName == "timestamp")
                 {
                     c.DefaultValue = "CURRENT_TIMESTAMP";
                 }
@@ -596,6 +599,265 @@ namespace nkv.Automator.PGSQL
             data.SelectLoginBindValue = selectLoginBindValue;
             #endregion     
 
+            return data;
+        }
+        public FinalQueryData BuildQueryNodeJS(string tableName)
+        {
+            FinalQueryData data = new FinalQueryData();
+            var columnList = GetColumns(tableName);
+            var selectQueryData = GetSelectQueryData(tableName, columnList);
+            var insertUpdateQueryData = GetInsertUpdateQueryData(tableName, columnList);
+
+            var selectOneQuery = "SELECT {fkColumns} t.* FROM " + tableName + " t {joinQuery} WHERE {selectPrimaryKey} LIMIT 1 OFFSET 0";
+            var selectByFKQuery = "SELECT {fkColumns} t.* FROM " + tableName + " t {joinQuery} WHERE {selectFKKey} LIMIT $1 OFFSET $2";
+            var selectAllQuery = "SELECT {fkColumns} t.* FROM " + tableName + " t {joinQuery} LIMIT $1 OFFSET $2";
+            var searchByColumnQuery = "SELECT {fkColumns} t.* FROM " + tableName + " t {joinQuery}";
+            var searchQuery = "SELECT {fkColumns} t.* FROM " + tableName + " t {joinQuery} WHERE {searchCondition} LIMIT $1 OFFSET $2";
+            var searchRecordCountQuery = "SELECT count(*) TotalCount FROM " + tableName + " t {joinQuery} WHERE {searchCondition} ";
+            var selectAllRecordCountQuery = "SELECT count(*) TotalCount FROM " + tableName + " t {joinQuery} ";
+            var selectByFKCountQuery = "SELECT count(*) TotalCount FROM " + tableName + " t {joinQuery} WHERE {selectFKKey}";
+            var joinString = string.Empty;
+            var fkColumnsString = string.Empty;
+            var searchCondition = string.Empty;
+            var deleteQuery = "DELETE FROM " + tableName + " Where {deletePrimaryKey}";
+            string primaryKeyStringForController = "";
+            string createPropertyList = "";
+            string propertyList = "";
+            string importantFieldForCreate = "";
+
+            foreach (var c in selectQueryData.ColumnList)
+            {
+                if (c.DefaultValue == "CURRENT_TIMESTAMP")
+                {
+                    propertyList = propertyList + Environment.NewLine + "this." + c.Field + " = new Date();";
+                    createPropertyList = createPropertyList + Environment.NewLine + c.Field + ": new Date(),";
+                }
+                else if (c.Extra == "auto_increment")
+                {
+                    propertyList = propertyList + Environment.NewLine + "this." + c.Field + " = 0;";
+                    createPropertyList = createPropertyList + Environment.NewLine + "" + c.Field + ":0,";
+                }
+                else if (c.Extra != "auto_increment" && c.DefaultValue != "CURRENT_TIMESTAMP")
+                {
+                    propertyList = propertyList + Environment.NewLine + "this." + c.Field + " = " + tableName + "." + c.Field + ";";
+                    createPropertyList = createPropertyList + Environment.NewLine + c.Field + ":req.body." + c.Field + ",";
+
+                    if (c.IsNull == "NO")
+                    {
+                        if (string.IsNullOrEmpty(importantFieldForCreate))
+                        {
+                            importantFieldForCreate = importantFieldForCreate + "!createObj." + c.Field;
+                        }
+                        else
+                        {
+                            importantFieldForCreate = importantFieldForCreate + " || " + "!createObj." + c.Field;
+                        }
+                    }
+                }
+
+                if (c.Extra != "auto_increment" && c.DefaultValue != "CURRENT_TIMESTAMP")
+                {
+                    searchCondition = searchCondition + " OR LOWER(t." + c.Field + ") LIKE `+SqlString.escape('%'+key+'%')+`";
+                }
+
+            }
+            List<string> fkValidation = new List<string>();
+            foreach (var f in selectQueryData.FKColumnData)
+            {
+                fkColumnsString = fkColumnsString + " " + f.TableChar2 + "." + f.FieldName2 + " as " + f.FieldName1 + "_Value,";
+                propertyList = propertyList + Environment.NewLine + "this." + f.FieldName1 + "_Value = " + tableName + "." + f.FieldName1 + "_Value;";
+            }
+
+            foreach (var j in selectQueryData.JoinQueryData)
+            {
+                if (j.Column1Data != null && j.Column1Data.IsNull.ToUpper() == "NO")
+                {
+                    joinString = joinString + " join " + j.TableName2 + " " + j.TableChar2 + " on t." + j.FieldName1 + " = " + j.TableChar2 + "." + j.FieldName2 + " ";
+                }
+                else
+                {
+                    joinString = joinString + " left join " + j.TableName2 + " " + j.TableChar2 + " on t." + j.FieldName1 + " = " + j.TableChar2 + "." + j.FieldName2 + " ";
+                }
+            }
+            var selectPrimaryKey = "";
+            var deletePrimaryKey = "";
+            var primaryKeyString = "";
+            var primaryKeyCommaString = "";
+            var updateWereParam = "";
+            if (selectQueryData.PrimaryKeys != null && selectQueryData.PrimaryKeys.Count > 1)
+            {
+                var pCount = 1;
+                foreach (var p in selectQueryData.PrimaryKeys)
+                {
+                    if (string.IsNullOrEmpty(primaryKeyString))
+                    {
+                        primaryKeyString = p.FieldName + "= ${" + p.FieldName + "}";
+                        primaryKeyCommaString = p.FieldName;
+                        updateWereParam = p.FieldName + "=$${count++}";
+                    }
+                    else
+                    {
+                        primaryKeyString = primaryKeyString + " AND " + p.FieldName + "= ${" + p.FieldName + "}";
+                        primaryKeyCommaString = primaryKeyCommaString + "," + p.FieldName;
+                        updateWereParam = updateWereParam + " AND " + p.FieldName + "=$${count++}";
+                    }
+                    if (!string.IsNullOrEmpty(selectPrimaryKey))
+                    {
+                        selectPrimaryKey = selectPrimaryKey + " AND ";
+                    }
+                    if (!string.IsNullOrEmpty(deletePrimaryKey))
+                    {
+                        deletePrimaryKey = deletePrimaryKey + " AND ";
+                    }
+                    if (string.IsNullOrEmpty(primaryKeyStringForController))
+                    {
+                        primaryKeyStringForController = "req.params." + p.FieldName;
+                    }
+                    else
+                    {
+                        primaryKeyStringForController = primaryKeyStringForController + ",req.params." + p.FieldName;
+                    }
+                    selectPrimaryKey = selectPrimaryKey + "t." + p.FieldName + "=$"+ pCount;
+                    deletePrimaryKey = deletePrimaryKey + p.FieldName + "=$"+ pCount;
+                    pCount++;
+                }
+                selectPrimaryKey = selectPrimaryKey.Trim();
+                deletePrimaryKey = deletePrimaryKey.Trim();
+                primaryKeyString = primaryKeyString.Trim();
+                primaryKeyStringForController = primaryKeyStringForController.Trim();
+            }
+            else if (selectQueryData.PrimaryKeys != null && selectQueryData.PrimaryKeys.Count == 1)
+            {
+                string pKeyOne = selectQueryData.PrimaryKeys[0].FieldName;
+                selectPrimaryKey = "t." + pKeyOne + "=$1";
+                deletePrimaryKey = pKeyOne + "= $1 ";
+                primaryKeyString = pKeyOne + "= $1";
+                updateWereParam = pKeyOne + "=$${count}";
+                primaryKeyCommaString = pKeyOne;
+                primaryKeyStringForController = "req.params." + pKeyOne;
+            }
+            else
+            {
+                string pKeyOne = selectQueryData.ColumnList[0].Field;
+                selectPrimaryKey = "t." + pKeyOne + "= $1";
+                deletePrimaryKey = pKeyOne + "=$1";
+                primaryKeyString = pKeyOne + "=$1";
+                primaryKeyCommaString = pKeyOne;
+                updateWereParam = pKeyOne + "=$${count}";
+                primaryKeyStringForController = "req.params." + pKeyOne;
+            }
+            data.SelectByFKQuery = new List<ExtraQuery>();
+
+            foreach (var f in selectQueryData.FKColumnData)
+            {
+                var eQuery = new ExtraQuery();
+
+                var fkQuery = selectByFKQuery;
+                fkQuery = fkQuery.Replace("{selectFKKey}", "t." + f.LocalField + "= $1");
+                fkQuery = fkQuery.Replace("{tableName}", tableName);
+                fkQuery = fkQuery.Replace("{joinQuery}", joinString);
+                fkQuery = fkQuery.Replace("{fkColumns}", fkColumnsString);
+
+                var fkCountQuery = selectByFKCountQuery;
+                fkCountQuery = fkCountQuery.Replace("{selectFKKey}", "t." + f.LocalField + "= $1");
+                fkCountQuery = fkCountQuery.Replace("{tableName}", tableName);
+                fkCountQuery = fkCountQuery.Replace("{joinQuery}", joinString);
+                fkCountQuery = fkCountQuery.Replace("{fkColumns}", fkColumnsString);
+
+                eQuery.ColumnName = f.LocalField;
+                eQuery.DataType = f.DataTypeLocal;
+                eQuery.SelectQuery = fkQuery;
+                eQuery.SelectCountQuery = fkCountQuery;
+                data.SelectByFKQuery.Add(eQuery);
+            }
+            selectAllQuery = selectAllQuery.Replace("{tableName}", tableName);
+            selectAllQuery = selectAllQuery.Replace("{joinQuery}", joinString);
+            selectAllQuery = selectAllQuery.Replace("{fkColumns}", fkColumnsString);
+
+            selectOneQuery = selectOneQuery.Replace("{tableName}", tableName);
+            selectOneQuery = selectOneQuery.Replace("{joinQuery}", joinString);
+            selectOneQuery = selectOneQuery.Replace("{fkColumns}", fkColumnsString);
+            selectOneQuery = selectOneQuery.Replace("{selectPrimaryKey}", selectPrimaryKey);
+
+
+            searchByColumnQuery = searchByColumnQuery.Replace("{tableName}", tableName);
+            searchByColumnQuery = searchByColumnQuery.Replace("{joinQuery}", joinString);
+            searchByColumnQuery = searchByColumnQuery.Replace("{fkColumns}", fkColumnsString);
+            searchByColumnQuery = searchByColumnQuery.Replace("{selectPrimaryKey}", selectPrimaryKey);
+
+            searchQuery = searchQuery.Replace("{tableName}", tableName);
+            searchQuery = searchQuery.Replace("{joinQuery}", joinString);
+            searchQuery = searchQuery.Replace("{fkColumns}", fkColumnsString);
+            searchQuery = searchQuery.Replace("{searchCondition}", searchCondition.Trim().TrimStart('O').TrimStart('R'));
+
+            selectAllRecordCountQuery = selectAllRecordCountQuery.Replace("{tableName}", tableName);
+            selectAllRecordCountQuery = selectAllRecordCountQuery.Replace("{joinQuery}", joinString);
+            selectAllRecordCountQuery = selectAllRecordCountQuery.Replace("{fkColumns}", fkColumnsString);
+
+            searchRecordCountQuery = searchRecordCountQuery.Replace("{tableName}", tableName);
+            searchRecordCountQuery = searchRecordCountQuery.Replace("{joinQuery}", joinString);
+            searchRecordCountQuery = searchRecordCountQuery.Replace("{fkColumns}", fkColumnsString);
+            searchRecordCountQuery = searchRecordCountQuery.Replace("{searchCondition}", searchCondition.Trim().TrimStart('O').TrimStart('R'));
+
+            deleteQuery = deleteQuery.Replace("{deletePrimaryKey}", deletePrimaryKey);
+
+
+
+            string updateQueryParam = "";
+            string insertQuery = "INSERT INTO " + tableName + " set ?";
+            string updateParameter = "[";
+            string updateQuery = "UPDATE " + tableName + " SET ? WHERE {updateWereParam} RETURNING *";
+            string updatePatchQuery = "UPDATE " + tableName + " SET ? WHERE {updateWereParam} RETURNING *";
+            string updatePatchParameter = "[" + tableName;
+            foreach (var c in insertUpdateQueryData.UpdateColumnList)
+            {
+                updateParameter = updateParameter + " " + tableName + "." + c.FieldName + ",";
+                if (string.IsNullOrEmpty(updateQueryParam))
+                {
+                    updateQueryParam = updateQueryParam + c.FieldName + " = ?";
+                }
+                else
+                {
+                    updateQueryParam = updateQueryParam + "," + c.FieldName + " = ?";
+                }
+
+            }
+
+            if (string.IsNullOrEmpty(importantFieldForCreate))
+            {
+                importantFieldForCreate = "true";
+            }
+            else
+            {
+                importantFieldForCreate = importantFieldForCreate.Trim().TrimStart('|').TrimStart('|').TrimEnd('|').TrimEnd('|');
+            }
+            data.PrimaryKeyControllerString = primaryKeyStringForController;
+            data.PrimaryKeys = selectQueryData.PrimaryKeys;
+            data.SearchQuery = searchQuery;
+            data.SelectAllQuery = selectAllQuery;
+            data.SelectOneQuery = selectOneQuery;
+            data.SelectAllRecordCountQuery = selectAllRecordCountQuery;
+            data.SearchRecordCountQuery = searchRecordCountQuery;
+            data.SelectQueryData = selectQueryData;
+            data.PropertyListString = propertyList;
+            data.CreatePropertyListString = createPropertyList;
+            data.PrimaryKeyString = primaryKeyString;
+            data.PrimaryKeyCommaString = primaryKeyCommaString;
+            data.SearchQueryByColumn = searchByColumnQuery;
+            updateQuery = updateQuery.Replace("{updateQueryParam}", updateQueryParam);
+            updateQuery = updateQuery.Replace("{updateWereParam}", updateWereParam);
+            updatePatchQuery = updatePatchQuery.Replace("{updateWereParam}", updateWereParam);
+            data.UpdateQuery = updateQuery;
+            data.UpdatePatchQuery = updatePatchQuery;
+            updateParameter = updateParameter.TrimEnd(',') + "," + primaryKeyCommaString + "]";
+            updatePatchParameter = updatePatchParameter.TrimEnd(',') + "," + primaryKeyCommaString + "]";
+            data.UpdatePatchParam = updatePatchParameter;
+            data.UpdateParam = updateParameter;
+            data.InsertQuery = insertQuery;
+            data.InsertParam = "";
+            data.DeleteQuery = deleteQuery;
+            data.RequiredFieldString_CreateUpdate = importantFieldForCreate;
+            data.InsertUpdateQueryData = insertUpdateQueryData;
             return data;
         }
     }

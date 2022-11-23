@@ -1,0 +1,24 @@
+﻿const util = require('util');
+const { Pool } = require('pg');
+const pool = new Pool({
+    connectionLimit: 10,
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || '',
+    port: process.env.DB_PORT || 5432,
+    "typeCast": function castField( field, useDefaultTypeCasting ) {
+        if ( ( field.type === "BIT" ) && ( field.length === 1 ) ) {
+            const bytes = field.buffer();
+            return( bytes[ 0 ] === 1 );
+        }
+        return( useDefaultTypeCasting() );
+    }
+});
+
+// Promisify for Node.js async/await.
+pool.query = util.promisify(pool.query);
+
+module.exports = {
+    query: (text, params) => pool.query(text, params),
+}

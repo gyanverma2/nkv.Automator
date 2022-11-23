@@ -1,0 +1,57 @@
+﻿import { Injectable } from '@angular/core';
+import { APIService } from '../api/api.service';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class {modelName}Service {
+    dialogData: any;
+
+    constructor(private apiService: APIService) { }
+
+
+    getDialogData() {
+        return this.dialogData;
+    }
+
+    get{modelName}(pageNo: number = 1, pageSize: number = 30, searchKey: string = ""): Promise<any> {
+        return new Promise(async (resolve) => {
+            if (searchKey.length === 0) {
+                const res = await this.apiService.get("{tableName}{readAllURL}?pageno=" + pageNo + "&pagesize=" + pageSize);
+                resolve(res);
+            } else {
+                const res = await this.apiService.get("{tableName}/{searchURL}/" + searchKey + "/?pageno=" + pageNo + "&pagesize=" + pageSize);
+                resolve(res);
+            }
+        });
+    }
+
+    getOne{modelName}({primaryKeyParam}) {
+        return new Promise(async (resolve) => {
+            const res = await this.apiService.get("{tableName}{readOneURL}/"{primaryKeyURLParam});
+            resolve(res);
+        });
+    }
+
+    add{modelName}(data) {
+        return new Promise(async (resolve) => {
+            const res = await this.apiService.post("{tableName}{createURL}", data);
+            resolve(res);
+        });
+    }
+
+    update{modelName}({primaryKeyParam},data) {
+        return new Promise(async (resolve) => {
+            const res = await this.apiService.patch("{tableName}{updateURL}/"{primaryKeyURLParam}, data);
+            resolve(res);
+        });
+    }
+
+    delete{modelName}({primaryKeyParam}) {
+        return new Promise(async (resolve) => {
+            const res = await this.apiService.delete("{tableName}{deleteURL}", {{primaryKeyParam}});
+            resolve(res);
+        });
+    }
+
+}

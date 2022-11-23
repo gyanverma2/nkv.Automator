@@ -1,0 +1,126 @@
+﻿const {getRows, insertRow, updateRow, deleteRow} = require('../database/query');
+const SqlString = require('sqlstring');
+const {isNumeric} = require('../utils/helper');
+
+exports.find = async (offset, pageSize) => {
+    {selectAllQuery}
+    return getRows(query,[pageSize,offset]);
+}
+
+exports.findOne = async ({primaryKeyParam}) => {
+    {selectByIDQuery}
+    return getRows(query,[{primaryKeyParam}]);
+}
+
+exports.insert = async (object) => {
+    const insertKeys = [];
+    const insertValues = [];
+    const countValues = [];
+    let count = 1;
+    for (const key in object) {
+        insertKeys.push(`${key}`);
+        countValues.push(`$${count}`);
+        insertValues.push(`${object[key]}`);
+        count++;
+    }
+    let query = `INSERT INTO {tableName} (<columns>) VALUES (<values>) RETURNING *`;
+    query = query.replace("<columns>", insertKeys.join(","));
+    query = query.replace("<values>", countValues.join(","));
+    var newObject= await insertRow(query, insertValues);
+    if(newObject){
+        return this.findOne({primaryKeyInsertObjectParam});
+    }
+    else{
+        return null;
+    }
+    
+}
+exports.update = async ({primaryKeyParam}, object) => {
+    const updateKeys = [];
+    const updateValues = [];
+    let count = 1;
+    for (const key in object) {
+        updateKeys.push(`${key}=$${count}`);
+        updateValues.push(`${object[key]}`);
+        count++;
+    }
+    {updateValueWithPrimaryKey}
+    {updateQuery}
+    query = query.replace("?", updateKeys.join(","));
+    var newObject= await updateRow(query, updateValues);
+    if(newObject){
+        return this.findOne({primaryKeyInsertObjectParam});
+    }
+    else{
+        return null;
+    }
+}
+
+exports.remove = async ({primaryKeyParam}) => {
+    {removeQuery}
+    return deleteRow(query,[{primaryKeyParam}]);
+}
+
+exports.count = async () => {
+    {countAllQuery}
+    const result = await getRows(query);
+    if (result && result[0] && result[0].TotalCount && result[0].TotalCount > 0) {
+        return result[0].TotalCount;
+    } else {
+        return 0;
+    }
+}
+
+exports.search = async (offset, pageSize, key) => {
+    {searchQuery}
+    return getRows(query,[pageSize,offset]);
+}
+
+exports.searchCount = async (key) => {
+    {searchCountQuery}
+    const result = await getRows(query);
+    if (result && result[0] && result[0].TotalCount && result[0].TotalCount > 0) {
+        return result[0].TotalCount;
+    } else {
+        return 0;
+    }
+}
+
+const getWhereCondition = async (columnArray, orAnd) => {
+    let whereCondition = "";
+    let count = 0;
+    for (const col of columnArray) {
+        const columnName = col["columnName"];
+        const columnLogic = col["columnLogic"];
+        const columnValue = col["columnValue"];
+        var isNumericValue = await isNumeric(columnValue);
+        if (columnLogic === "LIKE") {
+            whereCondition = whereCondition + ` ${count > 0 ? orAnd : ""} LOWER(t.${columnName}) ${columnLogic} '%${columnValue.toLowerCase()}%'`;
+        } else if (isNumericValue) {
+            whereCondition = whereCondition + ` ${count > 0 ? orAnd : ""} t.${columnName} ${columnLogic} ${columnValue}`;
+        } else {
+            whereCondition = whereCondition + ` ${count > 0 ? orAnd : ""} LOWER(t.${columnName}) ${columnLogic} '${columnValue.toLowerCase()}'`;
+        }
+        count++;
+    }
+    return whereCondition;
+}
+
+exports.searchByColumn = async (offset, pageSize, columnArray, orAnd) => {
+    const whereCondition = await getWhereCondition(columnArray, orAnd);
+    const query = `{searchByColumnQuery} WHERE ${whereCondition} LIMIT  ${pageSize} OFFSET ${offset}`;
+    return getRows(query);
+}
+
+exports.searchByColumnCount = async (columnArray, orAnd) => {
+    const whereCondition = await getWhereCondition(columnArray, orAnd);
+    const query = `SELECT count(*) AS TotalCount FROM {tableName} t WHERE ${whereCondition}`;
+    const result = await getRows(query);
+    if (result && result[0] && result[0].TotalCount && result[0].TotalCount > 0) {
+        return result[0].TotalCount;
+    } else {
+        return 0;
+    }
+}
+
+{extraFunction}

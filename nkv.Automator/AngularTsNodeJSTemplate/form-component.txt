@@ -1,0 +1,86 @@
+﻿import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import {
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+import { ThemePalette } from '@angular/material/core';
+import { {modelName}Service } from '../../../service/{tableName}.service';
+{foreignKeyServiceImport}
+import { ToastrService } from 'ngx-toastr';
+@Component({
+  selector: 'app-{tableName}',
+  templateUrl: './{tableName}-form.component.html',
+  styleUrls: ['./{tableName}-form.component.scss']
+})
+export class {tableAddEditComponent} implements OnInit {
+
+  isEditMode: boolean = false;
+  {foreignKeyPram}
+  color: ThemePalette = 'accent';
+  data: any;
+  formError: any[] = [];
+  {tableName}form: FormGroup;
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private {tableServiceInstance}: {modelName}Service,
+    {foreignKeyServiceInstance}
+    private toastr: ToastrService
+  ) {
+    this.data = {};
+    {foreignKeyPramInit}
+    this.{tableName}form = new FormGroup({
+    {tableColumnValidation}
+    });
+   {fetchForeignKeyData}
+  }
+
+  ngOnInit() {
+    
+    this.activatedRoute.params.subscribe(params => {
+     // const userId = params['id'];
+     {primaryKeyParamValue}
+      if ({primaryKeyParamCheck}) {
+        this.{tableServiceInstance}.getOne{modelName}({primaryKeyParamArgument}).then((res: any) => {
+          if (res.code === 1) {
+            this.isEditMode = true;
+            this.data = res.document;
+          } else {
+            this.isEditMode = false;
+            this.toastr.error("{modelName} not found for edit");
+          }
+        })
+      }
+    });
+  }
+
+  public confirmSubmit(): void {
+    if (this.{tableName}form.valid) {
+      if (this.isEditMode) {
+        //Edit
+        this.{tableServiceInstance}.update{modelName}(this.data.{primaryKey},this.data).then((res: any) => {
+          if (res.code === 1) {
+            this.toastr.success(res.message);
+            this.router.navigateByUrl("{tableName}");
+          } else {
+            this.toastr.error(res.message);
+          }
+        });
+      }
+      else {
+        //Add
+        this.{tableServiceInstance}.add{modelName}(this.data).then((res: any) => {
+          if (res.code === 1) {
+            this.toastr.success(res.message);
+            this.router.navigateByUrl("{tableName}");
+          } else {
+            this.toastr.error(res.message);
+          }
+        });
+      }
+    }
+  }
+
+}

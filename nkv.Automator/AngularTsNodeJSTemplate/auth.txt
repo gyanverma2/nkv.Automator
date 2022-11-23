@@ -1,0 +1,69 @@
+﻿import { Injectable } from '@angular/core';
+import axios from 'axios';
+@Injectable({
+    providedIn: 'root'
+})
+export class AuthService {
+
+    constructor() { }
+
+    setToken(key, value) {
+        localStorage.setItem(key, value);
+    }
+
+    generateToken(username: string, password: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let item = {
+                    "username": username,
+                    "password": password
+                };
+                const config = {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Content-Type': 'application/json',
+                    }
+                };
+                const response = await axios.post("{tokenURL}", JSON.stringify(item), config);
+                  if (response && response.data) {
+                    const res = response.data;
+                    if (res) {
+                        let token = res.access_token;
+                        let expiryDate = res.expires_in;
+                        this.setToken('token', token);
+                        this.setToken('token_exp', expiryDate);
+                        resolve({ code: 1,response:res });
+                    } else {
+                        resolve({ code: 0,response:res });
+                    }
+                } else {
+                    resolve({ code: 0 });
+                }
+            } catch (error: any) {
+                if (axios.isAxiosError(error)) {
+                    resolve({ code: 0 ,response:error});
+                } else {
+                    resolve({ code: 0, message: 'Some error occured' });
+                }
+            }
+        });
+    }
+    getHeaders() {
+        let token = 'Bearer ' + localStorage.getItem('token');
+        return {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            'Authorization': token
+        };
+    }
+    
+    getHeadersUpload() {
+        let token = 'Bearer ' + localStorage.getItem('token');
+        return {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': token
+        };
+    }
+
+}

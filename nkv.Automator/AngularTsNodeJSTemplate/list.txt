@@ -1,0 +1,38 @@
+﻿<section id="{tableName}-table" class="mat-elevation-z8 bg-white">
+  <div class="mt10 pl10 pr10" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="flex-end">
+    <mat-form-field>
+      <mat-placeholder>Search</mat-placeholder>
+      <input matInput type="search" [(ngModel)]="searchValue">
+      <button mat-icon-button matSuffix color="primary" aria-label="search" (click)="applyFilter($event)">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+    <button mat-mini-fab color="primary" [routerLink]="['/{tableName}/add']">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+  <table mat-table [dataSource]="dataSource" matSort class="w-100">
+  {tableColumnNgContainer}
+    <!-- actions -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>
+      </th>
+
+      <td mat-cell *matCellDef="let row; let i=index;">
+       <button mat-icon-button color="primary" (click)="editItem(i, row)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button color="warn" (click)="deleteItem(i, row)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></tr>
+  </table>
+
+  <mat-paginator [pageIndex]="pageNo" [pageSize]="pageSize" [showFirstLastButtons]="true" [length]="totalRecord"
+    [pageSizeOptions]="[10,20,50]" (page)="pageEvent = pageEventCall($event)"></mat-paginator>
+</section>

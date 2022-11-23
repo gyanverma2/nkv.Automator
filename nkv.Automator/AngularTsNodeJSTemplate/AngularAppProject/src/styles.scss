@@ -1,0 +1,39 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import './scss/material';
+@import './scss/utils';
+@import './scss/responsive';
+@import './scss/variables';
+@import './scss/theme';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.mat-elevation-z8 {    
+    overflow-x: auto;
+   }
+   
+.icon-lg {
+    font-size: 40px;
+  }
+  
+  .mat-card {
+    &.danger {
+      background: linear-gradient(60deg, #ec407a, #d81b60);
+    }
+    &.warn {
+      background: linear-gradient(60deg, #ffa726, #fb8c00);
+    }
+    &.success {
+      background: linear-gradient(60deg, #66bb6a, #43a047);
+    }
+    &.info {
+      background: linear-gradient(60deg, #26c6da, #00acc1);
+    }
+  }
+  .full-width {
+    width: 100%;
+  }
+  
